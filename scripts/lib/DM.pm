@@ -226,6 +226,9 @@ sub new {
     my $self = \%self;
     $self->_check_arg_consistency(%self);
 
+    print { $self->{'makefile'} } "SHELL:=/bin/bash\n";
+    print { $self->{'makefile'} } "export SHELLOPTS:=errexit:pipefail\n\n";
+
     return \%self;
 }
 
