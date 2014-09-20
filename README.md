@@ -1,4 +1,4 @@
 PacBio
 ======
 
-Assessments of PacBio assemblies
+Assessments of PacBio datasets.
