@@ -70,7 +70,7 @@ legend("topright", c( '@m140912_185114_42137_c100689352550000001823145102281580_
 
 ![IGV2](figure/IGV_indelerrors.png)
 
-```{r showCoverageOverIdeogram, echo=FALSE}
+```{r showCoverageOverIdeogram, echo=FALSE, fit.width=12, dpi=300}
 cov.pb = read.table(paste(dir.results, "/pb/coverageHist.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
 names(cov.pb) = c("chrom", "start", "stop", "cov");
 
