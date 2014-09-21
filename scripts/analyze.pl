@@ -86,7 +86,7 @@ foreach my $id (keys(%bams)) {
     
     if (defined($bam)) {
         my $coverageHist = "$outdir/coverageHist.txt";
-        my $coverageHistCmd = "$indiana8 CoverageHistogram -b $bam -o $coverageHist";
+        my $coverageHistCmd = "$indiana8 CoverageHistogram -b $bam -s 300 -o $coverageHist";
         $dm->addRule($coverageHist, $bam, $coverageHistCmd);
     }
 
