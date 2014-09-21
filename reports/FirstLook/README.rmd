@@ -17,6 +17,7 @@ rgcolors = list(
 )
 
 dir.results = "../../results/master/";
+dir.resources = "../../resources/";
 ```
 
 ```{r lengthStats, echo=FALSE, results='asis'}
@@ -37,7 +38,7 @@ ls = rbind(ls.pb0, ls.pb1, ls.pb2, ls.pb3, ls.pb4, ls.pb5, ls.pb6, ls.pb7, ls.pb
 kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value")]);
 ```
 
-```{r lengthHist, echo=FALSE}
+```{r lengthHist, echo=FALSE, eval=TRUE}
 lh.pb = read.table(paste(dir.results, "/pb/lengthHist.txt", sep=""), header=TRUE);
 
 plot(lh.pb$length, lh.pb$pb, type="l", lwd=3, col=color.pb, bty="n", cex=1.3, cex.lab=1.3, cex.axis=1.3, xlab="Length (bp)", ylab="Counts");
@@ -55,7 +56,7 @@ points(8000, lh.pb$pb[which(lh.pb$length == 8000)]+100, pch=6);
 text(8000, lh.pb$pb[which(lh.pb$length == 8000)]+100, labels="~ 8.0 kb", pos=4);
 ```
 
-```{r lengthHistPerRG, echo=FALSE}
+```{r lengthHistPerRG, echo=FALSE, eval=TRUE}
 plot(0, 0, type="n", bty="n", cex=1.3, cex.lab=1.3, cex.axis=1.3, xlab="Length (bp)", ylab="Counts", xlim=c(0, max(lh.pb$length)), ylim=c(0, 1500));
 for (rg in c("pb0", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "pb7")) {
     lhsub = read.table(paste(dir.results, "/", rg, "/lengthHist.txt", sep=""), header=TRUE);
@@ -66,3 +67,51 @@ legend("topright", c( '@m140912_185114_42137_c100689352550000001823145102281580_
 ```
 
 ![IGV1](figure/IGV_chr1.png)
+
+![IGV2](figure/IGV_indelerrors.png)
+
+```{r showCoverageOverIdeogram, echo=FALSE}
+cov.pb = read.table(paste(dir.results, "/pb/coverageHist.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
+names(cov.pb) = c("chrom", "start", "stop", "cov");
+
+cov.il = read.table(paste(dir.results, "/il/coverageHist.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
+names(cov.il) = c("chrom", "start", "stop", "cov");
+
+chroms = sort(na.exclude(grep("apico|M76611", unique(cov.pb$chrom), invert=TRUE, value=TRUE)));
+chroms.length = list();
+
+for (chr in chroms) {
+    chroms.length[[chr]] = max(subset(cov.pb, chrom == chr)$stop);
+}
+
+access = read.table(paste(dir.resources, "/regions-20130225.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
+names(access) = c("chrom", "start", "stop", "type");
+access = subset(access, type != "Core");
+
+par(mar=c(5, 8, 2, 1));
+plot(0, 0, type="n", xlim=c(0, max(unlist(chroms.length)) + 500000), ylim=c(0, length(chroms.length) + 1), bty="n", xlab="Length (bp)", ylab="", yaxt="n", cex=1.3, cex.axis=1.3, cex.lab=1.3);
+
+for (chr in chroms) {
+    pos = as.integer(gsub("_v3", "", gsub("Pf3D7_", "", chr)));
+    chrlength = chroms.length[[chr]];
+
+    mtext(chr, side=2, at=pos, las=1, cex=1.3);
+
+    acc = subset(access, chrom == chr);
+    rect(acc$start, pos - 0.1, acc$stop, pos + 0.1, col="red", border=NA);
+
+    rect(0, pos - 0.1, chrlength, pos + 0.1);
+
+    pb.covs = subset(cov.pb, chrom == chr);
+    il.covs = subset(cov.il, chrom == chr);
+
+    pb.mids = pb.covs$start + ((pb.covs$stop - pb.covs$start)/2);
+    il.mids = il.covs$start + ((il.covs$stop - il.covs$start)/2);
+
+    pb.max = max(pb.covs$cov);
+    il.max = max(il.covs$cov);
+
+    points(pb.mids, pos + 0.1 +  0.3*(pb.covs$cov / pb.max), type="l", col=color.pb, lwd=1);
+    points(il.mids, pos - 0.1 + -0.3*(il.covs$cov / il.max), type="l", col=color.il, lwd=1);
+}
+```
