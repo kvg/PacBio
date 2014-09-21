@@ -108,10 +108,14 @@ for (chr in chroms) {
     pb.mids = pb.covs$start + ((pb.covs$stop - pb.covs$start)/2);
     il.mids = il.covs$start + ((il.covs$stop - il.covs$start)/2);
 
-    pb.max = max(pb.covs$cov);
-    il.max = max(il.covs$cov);
+    pb.median = median(pb.covs$cov);
+    il.median = median(il.covs$cov);
 
-    points(pb.mids, pos + 0.1 +  0.3*(pb.covs$cov / pb.max), type="l", col=color.pb, lwd=0.7);
-    points(il.mids, pos - 0.1 + -0.3*(il.covs$cov / il.max), type="l", col=color.il, lwd=0.7);
+    points(pb.mids, pos + 0.1 +  0.3*(pb.covs$cov / pb.median), type="l", col=color.pb, lwd=0.7);
+    points(il.mids, pos - 0.1 + -0.3*(il.covs$cov / il.median), type="l", col=color.il, lwd=0.7);
 }
+```
+
+```{r runningCorrelationOfCoverage, echo=FALSE}
+
 ```

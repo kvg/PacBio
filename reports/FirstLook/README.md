@@ -41,3 +41,6 @@ A first look at the PacBio 3D7 data
 
 ![plot of chunk showCoverageOverIdeogram](figure/showCoverageOverIdeogram.png) 
 
+
+
+
