@@ -41,6 +41,7 @@ my $dm = new DM(
 );
 
 my $indiana8 = "java -Xmx8g -jar $binDir/indiana.jar";
+my $gatk8 = "java -Xmx8g -jar bin/GenomeAnalysisTK.v3.2.jar";
 
 my %bams = (
     'pb' => "$dataDir/Pfalc3D7/aligned_reads.bam",
@@ -50,6 +51,11 @@ my %bams = (
 my %seqs = (
     'pb' => "$dataDir/Pfalc3D7/filtered_subreads.fastq",
     'il' => "$dataDir/PfCross/ERR019061_1.fastq.gz",
+);
+
+my %refs = (
+    'pb' => "$resourcesDir/3D7.cshl.fasta",
+    'il' => "/home/kiran/ngs/references/plasmodium/falciparum/3D7/PlasmoDB-9.0/PlasmoDB-9.0_Pfalciparum3D7_Genome.fasta",
 );
 
 my %pbrgs = (
@@ -85,9 +91,13 @@ foreach my $id (keys(%bams)) {
     my $outdir = "$resultsDir/$id";
     
     if (defined($bam)) {
-        my $coverageHist = "$outdir/coverageHist.txt";
-        my $coverageHistCmd = "$indiana8 CoverageHistogram -b $bam -s 300 -o $coverageHist";
-        $dm->addRule($coverageHist, $bam, $coverageHistCmd);
+        my $coverage = "$outdir/coverage.txt";
+        my $coverageCmd = "$gatk8 -T DepthOfCoverage -R $refs{$id} -I $bam -omitSampleSummary -omitIntervals -omitLocusTable -mmq 1 -o $coverage";
+        $dm->addRule($coverage, $bam, $coverageCmd);
+
+        my $coverageSimple = "$outdir/coverage.simple.txt";
+        my $coverageSimpleCmd = "grep -v Locus $coverage | sed 's/:/\\t/g' | cut -f1-3 > $coverageSimple";
+        $dm->addRule($coverageSimple, $coverage, $coverageSimpleCmd);
     }
 
     if (defined($fq)) {
