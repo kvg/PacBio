@@ -111,7 +111,7 @@ for (chr in chroms) {
     pb.max = max(pb.covs$cov);
     il.max = max(il.covs$cov);
 
-    points(pb.mids, pos + 0.1 +  0.3*(pb.covs$cov / pb.max), type="l", col=color.pb, lwd=1);
-    points(il.mids, pos - 0.1 + -0.3*(il.covs$cov / il.max), type="l", col=color.il, lwd=1);
+    points(pb.mids, pos + 0.1 +  0.3*(pb.covs$cov / pb.max), type="l", col=color.pb, lwd=0.7);
+    points(il.mids, pos - 0.1 + -0.3*(il.covs$cov / il.max), type="l", col=color.il, lwd=0.7);
 }
 ```
