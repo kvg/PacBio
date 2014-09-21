@@ -17,6 +17,8 @@ rgcolors = list(
 dir.results = "../../results/master/";
 dir.resources = "../../resources/";
 
+par(mar=c(5, 4, 4, 2)+0.1);
+
 
 ## ----lengthStats, echo=FALSE, results='asis'-----------------------------
 ls.pb  = read.table(paste(dir.results, "/pb/lengthStats.txt",  sep=""), header=TRUE);
@@ -36,46 +38,48 @@ ls = rbind(ls.pb0, ls.pb1, ls.pb2, ls.pb3, ls.pb4, ls.pb5, ls.pb6, ls.pb7, ls.pb
 kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value")]);
 
 
-## ----lengthHist, echo=FALSE, eval=FALSE----------------------------------
-## lh.pb = read.table(paste(dir.results, "/pb/lengthHist.txt", sep=""), header=TRUE);
-## 
-## plot(lh.pb$length, lh.pb$pb, type="l", lwd=3, col=color.pb, bty="n", cex=1.3, cex.lab=1.3, cex.axis=1.3, xlab="Length (bp)", ylab="Counts");
-## labels = c(paste("reads:", ls.pb$numReads[1]),
-##            paste("min length:", ls.pb$minLength[1], "bp"),
-##            paste("max length:", ls.pb$maxLength[1], "bp"),
-##            paste("mean length:", as.integer(ls.pb$meanLength[1]), "bp"),
-##            paste("n50:", ls.pb$n50Value[1], "bp"));
-## legend(22000, 6000, labels, cex=1.3, bty="n");
-## 
-## points(1100, lh.pb$pb[which(lh.pb$length == 1100)]+100, pch=6);
-## text(1100, lh.pb$pb[which(lh.pb$length == 1100)]+100, labels="~ 1.1 kb", pos=4);
-## 
-## points(8000, lh.pb$pb[which(lh.pb$length == 8000)]+100, pch=6);
-## text(8000, lh.pb$pb[which(lh.pb$length == 8000)]+100, labels="~ 8.0 kb", pos=4);
+## ----lengthHist, echo=FALSE, eval=TRUE-----------------------------------
+lh.pb = read.table(paste(dir.results, "/pb/lengthHist.txt", sep=""), header=TRUE);
+
+plot(lh.pb$length, lh.pb$pb, type="l", lwd=3, col=color.pb, bty="n", cex=1.3, cex.lab=1.3, cex.axis=1.3, xlab="Length (bp)", ylab="Counts");
+labels = c(paste("reads:", ls.pb$numReads[1]),
+           paste("min length:", ls.pb$minLength[1], "bp"),
+           paste("max length:", ls.pb$maxLength[1], "bp"),
+           paste("mean length:", as.integer(ls.pb$meanLength[1]), "bp"),
+           paste("n50:", ls.pb$n50Value[1], "bp"));
+legend(22000, 6000, labels, cex=1.3, bty="n");
+
+points(1100, lh.pb$pb[which(lh.pb$length == 1100)]+100, pch=6);
+text(1100, lh.pb$pb[which(lh.pb$length == 1100)]+100, labels="~ 1.1 kb", pos=4);
+
+points(8000, lh.pb$pb[which(lh.pb$length == 8000)]+100, pch=6);
+text(8000, lh.pb$pb[which(lh.pb$length == 8000)]+100, labels="~ 8.0 kb", pos=4);
 
 
-## ----lengthHistPerRG, echo=FALSE, eval=FALSE-----------------------------
-## plot(0, 0, type="n", bty="n", cex=1.3, cex.lab=1.3, cex.axis=1.3, xlab="Length (bp)", ylab="Counts", xlim=c(0, max(lh.pb$length)), ylim=c(0, 1500));
-## for (rg in c("pb0", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "pb7")) {
-##     lhsub = read.table(paste(dir.results, "/", rg, "/lengthHist.txt", sep=""), header=TRUE);
-## 
-##     points(lhsub$length, lhsub$pb, type="l", lwd=2, lty=1, col=rgcolors[[rg]]);
-## }
-## legend("topright", c( '@m140912_185114_42137_c100689352550000001823145102281580_s1_p0', '@m140912_220917_42137_c100689352550000001823145102281581_s1_p0', '@m140913_012852_42137_c100689352550000001823145102281582_s1_p0', '@m140913_044743_42137_c100689352550000001823145102281583_s1_p0', '@m140918_073419_42137_c100716502550000001823136502281504_s1_p0', '@m140918_105250_42137_c100716502550000001823136502281505_s1_p0', '@m140918_141535_42137_c100716502550000001823136502281506_s1_p0', '@m140918_173349_42137_c100716502550000001823136502281507_s1_p0'), col=c(rgcolors$pb0, rgcolors$pb1, rgcolors$pb2, rgcolors$pb3, rgcolors$pb4, rgcolors$pb5, rgcolors$pb6, rgcolors$pb7), lwd=2, lty=1, cex=0.6, bty="n");
+## ----lengthHistPerRG, echo=FALSE, eval=TRUE------------------------------
+plot(0, 0, type="n", bty="n", cex=1.3, cex.lab=1.3, cex.axis=1.3, xlab="Length (bp)", ylab="Counts", xlim=c(0, max(lh.pb$length)), ylim=c(0, 1500));
+for (rg in c("pb0", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "pb7")) {
+    lhsub = read.table(paste(dir.results, "/", rg, "/lengthHist.txt", sep=""), header=TRUE);
+
+    points(lhsub$length, lhsub$pb, type="l", lwd=2, lty=1, col=rgcolors[[rg]]);
+}
+legend("topright", c( '@m140912_185114_42137_c100689352550000001823145102281580_s1_p0', '@m140912_220917_42137_c100689352550000001823145102281581_s1_p0', '@m140913_012852_42137_c100689352550000001823145102281582_s1_p0', '@m140913_044743_42137_c100689352550000001823145102281583_s1_p0', '@m140918_073419_42137_c100716502550000001823136502281504_s1_p0', '@m140918_105250_42137_c100716502550000001823136502281505_s1_p0', '@m140918_141535_42137_c100716502550000001823136502281506_s1_p0', '@m140918_173349_42137_c100716502550000001823136502281507_s1_p0'), col=c(rgcolors$pb0, rgcolors$pb1, rgcolors$pb2, rgcolors$pb3, rgcolors$pb4, rgcolors$pb5, rgcolors$pb6, rgcolors$pb7), lwd=2, lty=1, cex=0.6, bty="n");
 
 
-## ----showCoverageOverIdeogram, echo=FALSE--------------------------------
-cov.pb = read.table(paste(dir.results, "/pb/coverageHist.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
-names(cov.pb) = c("chrom", "start", "stop", "cov");
+## ----loadCoverage, echo=FALSE, cache=TRUE--------------------------------
+cov.pb = read.table(paste(dir.results, "/pb/coverage.simple.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
+names(cov.pb) = c("chrom", "start", "cov");
 
-cov.il = read.table(paste(dir.results, "/il/coverageHist.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
-names(cov.il) = c("chrom", "start", "stop", "cov");
+cov.il = read.table(paste(dir.results, "/il/coverage.simple.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
+names(cov.il) = c("chrom", "start", "cov");
 
+
+## ----showCoverageOverIdeogram, echo=FALSE, fit.height=6, fit.width=18, dpi=300----
 chroms = sort(na.exclude(grep("apico|M76611", unique(cov.pb$chrom), invert=TRUE, value=TRUE)));
 chroms.length = list();
 
 for (chr in chroms) {
-    chroms.length[[chr]] = max(subset(cov.pb, chrom == chr)$stop);
+    chroms.length[[chr]] = max(subset(cov.pb, chrom == chr)$start);
 }
 
 access = read.table(paste(dir.resources, "/regions-20130225.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
@@ -99,14 +103,47 @@ for (chr in chroms) {
     pb.covs = subset(cov.pb, chrom == chr);
     il.covs = subset(cov.il, chrom == chr);
 
-    pb.mids = pb.covs$start + ((pb.covs$stop - pb.covs$start)/2);
-    il.mids = il.covs$start + ((il.covs$stop - il.covs$start)/2);
+    pb.start = pb.covs$start;
+    il.start = il.covs$start;
 
     pb.max = max(pb.covs$cov);
     il.max = max(il.covs$cov);
 
-    points(pb.mids, pos + 0.1 +  0.3*(pb.covs$cov / pb.max), type="l", col=color.pb, lwd=1);
-    points(il.mids, pos - 0.1 + -0.3*(il.covs$cov / il.max), type="l", col=color.il, lwd=1);
+    interval = seq(1, length(pb.start), by=5000);
+
+    points(pb.start[interval], pos + 0.1 +  0.3*(pb.covs$cov / pb.max)[interval], type="l", col=color.pb, lwd=0.5);
+    points(il.start[interval], pos - 0.1 + -0.3*(il.covs$cov / il.max)[interval], type="l", col=color.il, lwd=0.5);
 }
+
+
+## ----runningCorrelationOfCoverage, echo=FALSE, eval=FALSE----------------
+## binSize = 10;
+## 
+## par(mar=c(5, 8, 2, 1));
+## plot(0, 0, type="n", xlim=c(0, max(unlist(chroms.length)) + 500000), ylim=c(0, length(chroms.length) + 1), bty="n", xlab="Length (bp)", ylab="", yaxt="n", cex=1.3, cex.axis=1.3, cex.lab=1.3);
+## 
+## for (chr in chroms) {
+##     pos = as.integer(gsub("_v3", "", gsub("Pf3D7_", "", chr)));
+##     chrlength = chroms.length[[chr]];
+## 
+##     mtext(chr, side=2, at=pos, las=1, cex=1.3);
+## 
+##     acc = subset(access, chrom == chr);
+##     rect(acc$start, pos - 0.1, acc$stop, pos + 0.1, col="red", border=NA);
+## 
+##     rect(0, pos - 0.1, chrlength, pos + 0.1);
+## 
+##     pb.covs = subset(cov.pb, chrom == chr);
+##     il.covs = subset(cov.il, chrom == chr);
+## 
+##     #pb.mids = pb.covs$start + ((pb.covs$stop - pb.covs$start)/2);
+##     #il.mids = il.covs$start + ((il.covs$stop - il.covs$start)/2);
+## 
+##     #pb.max = max(pb.covs$cov);
+##     #il.max = max(il.covs$cov);
+## 
+##     #points(pb.mids, pos + 0.1 +  0.3*(pb.covs$cov / pb.max), type="l", col=color.pb, lwd=0.5);
+##     #points(il.mids, pos - 0.1 + -0.3*(il.covs$cov / il.max), type="l", col=color.il, lwd=0.5);
+## }
 
 

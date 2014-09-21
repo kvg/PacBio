@@ -39,6 +39,9 @@ A first look at the PacBio 3D7 data
 
 ![IGV2](figure/IGV_indelerrors.png)
 
+
+
+
 ![plot of chunk showCoverageOverIdeogram](figure/showCoverageOverIdeogram.png) 
 
 
