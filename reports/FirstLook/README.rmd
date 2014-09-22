@@ -80,13 +80,15 @@ cov.il = read.table(paste(dir.results, "/il/coverage.simple.txt", sep=""), heade
 names(cov.il) = c("chrom", "start", "cov");
 ```
 
-```{r showCoverageOverIdeogram, echo=FALSE, fit.height=6, fit.width=18, dpi=300}
+```{r showCoverageOverIdeogram, echo=FALSE, fit.height=6, fit.width=18, dpi=300, cache=TRUE}
 chroms = sort(na.exclude(grep("apico|M76611", unique(cov.pb$chrom), invert=TRUE, value=TRUE)));
 chroms.length = list();
 
 for (chr in chroms) {
     chroms.length[[chr]] = max(subset(cov.pb, chrom == chr)$start);
 }
+
+mask = read.table(paste(dir.resources, "/tbl_telomere.txt", sep=""), header=TRUE, stringsAsFactors=FALSE);
 
 access = read.table(paste(dir.resources, "/regions-20130225.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
 names(access) = c("chrom", "start", "stop", "type");
@@ -100,6 +102,9 @@ for (chr in chroms) {
     chrlength = chroms.length[[chr]];
 
     mtext(chr, side=2, at=pos, las=1, cex=1.3);
+
+    submask = subset(mask, chrom == chr);
+    rect(submask$co_pos_min, pos - 0.1, submask$co_pos_max, pos + 0.1, col="gray", border=NA);
 
     acc = subset(access, chrom == chr);
     rect(acc$start, pos - 0.1, acc$stop, pos + 0.1, col="red", border=NA);
@@ -136,7 +141,12 @@ showRegionalCoverage <- function(region) {
     par(mar=c(5, 4, 4, 2)+0.1);
     plot(0, 0, type="n", xlim=c(region$start - region.window, region$stop + region.window), ylim=c(-region.max/100, region.max), bty="n", xlab="Length (bp)", ylab="Coverage", cex=1.3, cex.axis=1.3, cex.lab=1.3, main=paste(region$chrom, ":", region$start, "-", region$stop, sep=""));
 
-    rect(region$start, -region.max/100, region$stop, region.max/100, col="red", border=NA);
+    submask = subset(mask, chrom == chr);
+    rect(submask$co_pos_min, -region.max/100, acc$co_pos_max, region.max/100, col="gray", border=NA);
+
+    acc = subset(access, chrom == region$chrom)
+    rect(acc$start, -region.max/100, acc$stop, region.max/100, col="red", border=NA);
+
     rect(region.left, -region.max/100, region.right, region.max/100);
 
     points(region.cov.pb$start, region.cov.pb$cov, type="l", col=color.pb, lwd=1);
@@ -151,7 +161,8 @@ showRegionalCoverage(region.chr4_centromere);
 
 ```{r coverageSubtelomericRepeats, echo=FALSE}
 regions.telomeric = subset(access, type == "SubtelomericRepeat");
-for (i in 1:nrow(regions.telomeric)) {
+#for (i in 1:nrow(regions.telomeric)) {
+for (i in 1:2) {
     region.telomeric = regions.telomeric[i,];
     showRegionalCoverage(region.telomeric);
 }
