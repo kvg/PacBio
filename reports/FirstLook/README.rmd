@@ -24,8 +24,8 @@ par(mar=c(5, 4, 4, 2)+0.1);
 
 We prepared roughly 15ug of DNA from the canonical Plasmodium falciparum strain, 3D7, for sequencing on Cold Spring Harbor Laboratory's PacBio RS-II instrument.  This was sequenced on eight SMRT cells, which should yield approximately 100x coverage over the 23 megabase genome.  Having just received the filtered subreads (in unaligned and aligned form), we investigated some very basic properties of the data.
 
-Reads, read length
-==================
+Read length
+===========
 
 ```{r readStats, echo=FALSE, results='asis'}
 ls.pb  = read.table(paste(dir.results, "/pb/lengthStats.txt",  sep=""), header=TRUE);
@@ -62,7 +62,7 @@ aligned = c(aligned, sum(aligned));
 ls = cbind(ls, alignedReads = aligned);
 ls = cbind(ls, pctAligned = 100*ls$alignedReads/ls$numReads);
 
-kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value", "alignedReads", "pctAligned")]);
+kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value")]);
 
 #80f50c5537 m140912_185114_42137_c100689352550000001823145102281580_s1_p0
 #101bc6c4f2 m140912_220917_42137_c100689352550000001823145102281581_s1_p0
@@ -74,7 +74,7 @@ kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value
 #06f934595b m140918_173349_42137_c100716502550000001823136502281507_s1_p0
 ```
 
-We first examined read count and read length properties, as shown in the table above.  We have labeled data from each SMRT cell with a simple identifier, pb0 .. pb7 (the full identifier is a bit long and cumbersome to use). On average, each SMRT cell yields `r mean(subset(ls, key != "total")$numReads)` reads, typically `r mean(subset(ls, key != "total")$meanLength` bases long.  Most reads (~ `r mean(subset(ls, key != "total")$pctAligned)`) align to the reference genome.
+We first examined read count and read length properties, as shown in the table above.  We have labeled data from each SMRT cell with a simple identifier, pb0 .. pb7 (the full identifier is a bit long and cumbersome to use everywhere). On average, each SMRT cell yields `r mean(subset(ls, key != "total")$numReads)` reads, typically `r mean(subset(ls, key != "total")$meanLength)` bases long.
 
 We next examined the read length distribution, shown below.
 
@@ -96,6 +96,8 @@ points(8000, lh.pb$pb[which(lh.pb$length == 8000)]+100, pch=6);
 text(8000, lh.pb$pb[which(lh.pb$length == 8000)]+100, labels="~ 8.0 kb", pos=4);
 ```
 
+Interestingly, this distribution appears to be bimodal, with peaks at 1.1 kb and 8.0 kb.  The origin of these peaks are unclear.  Furthermore, they appear in all SMRT cells (see figure below), which could indicate a property of the library used for sequencing.  It is not clear whether this bimodality is from the original DNA sample or an artifact of the long-fragment library construction process.
+
 ```{r lengthHistPerRG, echo=FALSE, eval=TRUE, warning=FALSE}
 plot(0, 0, type="n", bty="n", cex=1.3, cex.lab=1.3, cex.axis=1.3, xlab="Length (bp)", ylab="Counts", xlim=c(0, max(lh.pb$length)), ylim=c(0, 1500));
 for (rg in c("pb0", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "pb7")) {
@@ -105,18 +107,9 @@ for (rg in c("pb0", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "pb7")) {
 }
 legend("topright", c( '@m140912_185114_42137_c100689352550000001823145102281580_s1_p0', '@m140912_220917_42137_c100689352550000001823145102281581_s1_p0', '@m140913_012852_42137_c100689352550000001823145102281582_s1_p0', '@m140913_044743_42137_c100689352550000001823145102281583_s1_p0', '@m140918_073419_42137_c100716502550000001823136502281504_s1_p0', '@m140918_105250_42137_c100716502550000001823136502281505_s1_p0', '@m140918_141535_42137_c100716502550000001823136502281506_s1_p0', '@m140918_173349_42137_c100716502550000001823136502281507_s1_p0'), col=c(rgcolors$pb0, rgcolors$pb1, rgcolors$pb2, rgcolors$pb3, rgcolors$pb4, rgcolors$pb5, rgcolors$pb6, rgcolors$pb7), lwd=2, lty=1, cex=0.6, bty="n");
 ```
-Interestingly, this distribution appears to be bimodal, with peaks at 1.1 kb and 8.0 kb.  The origin of these peaks are unclear.  Furthermore, they appear in all SMRT cells, which could indicate a property of the library used for sequencing.  It is not clear whether this bimodality is from the original DNA sample or an artifact of the long-fragment library construction process.
 
 Read alignment
 ==============
-
-We next examined the alignment of the reads to the reference.  To guide our expectations, we compare the PacBio alignments of the long-read data to BWA alignments of short-read data Illumina data (paired-end, 76-bp, ~200 bp fragment size) from the same parasite.  However, please note that the DNA source library for these two experiments is not the same.  The Illumina data is from sample PG0051-C, the 3D7 isolate sequenced on an Illumina GA2 for the P.f. crosses project.
-
-![IGV1](figure/IGV_chr1.png)
-
-![IGV2](figure/IGV_indelerrors.png)
-
-Strikingly, the PacBio data appears to have uniform coverage across the entire length of chromosome 1, while the Illumina data shows many peaks and valleys along the same chromosome.
 
 ```{r loadCoverage, echo=FALSE, cache=TRUE}
 cov.pb = read.table(paste(dir.results, "/pb/coverage.simple.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
@@ -125,6 +118,51 @@ names(cov.pb) = c("chrom", "start", "cov");
 cov.il = read.table(paste(dir.results, "/il/coverage.simple.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
 names(cov.il) = c("chrom", "start", "cov");
 ```
+
+We next examined the alignment of the reads to the reference (as performed by CSHL using `pbalign`(?)).  To guide our expectations, we compare the PacBio alignments of the long-read data to BWA alignments of short-read data Illumina data (paired-end, 76-bp, ~200 bp fragment size) from the same parasite.  However, please note that the DNA source library for these two experiments is not the same.  The Illumina data is from sample PG0051-C, the 3D7 isolate sequenced on an Illumina GA2 for the P.f. crosses project.  The coverage metrics over the whole of chromosome 8 are listed in the table below:
+
+```{r coverageTable, echo=FALSE, results='asis', cache=TRUE}
+cov.pb.chr8 = subset(cov.pb, chrom == "Pf3D7_08_v3")$cov;
+cov.il.chr8 = subset(cov.il, chrom == "Pf3D7_08_v3")$cov;
+
+cov.pb.mean = mean(cov.pb.chr8);
+cov.pb.sd = sd(cov.pb.chr8);
+cov.pb.median = median(cov.pb.chr8);
+
+cov.il.mean = mean(chr.il.chr8);
+cov.il.sd = sd(chr.il.chr8);
+cov.il.median = median(chr.il.chr8);
+
+cov.table = rbind(PacBio = c(cov.pb.median, cov.pb.mean, cov.pb.sd), Illumina = c(cov.il.median, cov.il.mean, cov.il.sd));
+colnames(cov.table) = c("median", "mean", "sd");
+
+kable(cov.table);
+```
+
+```{r coverageDist, echo=FALSE, results='asis', cache=TRUE}
+h.pb = hist(cov.pb.chr8, breaks=0:(max(cov.pb.chr8) + 10), plot=FALSE);
+h.il = hist(cov.il.chr8, breaks=0:(max(cov.il.chr8) + 10), plot=FALSE);
+
+plot(0, 0, type="n", xlim=c(0, 250), ylim=c(0, max(h.pb$counts)), xlab="Coverage", ylab="Frequency", cex=1.3, cex.lab=1.3, cex.axis=1.3, bty="n");
+points(h.pb$mids, h.pb$counts, type="l", lwd=2, col=color.pb);
+points(h.il$mids, h.il$counts, type="l", lwd=2, col=color.il);
+
+legend("topright", c("PacBio coverage", "Illumina coverage"), lwd=2, col=c(color.pb, color.il), bty="n", cex=1.3);
+```
+
+We manually inspected the alignments in IGV across the entire length of chromosome 1.
+
+![IGV1](figure/IGV_chr1.png)
+
+Strikingly, the PacBio data appears to have uniform coverage across the entire length of chromosome 1, while the Illumina data shows many peaks and valleys along the same chromosome.  Zooming in closer (below), we can see that the PacBio reads are replete with insertions, typically one base long, as expected.
+
+![IGV2](figure/IGV_indelerrors.png)
+
+
+Genome accessibility
+--------------------
+
+We sought to examine regions of the P. falciparum genome that are inaccessible with Illumina reads but accessible with PacBio reads.  We computed coverage profiles across each autosome by computing coverage at every nucleotide using the GATK's `DepthOfCoverage` tool, and showing the minimum coverage value found in 2,000-bp bins.  We've plotted the PacBio coverage above the appropriate ideogram and the Illumina coverage underneath it (and flipped upside-down) in the plot below.  Red and gray regions indicate areas of the genome deemed to be inaccessible (from Alistair Miles's accessibility calculations on MalariaGen datasets, personal communication).
 
 ```{r showCoverageOverIdeogram, echo=FALSE, fit.height=6, fit.width=18, dpi=300, cache=TRUE}
 chroms = sort(na.exclude(grep("apico|M76611", unique(cov.pb$chrom), invert=TRUE, value=TRUE)));
@@ -176,28 +214,12 @@ for (chr in chroms) {
         il.mincov = c(il.mincov, min(il.covs$cov[i:(i+window)]));
     }
 
-    #points(pb.start[interval], pos + 0.1 +  0.3*(pb.covs$cov / pb.max)[interval], type="l", col=color.pb, lwd=0.5);
-    #points(il.start[interval], pos - 0.1 + -0.3*(il.covs$cov / il.max)[interval], type="l", col=color.il, lwd=0.5);
-
     points(pb.start[interval], pos + 0.1 +  0.3*(pb.mincov / max(pb.mincov, na.rm=TRUE)), type="l", col=color.pb, lwd=0.5);
     points(il.start[interval], pos - 0.1 + -0.3*(il.mincov / max(il.mincov, na.rm=TRUE)), type="l", col=color.il, lwd=0.5);
 }
 ```
 
-```{r coverageTable, echo=FALSE, results='asis', cache=TRUE}
-cov.pb.mean = mean(subset(cov.pb, chrom == "Pf3D7_08_v3")$cov)
-cov.pb.sd = sd(subset(cov.pb, chrom == "Pf3D7_08_v3")$cov)
-cov.pb.median = median(subset(cov.pb, chrom == "Pf3D7_08_v3")$cov)
-
-cov.il.mean = mean(subset(cov.il, chrom == "Pf3D7_08_v3")$cov)
-cov.il.sd = sd(subset(cov.il, chrom == "Pf3D7_08_v3")$cov)
-cov.il.median = median(subset(cov.il, chrom == "Pf3D7_08_v3")$cov)
-
-cov.table = rbind(PacBio = c(cov.pb.mean, cov.pb.sd, cov.pb.median), Illumina = c(cov.il.mean, cov.il.sd, cov.il.median));
-colnames(cov.table) = c("mean", "sd", "median");
-
-kable(cov.table);
-```
+It is evident that the PacBio coverage is roughly uniform across the entire length of the chromosome.  In contrast, the Illumina coverage spikes and dips as it moves along, reaching zero coverage in many regions (especially the biologically interesting subtelomeric repetitive regions).  Let us examine a few of these places more closely.
 
 ```{r coverageZoom, echo=FALSE}
 showRegionalCoverage <- function(region) {
@@ -226,11 +248,13 @@ showRegionalCoverage <- function(region) {
 }
 ```
 
+### Centromere on chromosome 4
 ```{r coverageCentromere, echo=FALSE, cache=TRUE}
 region.chr4_centromere = subset(access, chrom == "Pf3D7_04_v3" & type == "Centromere")[1,];
 showRegionalCoverage(region.chr4_centromere);
 ```
 
+### All 28 subtelomeric regions
 ```{r coverageSubtelomericRepeats, echo=FALSE, cache=TRUE}
 regions.telomeric = subset(access, type == "SubtelomericRepeat");
 for (i in 1:nrow(regions.telomeric)) {
@@ -239,13 +263,18 @@ for (i in 1:nrow(regions.telomeric)) {
 }
 ```
 
+Error rate along the length of the read
+---------------------------------------
+
+Finally, we examined the error rate as a function of distance from the center of the contig (this is a slightly more meaningful measure for contigs, where it is easy to see error piling up towards the end of contigs, associated with the end of a graph traversal, but we have the code so we might as well look).  Here, we take a read, fold it in half, and start measuring the rate of insertion and deletion errors as a function of distance from the center of the read.  The result is shown below.  Insertion and deletion errors are found uniformly along the length of the reads.  Towards the tail end, we start to see a lot more variance in this rate as reads that reach these lengths become more infrequent.
+
 ```{r errorsByPosition, echo=FALSE}
 f = read.table(paste(dir.results, "/pb/errors.per_position.txt", sep=""), header=TRUE, stringsAsFactors=FALSE);
 
 col.insertions = rgb(219, 56, 46, 100, maxColorValue=255);
 col.deletions = rgb(95, 169, 192, 100, maxColorValue=255);
 
-plot(f$deletionRate, pch=19, cex=0.2, col=col.insertions, bty="n", xlab="Distance from middle of contig (bp)", ylab="Error rate", cex.lab=1.3, cex.axis=1.3);
-points(f$insertionRate, pch=19, cex=0.2, col=col.deletions);
+plot(f$deletionRate, pch=19, cex=0.2, col=col.deletions, bty="n", xlab="Distance from middle of contig (bp)", ylab="Error rate", cex.lab=1.3, cex.axis=1.3);
+points(f$insertionRate, pch=19, cex=0.2, col=col.insertions);
 legend("topleft", c("Insertions", "Deletions"), fill=c(col.insertions, col.deletions), bty="n", cex=1.3);
 ```
