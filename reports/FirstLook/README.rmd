@@ -133,8 +133,8 @@ for (chr in chroms) {
     #points(pb.start[interval], pos + 0.1 +  0.3*(pb.covs$cov / pb.max)[interval], type="l", col=color.pb, lwd=0.5);
     #points(il.start[interval], pos - 0.1 + -0.3*(il.covs$cov / il.max)[interval], type="l", col=color.il, lwd=0.5);
 
-    points(pb.start[interval], pos + 0.15 +  0.3*(pb.mincov / max(pb.mincov, na.rm=TRUE)), type="l", col=color.pb, lwd=0.5);
-    points(il.start[interval], pos - 0.15 + -0.3*(il.mincov / max(il.mincov, na.rm=TRUE)), type="l", col=color.il, lwd=0.5);
+    points(pb.start[interval], pos + 0.1 +  0.3*(pb.mincov / max(pb.mincov, na.rm=TRUE)), type="l", col=color.pb, lwd=0.5);
+    points(il.start[interval], pos - 0.1 + -0.3*(il.mincov / max(il.mincov, na.rm=TRUE)), type="l", col=color.il, lwd=0.5);
 }
 ```
 
