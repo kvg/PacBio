@@ -129,9 +129,9 @@ cov.pb.mean = mean(cov.pb.chr8);
 cov.pb.sd = sd(cov.pb.chr8);
 cov.pb.median = median(cov.pb.chr8);
 
-cov.il.mean = mean(chr.il.chr8);
-cov.il.sd = sd(chr.il.chr8);
-cov.il.median = median(chr.il.chr8);
+cov.il.mean = mean(cov.il.chr8);
+cov.il.sd = sd(cov.il.chr8);
+cov.il.median = median(cov.il.chr8);
 
 cov.table = rbind(PacBio = c(cov.pb.median, cov.pb.mean, cov.pb.sd), Illumina = c(cov.il.median, cov.il.mean, cov.il.sd));
 colnames(cov.table) = c("median", "mean", "sd");

@@ -42,19 +42,6 @@ Read alignment
 
 We next examined the alignment of the reads to the reference (as performed by CSHL using `pbalign`(?)).  To guide our expectations, we compare the PacBio alignments of the long-read data to BWA alignments of short-read data Illumina data (paired-end, 76-bp, ~200 bp fragment size) from the same parasite.  However, please note that the DNA source library for these two experiments is not the same.  The Illumina data is from sample PG0051-C, the 3D7 isolate sequenced on an Illumina GA2 for the P.f. crosses project.  The coverage metrics over the whole of chromosome 8 are listed in the table below:
 
-
-```
-## Error: object 'chr.il.chr8' not found
-```
-
-```
-## Error: object 'chr.il.chr8' not found
-```
-
-```
-## Error: object 'chr.il.chr8' not found
-```
-
 |id        |  median|    mean|     sd|
 |:---------|-------:|-------:|------:|
 |PacBio    |      81|   80.87|  14.36|
