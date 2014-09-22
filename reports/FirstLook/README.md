@@ -48,21 +48,8 @@ A first look at the PacBio 3D7 data
 
 
 
-
-```
-## Error: cannot mix zero-length and non-zero-length coordinates
-```
-
 ![plot of chunk coverageCentromere](figure/coverageCentromere.png) 
 
 
-
-```
-## Error: cannot mix zero-length and non-zero-length coordinates
-```
-
-![plot of chunk coverageSubtelomericRepeats](figure/coverageSubtelomericRepeats.png) 
-
-
-
+![plot of chunk coverageSubtelomericRepeats](figure/coverageSubtelomericRepeats1.png) ![plot of chunk coverageSubtelomericRepeats](figure/coverageSubtelomericRepeats2.png) 
 
