@@ -20,7 +20,7 @@ dir.resources = "../../resources/";
 par(mar=c(5, 4, 4, 2)+0.1);
 
 
-## ----lengthStats, echo=FALSE, results='asis'-----------------------------
+## ----readStats, echo=FALSE, results='asis'-------------------------------
 ls.pb  = read.table(paste(dir.results, "/pb/lengthStats.txt",  sep=""), header=TRUE);
 ls.pb0 = read.table(paste(dir.results, "/pb0/lengthStats.txt", sep=""), header=TRUE);
 ls.pb1 = read.table(paste(dir.results, "/pb1/lengthStats.txt", sep=""), header=TRUE);
@@ -35,7 +35,36 @@ ls.pb$key = "total";
 
 ls = rbind(ls.pb0, ls.pb1, ls.pb2, ls.pb3, ls.pb4, ls.pb5, ls.pb6, ls.pb7, ls.pb);
 
-kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value")]);
+rgcounts = read.table(paste(dir.results, "pb/rgcounts.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
+rownames(rgcounts) = gsub("RG:Z:", "", rgcounts$V1);
+colnames(rgcounts) = c("RG", "alignedReads");
+
+aligned = c(
+    rgcounts["80f50c5537", "alignedReads"],
+    rgcounts["101bc6c4f2", "alignedReads"],
+    rgcounts["13b6a42da4", "alignedReads"],
+    rgcounts["db860605d6", "alignedReads"],
+    rgcounts["236e875a13", "alignedReads"],
+    rgcounts["eeb951b4d9", "alignedReads"],
+    rgcounts["438703e3ac", "alignedReads"],
+    rgcounts["06f934595b", "alignedReads"]
+);
+
+aligned = c(aligned, sum(aligned));
+
+ls = cbind(ls, alignedReads = aligned);
+ls = cbind(ls, pctAligned = 100*ls$alignedReads/ls$numReads);
+
+kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value", "alignedReads", "pctAligned")]);
+
+#80f50c5537 m140912_185114_42137_c100689352550000001823145102281580_s1_p0
+#101bc6c4f2 m140912_220917_42137_c100689352550000001823145102281581_s1_p0
+#13b6a42da4 m140913_012852_42137_c100689352550000001823145102281582_s1_p0
+#db860605d6 m140913_044743_42137_c100689352550000001823145102281583_s1_p0
+#236e875a13 m140918_073419_42137_c100716502550000001823136502281504_s1_p0
+#eeb951b4d9 m140918_105250_42137_c100716502550000001823136502281505_s1_p0
+#438703e3ac m140918_141535_42137_c100716502550000001823136502281506_s1_p0
+#06f934595b m140918_173349_42137_c100716502550000001823136502281507_s1_p0
 
 
 ## ----lengthHist, echo=FALSE, eval=TRUE-----------------------------------
@@ -56,7 +85,7 @@ points(8000, lh.pb$pb[which(lh.pb$length == 8000)]+100, pch=6);
 text(8000, lh.pb$pb[which(lh.pb$length == 8000)]+100, labels="~ 8.0 kb", pos=4);
 
 
-## ----lengthHistPerRG, echo=FALSE, eval=TRUE------------------------------
+## ----lengthHistPerRG, echo=FALSE, eval=TRUE, warning=FALSE---------------
 plot(0, 0, type="n", bty="n", cex=1.3, cex.lab=1.3, cex.axis=1.3, xlab="Length (bp)", ylab="Counts", xlim=c(0, max(lh.pb$length)), ylim=c(0, 1500));
 for (rg in c("pb0", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "pb7")) {
     lhsub = read.table(paste(dir.results, "/", rg, "/lengthHist.txt", sep=""), header=TRUE);
@@ -74,13 +103,15 @@ cov.il = read.table(paste(dir.results, "/il/coverage.simple.txt", sep=""), heade
 names(cov.il) = c("chrom", "start", "cov");
 
 
-## ----showCoverageOverIdeogram, echo=FALSE, fit.height=6, fit.width=18, dpi=300----
+## ----showCoverageOverIdeogram, echo=FALSE, fit.height=6, fit.width=18, dpi=300, cache=TRUE----
 chroms = sort(na.exclude(grep("apico|M76611", unique(cov.pb$chrom), invert=TRUE, value=TRUE)));
 chroms.length = list();
 
 for (chr in chroms) {
     chroms.length[[chr]] = max(subset(cov.pb, chrom == chr)$start);
 }
+
+mask = read.table(paste(dir.resources, "/tbl_telomere.txt", sep=""), header=TRUE, stringsAsFactors=FALSE);
 
 access = read.table(paste(dir.resources, "/regions-20130225.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
 names(access) = c("chrom", "start", "stop", "type");
@@ -94,6 +125,9 @@ for (chr in chroms) {
     chrlength = chroms.length[[chr]];
 
     mtext(chr, side=2, at=pos, las=1, cex=1.3);
+
+    submask = subset(mask, chrom == chr);
+    rect(submask$co_pos_min, pos - 0.1, submask$co_pos_max, pos + 0.1, col="gray", border=NA);
 
     acc = subset(access, chrom == chr);
     rect(acc$start, pos - 0.1, acc$stop, pos + 0.1, col="red", border=NA);
@@ -109,41 +143,72 @@ for (chr in chroms) {
     pb.max = max(pb.covs$cov);
     il.max = max(il.covs$cov);
 
-    interval = seq(1, length(pb.start), by=5000);
+    window = 2000;
+    interval = seq(1, length(pb.start), by=window);
 
-    points(pb.start[interval], pos + 0.1 +  0.3*(pb.covs$cov / pb.max)[interval], type="l", col=color.pb, lwd=0.5);
-    points(il.start[interval], pos - 0.1 + -0.3*(il.covs$cov / il.max)[interval], type="l", col=color.il, lwd=0.5);
+    pb.mincov = c();
+    il.mincov = c();
+    for (i in interval) {
+        pb.mincov = c(pb.mincov, min(pb.covs$cov[i:(i+window)]));
+        il.mincov = c(il.mincov, min(il.covs$cov[i:(i+window)]));
+    }
+
+    #points(pb.start[interval], pos + 0.1 +  0.3*(pb.covs$cov / pb.max)[interval], type="l", col=color.pb, lwd=0.5);
+    #points(il.start[interval], pos - 0.1 + -0.3*(il.covs$cov / il.max)[interval], type="l", col=color.il, lwd=0.5);
+
+    points(pb.start[interval], pos + 0.1 +  0.3*(pb.mincov / max(pb.mincov, na.rm=TRUE)), type="l", col=color.pb, lwd=0.5);
+    points(il.start[interval], pos - 0.1 + -0.3*(il.mincov / max(il.mincov, na.rm=TRUE)), type="l", col=color.il, lwd=0.5);
 }
 
 
-## ----runningCorrelationOfCoverage, echo=FALSE, eval=FALSE----------------
-## binSize = 10;
-## 
-## par(mar=c(5, 8, 2, 1));
-## plot(0, 0, type="n", xlim=c(0, max(unlist(chroms.length)) + 500000), ylim=c(0, length(chroms.length) + 1), bty="n", xlab="Length (bp)", ylab="", yaxt="n", cex=1.3, cex.axis=1.3, cex.lab=1.3);
-## 
-## for (chr in chroms) {
-##     pos = as.integer(gsub("_v3", "", gsub("Pf3D7_", "", chr)));
-##     chrlength = chroms.length[[chr]];
-## 
-##     mtext(chr, side=2, at=pos, las=1, cex=1.3);
-## 
-##     acc = subset(access, chrom == chr);
-##     rect(acc$start, pos - 0.1, acc$stop, pos + 0.1, col="red", border=NA);
-## 
-##     rect(0, pos - 0.1, chrlength, pos + 0.1);
-## 
-##     pb.covs = subset(cov.pb, chrom == chr);
-##     il.covs = subset(cov.il, chrom == chr);
-## 
-##     #pb.mids = pb.covs$start + ((pb.covs$stop - pb.covs$start)/2);
-##     #il.mids = il.covs$start + ((il.covs$stop - il.covs$start)/2);
-## 
-##     #pb.max = max(pb.covs$cov);
-##     #il.max = max(il.covs$cov);
-## 
-##     #points(pb.mids, pos + 0.1 +  0.3*(pb.covs$cov / pb.max), type="l", col=color.pb, lwd=0.5);
-##     #points(il.mids, pos - 0.1 + -0.3*(il.covs$cov / il.max), type="l", col=color.il, lwd=0.5);
-## }
+## ----coverageZoom, echo=FALSE--------------------------------------------
+showRegionalCoverage <- function(region) {
+    region.window = 1000;
+    region.left = ifelse(region$start - region.window < 0, 0, region$start - region.window);
+    region.right = ifelse(region$stop + region.window > chroms.length[[region$chrom]], chroms.length[[region$chrom]], region$stop + region.window);
+
+    region.cov.pb = subset(cov.pb, chrom == region$chrom & start >= region.left & start <= region.right);
+    region.cov.il = subset(cov.il, chrom == region$chrom & start >= region.left & start <= region.right);
+
+    region.max = max(region.cov.pb$cov, region.cov.il$cov);
+
+    par(mar=c(5, 4, 4, 2)+0.1);
+    plot(0, 0, type="n", xlim=c(region$start - region.window, region$stop + region.window), ylim=c(-region.max/100, region.max), bty="n", xlab="Position (bp)", ylab="Coverage", cex=1.3, cex.axis=1.3, cex.lab=1.3, main=paste(region$chrom, ":", region$start, "-", region$stop, sep=""));
+
+    submask = subset(mask, chrom == chr);
+    rect(submask$co_pos_min, -region.max/100, submask$co_pos_max, region.max/100, col="gray", border=NA);
+
+    acc = subset(access, chrom == region$chrom)
+    rect(acc$start, -region.max/100, acc$stop, region.max/100, col="red", border=NA);
+
+    rect(region.left, -region.max/100, region.right, region.max/100);
+
+    points(region.cov.pb$start, region.cov.pb$cov, type="l", col=color.pb, lwd=1);
+    points(region.cov.il$start, region.cov.il$cov, type="l", col=color.il, lwd=1);
+}
+
+
+## ----coverageCentromere, echo=FALSE, cache=TRUE--------------------------
+region.chr4_centromere = subset(access, chrom == "Pf3D7_04_v3" & type == "Centromere")[1,];
+showRegionalCoverage(region.chr4_centromere);
+
+
+## ----coverageSubtelomericRepeats, echo=FALSE, cache=TRUE-----------------
+regions.telomeric = subset(access, type == "SubtelomericRepeat");
+for (i in 1:nrow(regions.telomeric)) {
+    region.telomeric = regions.telomeric[i,];
+    showRegionalCoverage(region.telomeric);
+}
+
+
+## ----errorsByPosition, echo=FALSE----------------------------------------
+f = read.table(paste(dir.results, "/pb/errors.per_position.txt", sep=""), header=TRUE, stringsAsFactors=FALSE);
+
+col.insertions = rgb(219, 56, 46, 100, maxColorValue=255);
+col.deletions = rgb(95, 169, 192, 100, maxColorValue=255);
+
+plot(f$deletionRate, pch=19, cex=0.2, col=col.insertions, bty="n", xlab="Distance from middle of contig (bp)", ylab="Error rate", cex.lab=1.3, cex.axis=1.3);
+points(f$insertionRate, pch=19, cex=0.2, col=col.deletions);
+legend("topleft", c("Insertions", "Deletions"), fill=c(col.insertions, col.deletions), bty="n", cex=1.3);
 
 

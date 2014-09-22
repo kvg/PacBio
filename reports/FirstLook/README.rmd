@@ -167,6 +167,21 @@ for (chr in chroms) {
 }
 ```
 
+```{r coverageTable, echo=FALSE, results='asis', cache=TRUE}
+cov.pb.mean = mean(subset(cov.pb, chrom == "Pf3D7_08_v3")$cov)
+cov.pb.sd = sd(subset(cov.pb, chrom == "Pf3D7_08_v3")$cov)
+cov.pb.median = median(subset(cov.pb, chrom == "Pf3D7_08_v3")$cov)
+
+cov.il.mean = mean(subset(cov.il, chrom == "Pf3D7_08_v3")$cov)
+cov.il.sd = sd(subset(cov.il, chrom == "Pf3D7_08_v3")$cov)
+cov.il.median = median(subset(cov.il, chrom == "Pf3D7_08_v3")$cov)
+
+cov.table = rbind(PacBio = c(cov.pb.mean, cov.pb.sd, cov.pb.median), Illumina = c(cov.il.mean, cov.il.sd, cov.il.median));
+colnames(cov.table) = c("mean", "sd", "median");
+
+kable(cov.table);
+```
+
 ```{r coverageZoom, echo=FALSE}
 showRegionalCoverage <- function(region) {
     region.window = 1000;

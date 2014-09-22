@@ -33,6 +33,12 @@ A first look at the PacBio 3D7 data
 ![plot of chunk showCoverageOverIdeogram](figure/showCoverageOverIdeogram.png) 
 
 
+|id        |    mean|     sd|  median|
+|:---------|-------:|------:|-------:|
+|PacBio    |   80.87|  14.36|      81|
+|Illumina  |  118.75|  62.52|     132|
+
+
 
 
 
