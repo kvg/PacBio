@@ -177,3 +177,14 @@ for (i in 1:nrow(regions.telomeric)) {
     showRegionalCoverage(region.telomeric);
 }
 ```
+
+```{r errorsByPosition, echo=FALSE}
+f = read.table(paste(dir.results, "/pb/errors.per_position.txt", sep=""), header=TRUE, stringsAsFactors=FALSE);
+
+col.insertions = rgb(219, 56, 46, 100, maxColorValue=255);
+col.deletions = rgb(95, 169, 192, 100, maxColorValue=255);
+
+plot(f$deletionRate, pch=19, cex=0.2, col=col.insertions);
+points(f$insertionRate, pch=19, cex=0.2, col=col.deletions);
+legend("topleft", c("Insertions", "Deletions"), fill=c(col.insertions, col.deletions), bty="n");
+```

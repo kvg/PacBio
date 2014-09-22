@@ -98,6 +98,11 @@ foreach my $id (keys(%bams)) {
         my $coverageSimple = "$outdir/coverage.simple.txt";
         my $coverageSimpleCmd = "grep -v Locus $coverage | sed 's/:/\\t/g' | cut -f1-3 > $coverageSimple";
         $dm->addRule($coverageSimple, $coverage, $coverageSimpleCmd);
+
+        my $errorsPerPosition = "$outdir/errors.per_position.txt";
+        my $errorsPerContig = "$outdir/errors.per_contig.txt";
+        my $errorsCmd = "$indiana8 FoldedContigErrorStats -c $bam -o $errorsPerPosition -o2 $errorsPerContig";
+        $dm->addRule($errorsPerPosition, $bam, $errorsCmd);
     }
 
     if (defined($fq)) {
