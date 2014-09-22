@@ -139,7 +139,7 @@ showRegionalCoverage <- function(region) {
     region.max = max(region.cov.pb$cov, region.cov.il$cov);
 
     par(mar=c(5, 4, 4, 2)+0.1);
-    plot(0, 0, type="n", xlim=c(region$start - region.window, region$stop + region.window), ylim=c(-region.max/100, region.max), bty="n", xlab="Length (bp)", ylab="Coverage", cex=1.3, cex.axis=1.3, cex.lab=1.3, main=paste(region$chrom, ":", region$start, "-", region$stop, sep=""));
+    plot(0, 0, type="n", xlim=c(region$start - region.window, region$stop + region.window), ylim=c(-region.max/100, region.max), bty="n", xlab="Position (bp)", ylab="Coverage", cex=1.3, cex.axis=1.3, cex.lab=1.3, main=paste(region$chrom, ":", region$start, "-", region$stop, sep=""));
 
     submask = subset(mask, chrom == chr);
     rect(submask$co_pos_min, -region.max/100, submask$co_pos_max, region.max/100, col="gray", border=NA);
