@@ -120,20 +120,21 @@ for (chr in chroms) {
     pb.max = max(pb.covs$cov);
     il.max = max(il.covs$cov);
 
-    interval = seq(1, length(pb.start), by=5000);
+    window = 2000;
+    interval = seq(1, length(pb.start), by=2000);
 
     pb.mincov = c();
     il.mincov = c();
     for (i in interval) {
-        pb.mincov = c(pb.mincov, min(pb.covs$cov[i:(i+5000)]));
-        il.mincov = c(il.mincov, min(il.covs$cov[i:(i+5000)]));
+        pb.mincov = c(pb.mincov, min(pb.covs$cov[i:(i+2000)]));
+        il.mincov = c(il.mincov, min(il.covs$cov[i:(i+2000)]));
     }
 
     #points(pb.start[interval], pos + 0.1 +  0.3*(pb.covs$cov / pb.max)[interval], type="l", col=color.pb, lwd=0.5);
     #points(il.start[interval], pos - 0.1 + -0.3*(il.covs$cov / il.max)[interval], type="l", col=color.il, lwd=0.5);
 
-    points(pb.start[interval], pos + 0.1 +  0.3*(pb.mincov / pb.max), type="l", col=color.pb, lwd=0.5);
-    points(il.start[interval], pos - 0.1 + -0.3*(il.mincov / il.max), type="l", col=color.il, lwd=0.5);
+    points(pb.start[interval], pos + 0.15 +  0.3*(pb.mincov / max(pb.mincov)), type="l", col=color.pb, lwd=0.5);
+    points(il.start[interval], pos - 0.15 + -0.3*(il.mincov / max(il.mincov)), type="l", col=color.il, lwd=0.5);
 }
 ```
 
