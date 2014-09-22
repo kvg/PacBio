@@ -74,7 +74,7 @@ kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value
 #06f934595b m140918_173349_42137_c100716502550000001823136502281507_s1_p0
 ```
 
-We first examined read count and read length properties, as shown in the table above.  We have labeled data from each SMRT cell with a simple identifier, pb0 .. pb7 (the full identifier is a bit long and cumbersome to use everywhere). On average, each SMRT cell yields `r mean(subset(ls, key != "total")$numReads)` reads, typically `r mean(subset(ls, key != "total")$meanLength)` bases long.
+We first examined read count and read length properties, as shown in the table above.  We have labeled data from each SMRT cell with a simple identifier, pb0 .. pb7 (the full identifier is a bit long and cumbersome to use everywhere). On average, each SMRT cell yields `r mean(subset(ls, key != "total")$numReads)` reads, typically `r mean(subset(ls, key != "total")$meanLength)` +/- `r sd(subset(ls, key != "total")$meanLength)` bases long.
 
 We next examined the read length distribution, shown below.
 
