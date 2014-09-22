@@ -20,18 +20,6 @@ A first look at the PacBio 3D7 data
 ![plot of chunk lengthHist](figure/lengthHist.png) 
 
 
-
-```
-## Warning: Name partially matched in data frame
-## Warning: Name partially matched in data frame
-## Warning: Name partially matched in data frame
-## Warning: Name partially matched in data frame
-## Warning: Name partially matched in data frame
-## Warning: Name partially matched in data frame
-## Warning: Name partially matched in data frame
-## Warning: Name partially matched in data frame
-```
-
 ![plot of chunk lengthHistPerRG](figure/lengthHistPerRG.png) 
 
 
