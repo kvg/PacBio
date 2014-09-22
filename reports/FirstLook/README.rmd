@@ -154,15 +154,14 @@ showRegionalCoverage <- function(region) {
 }
 ```
 
-```{r coverageCentromere, echo=FALSE}
+```{r coverageCentromere, echo=FALSE, cache=TRUE}
 region.chr4_centromere = subset(access, chrom == "Pf3D7_04_v3" & type == "Centromere")[1,];
 showRegionalCoverage(region.chr4_centromere);
 ```
 
-```{r coverageSubtelomericRepeats, echo=FALSE}
+```{r coverageSubtelomericRepeats, echo=FALSE, cache=TRUE}
 regions.telomeric = subset(access, type == "SubtelomericRepeat");
-#for (i in 1:nrow(regions.telomeric)) {
-for (i in 1:2) {
+for (i in 1:nrow(regions.telomeric)) {
     region.telomeric = regions.telomeric[i,];
     showRegionalCoverage(region.telomeric);
 }
