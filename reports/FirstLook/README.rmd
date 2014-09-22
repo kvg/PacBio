@@ -22,6 +22,11 @@ dir.resources = "../../resources/";
 par(mar=c(5, 4, 4, 2)+0.1);
 ```
 
+We prepared roughly 15ug of DNA from the canonical Plasmodium falciparum strain, 3D7, for sequencing on Cold Spring Harbor Laboratory's PacBio RS-II instrument.  This was sequenced on eight SMRT cells, which should yield approximately 100x coverage over the 23 megabase genome.  Having just received the filtered subreads (in unaligned and aligned form), we investigated some very basic properties of the data.
+
+Reads, read length
+==================
+
 ```{r readStats, echo=FALSE, results='asis'}
 ls.pb  = read.table(paste(dir.results, "/pb/lengthStats.txt",  sep=""), header=TRUE);
 ls.pb0 = read.table(paste(dir.results, "/pb0/lengthStats.txt", sep=""), header=TRUE);
@@ -69,6 +74,10 @@ kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value
 #06f934595b m140918_173349_42137_c100716502550000001823136502281507_s1_p0
 ```
 
+We first examined read count and read length properties, as shown in the table above.  We have labeled data from each SMRT cell with a simple identifier, pb0 .. pb7 (the full identifier is a bit long and cumbersome to use). On average, each SMRT cell yields `r mean(subset(ls, key != "total")$numReads)` reads, typically `r mean(subset(ls, key != "total")$meanLength` bases long.  Most reads (~ `r mean(subset(ls, key != "total")$pctAligned)`) align to the reference genome.
+
+We next examined the read length distribution, shown below.
+
 ```{r lengthHist, echo=FALSE, eval=TRUE}
 lh.pb = read.table(paste(dir.results, "/pb/lengthHist.txt", sep=""), header=TRUE);
 
@@ -96,10 +105,18 @@ for (rg in c("pb0", "pb1", "pb2", "pb3", "pb4", "pb5", "pb6", "pb7")) {
 }
 legend("topright", c( '@m140912_185114_42137_c100689352550000001823145102281580_s1_p0', '@m140912_220917_42137_c100689352550000001823145102281581_s1_p0', '@m140913_012852_42137_c100689352550000001823145102281582_s1_p0', '@m140913_044743_42137_c100689352550000001823145102281583_s1_p0', '@m140918_073419_42137_c100716502550000001823136502281504_s1_p0', '@m140918_105250_42137_c100716502550000001823136502281505_s1_p0', '@m140918_141535_42137_c100716502550000001823136502281506_s1_p0', '@m140918_173349_42137_c100716502550000001823136502281507_s1_p0'), col=c(rgcolors$pb0, rgcolors$pb1, rgcolors$pb2, rgcolors$pb3, rgcolors$pb4, rgcolors$pb5, rgcolors$pb6, rgcolors$pb7), lwd=2, lty=1, cex=0.6, bty="n");
 ```
+Interestingly, this distribution appears to be bimodal, with peaks at 1.1 kb and 8.0 kb.  The origin of these peaks are unclear.  Furthermore, they appear in all SMRT cells, which could indicate a property of the library used for sequencing.  It is not clear whether this bimodality is from the original DNA sample or an artifact of the long-fragment library construction process.
+
+Read alignment
+==============
+
+We next examined the alignment of the reads to the reference.  To guide our expectations, we compare the PacBio alignments of the long-read data to BWA alignments of short-read data Illumina data (paired-end, 76-bp, ~200 bp fragment size) from the same parasite.  However, please note that the DNA source library for these two experiments is not the same.  The Illumina data is from sample PG0051-C, the 3D7 isolate sequenced on an Illumina GA2 for the P.f. crosses project.
 
 ![IGV1](figure/IGV_chr1.png)
 
 ![IGV2](figure/IGV_indelerrors.png)
+
+Strikingly, the PacBio data appears to have uniform coverage across the entire length of chromosome 1, while the Illumina data shows many peaks and valleys along the same chromosome.
 
 ```{r loadCoverage, echo=FALSE, cache=TRUE}
 cov.pb = read.table(paste(dir.results, "/pb/coverage.simple.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
