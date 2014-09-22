@@ -22,7 +22,7 @@ dir.resources = "../../resources/";
 par(mar=c(5, 4, 4, 2)+0.1);
 ```
 
-```{r lengthStats, echo=FALSE, results='asis'}
+```{r readStats, echo=FALSE, results='asis'}
 ls.pb  = read.table(paste(dir.results, "/pb/lengthStats.txt",  sep=""), header=TRUE);
 ls.pb0 = read.table(paste(dir.results, "/pb0/lengthStats.txt", sep=""), header=TRUE);
 ls.pb1 = read.table(paste(dir.results, "/pb1/lengthStats.txt", sep=""), header=TRUE);
@@ -37,7 +37,36 @@ ls.pb$key = "total";
 
 ls = rbind(ls.pb0, ls.pb1, ls.pb2, ls.pb3, ls.pb4, ls.pb5, ls.pb6, ls.pb7, ls.pb);
 
-kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value")]);
+rgcounts = read.table(paste(dir.results, "pb/rgcounts.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
+rownames(rgcounts) = gsub("RG:Z:", "", rgcounts$V1);
+colnames(rgcounts) = c("RG", "alignedReads");
+
+aligned = c(
+    rgcounts["80f50c5537", "alignedReads"],
+    rgcounts["101bc6c4f2", "alignedReads"],
+    rgcounts["13b6a42da4", "alignedReads"],
+    rgcounts["db860605d6", "alignedReads"],
+    rgcounts["236e875a13", "alignedReads"],
+    rgcounts["eeb951b4d9", "alignedReads"],
+    rgcounts["438703e3ac", "alignedReads"],
+    rgcounts["06f934595b", "alignedReads"]
+);
+
+aligned = c(aligned, sum(aligned));
+
+ls = cbind(ls, alignedReads = aligned);
+ls = cbind(ls, pctAligned = 100*ls$alignedReads/ls$numReads);
+
+kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value", "alignedReads", "pctAligned")]);
+
+#80f50c5537 m140912_185114_42137_c100689352550000001823145102281580_s1_p0
+#101bc6c4f2 m140912_220917_42137_c100689352550000001823145102281581_s1_p0
+#13b6a42da4 m140913_012852_42137_c100689352550000001823145102281582_s1_p0
+#db860605d6 m140913_044743_42137_c100689352550000001823145102281583_s1_p0
+#236e875a13 m140918_073419_42137_c100716502550000001823136502281504_s1_p0
+#eeb951b4d9 m140918_105250_42137_c100716502550000001823136502281505_s1_p0
+#438703e3ac m140918_141535_42137_c100716502550000001823136502281506_s1_p0
+#06f934595b m140918_173349_42137_c100716502550000001823136502281507_s1_p0
 ```
 
 ```{r lengthHist, echo=FALSE, eval=TRUE}

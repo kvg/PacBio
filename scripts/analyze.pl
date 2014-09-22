@@ -103,6 +103,12 @@ foreach my $id (keys(%bams)) {
         my $errorsPerContig = "$outdir/errors.per_contig.txt";
         my $errorsCmd = "$indiana8 FoldedContigErrorStats -c $bam -o $errorsPerPosition -o2 $errorsPerContig";
         $dm->addRule($errorsPerPosition, $bam, $errorsCmd);
+
+        if ($id eq 'pb') {
+            my $rgCounts = "$outdir/rgcounts.txt";
+            my $rgCountsCmd = "samtools view $bam | awk '{ print \$14 }' | sort | uniq -c | awk '{ print \$2, \$1 }' > $rgCounts";
+            $dm->addRule($rgCounts, $bam, $rgCountsCmd);
+        }
     }
 
     if (defined($fq)) {
