@@ -22,6 +22,25 @@ dir.resources = "../../resources/";
 par(mar=c(5, 4, 4, 2)+0.1);
 ```
 
+```{r loadGenes, echo=FALSE}
+genes = read.table(paste(dir.resources, "genes.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
+colnames(genes) = c("chrom", "start", "stop", "gene", "description");
+
+for (i in 1:nrow(genes)) {
+    genes$description[i] = gsub("\\+", " ", URLdecode(genes$description[i]));
+}
+
+genes$color = "gray";
+genes$color[grep("VAR|erythrocyte membrane protein|PfEMP1", genes$description)] = rgb(255, 0, 71, maxColorValue=255);
+genes$color[grep("RIF|rifin", genes$description)] = rgb(255, 200, 33, maxColorValue=255);
+genes$color[grep("stevor", genes$description)] = rgb(0, 155, 204, maxColorValue=255);
+
+genes$text = "";
+genes$text[grep("VAR|erythrocyte membrane protein|PfEMP1", genes$description)] = "v";
+genes$text[grep("RIF|rifin", genes$description)] = "r";
+genes$text[grep("stevor", genes$description)] = "s";
+```
+
 We prepared roughly 15ug of DNA from the canonical Plasmodium falciparum strain, 3D7, for sequencing on Cold Spring Harbor Laboratory's PacBio RS-II instrument.  This was sequenced on eight SMRT cells, which should yield approximately 100x coverage over the 23 megabase genome.  Having just received the filtered subreads (in unaligned and aligned form), we investigated some very basic properties of the data.
 
 Read length
@@ -164,7 +183,7 @@ Genome accessibility
 
 We sought to examine regions of the P. falciparum genome that are inaccessible with Illumina reads but accessible with PacBio reads.  We computed coverage profiles across each autosome by computing coverage at every nucleotide using the GATK's `DepthOfCoverage` tool, and showing the minimum coverage value found in 2,000-bp bins.  We've plotted the PacBio coverage above the appropriate ideogram and the Illumina coverage underneath it (and flipped upside-down) in the plot below.  Red and gray regions indicate areas of the genome deemed to be inaccessible (from Alistair Miles's accessibility calculations on MalariaGen datasets, personal communication).
 
-```{r showCoverageOverIdeogram, echo=FALSE, fit.height=6, fit.width=18, dpi=300, cache=TRUE}
+```{r showCoverageOverIdeogram, echo=FALSE, fig.height=6, fig.width=18, dpi=300, cache=TRUE}
 chroms = sort(na.exclude(grep("apico|M76611", unique(cov.pb$chrom), invert=TRUE, value=TRUE)));
 chroms.length = list();
 
@@ -233,32 +252,41 @@ showRegionalCoverage <- function(region) {
     region.max = max(region.cov.pb$cov, region.cov.il$cov);
 
     par(mar=c(5, 4, 4, 2)+0.1);
-    plot(0, 0, type="n", xlim=c(region$start - region.window, region$stop + region.window), ylim=c(-region.max/100, region.max), bty="n", xlab="Position (bp)", ylab="Coverage", cex=1.3, cex.axis=1.3, cex.lab=1.3, main=paste(region$chrom, ":", region$start, "-", region$stop, sep=""));
-
-    submask = subset(mask, chrom == chr);
-    rect(submask$co_pos_min, -region.max/100, submask$co_pos_max, region.max/100, col="gray", border=NA);
+    plot(0, 0, type="n", xlim=c(region$start - region.window, region$stop + region.window), ylim=c(-15, region.max), bty="n", xlab="Position (bp)", ylab="Coverage", cex=1.3, cex.axis=1.3, cex.lab=1.3, main=paste(region$chrom, ":", region$start, "-", region$stop, sep=""));
 
     acc = subset(access, chrom == region$chrom)
-    rect(acc$start, -region.max/100, acc$stop, region.max/100, col="red", border=NA);
-
-    rect(region.left, -region.max/100, region.right, region.max/100);
+    rect(acc$start, -5 + -region.max/100, acc$stop, -5 + region.max/100, col=rgb(255, 0, 0, 150, maxColorValue=255), border=NA);
+    rect(0, -5 + -region.max/100, chroms.length[[region$chrom]], -5 + region.max/100);
 
     points(region.cov.pb$start, region.cov.pb$cov, type="l", col=color.pb, lwd=1);
     points(region.cov.il$start, region.cov.il$cov, type="l", col=color.il, lwd=1);
+
+    overlappingGenes = subset(genes, chrom == region$chrom & ( (start <= region.left & stop >= region.left) | (start <= region.right & stop >= region.right) | (start <= region.left & stop >= region.right) | (start >= region.left & stop <= region.right) ));
+
+    print(region);
+    print(overlappingGenes);
+
+    for (i in 1:nrow(overlappingGenes)) {
+        overlappingGene = overlappingGenes[i,];
+        rect(overlappingGene$start, -15 + -region.max/100, overlappingGene$stop, -15 + region.max/100, col=overlappingGene$color);
+        text(overlappingGene$start + (overlappingGene$stop - overlappingGene$start)/2, -15, labels=overlappingGene$text, cex=0.7);
+    }
 }
 ```
 
 ### Centromere on chromosome 4
 ```{r coverageCentromere, echo=FALSE, cache=TRUE}
 region.chr4_centromere = subset(access, chrom == "Pf3D7_04_v3" & type == "Centromere")[1,];
+region.chr4_centromere$start = region.chr4_centromere$start - 10000;
+region.chr4_centromere$stop = region.chr4_centromere$stop + 10000;
 showRegionalCoverage(region.chr4_centromere);
 ```
 
-### All 28 subtelomeric regions
-```{r coverageSubtelomericRepeats, echo=FALSE, cache=TRUE}
-regions.telomeric = subset(access, type == "SubtelomericRepeat");
-for (i in 1:nrow(regions.telomeric)) {
-    region.telomeric = regions.telomeric[i,];
+### All 28 masked telomeric regions
+```{r coverageMaskedRegions, echo=FALSE, cache=TRUE, fig.height=8, fig.width=12}
+for (i in 1:nrow(mask)) {
+    region.telomeric = mask[i,];
+    colnames(region.telomeric) = c( "sample", "chrom", "co_pos_mid", "start", "stop", "co_pos_range", "cross", "co_from_parent", "co_to_parent" );
     showRegionalCoverage(region.telomeric);
 }
 ```

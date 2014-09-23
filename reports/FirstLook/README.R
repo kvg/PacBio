@@ -20,6 +20,15 @@ dir.resources = "../../resources/";
 par(mar=c(5, 4, 4, 2)+0.1);
 
 
+## ----loadGenes, echo=FALSE-----------------------------------------------
+genes = read.table(paste(dir.resources, "genes.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
+colnames(genes) = c("chrom", "start", "stop", "gene", "description");
+
+for (i in 1:nrow(genes)) {
+    genes$description[i] = gsub("\\+", " ", URLdecode(genes$description[i]));
+}
+
+
 ## ----readStats, echo=FALSE, results='asis'-------------------------------
 ls.pb  = read.table(paste(dir.results, "/pb/lengthStats.txt",  sep=""), header=TRUE);
 ls.pb0 = read.table(paste(dir.results, "/pb0/lengthStats.txt", sep=""), header=TRUE);
@@ -55,7 +64,7 @@ aligned = c(aligned, sum(aligned));
 ls = cbind(ls, alignedReads = aligned);
 ls = cbind(ls, pctAligned = 100*ls$alignedReads/ls$numReads);
 
-kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value", "alignedReads", "pctAligned")]);
+kable(ls[,c("key", "numReads", "minLength", "maxLength", "meanLength", "n50Value")]);
 
 #80f50c5537 m140912_185114_42137_c100689352550000001823145102281580_s1_p0
 #101bc6c4f2 m140912_220917_42137_c100689352550000001823145102281581_s1_p0
@@ -101,6 +110,35 @@ names(cov.pb) = c("chrom", "start", "cov");
 
 cov.il = read.table(paste(dir.results, "/il/coverage.simple.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
 names(cov.il) = c("chrom", "start", "cov");
+
+
+## ----coverageTable, echo=FALSE, results='asis', cache=TRUE---------------
+cov.pb.chr8 = subset(cov.pb, chrom == "Pf3D7_08_v3")$cov;
+cov.il.chr8 = subset(cov.il, chrom == "Pf3D7_08_v3")$cov;
+
+cov.pb.mean = mean(cov.pb.chr8);
+cov.pb.sd = sd(cov.pb.chr8);
+cov.pb.median = median(cov.pb.chr8);
+
+cov.il.mean = mean(cov.il.chr8);
+cov.il.sd = sd(cov.il.chr8);
+cov.il.median = median(cov.il.chr8);
+
+cov.table = rbind(PacBio = c(cov.pb.median, cov.pb.mean, cov.pb.sd), Illumina = c(cov.il.median, cov.il.mean, cov.il.sd));
+colnames(cov.table) = c("median", "mean", "sd");
+
+kable(cov.table);
+
+
+## ----coverageDist, echo=FALSE, results='asis', cache=TRUE----------------
+h.pb = hist(cov.pb.chr8, breaks=0:(max(cov.pb.chr8) + 10), plot=FALSE);
+h.il = hist(cov.il.chr8, breaks=0:(max(cov.il.chr8) + 10), plot=FALSE);
+
+plot(0, 0, type="n", xlim=c(0, 250), ylim=c(0, max(h.pb$counts)), xlab="Coverage", ylab="Frequency", cex=1.3, cex.lab=1.3, cex.axis=1.3, bty="n");
+points(h.pb$mids, h.pb$counts, type="l", lwd=2, col=color.pb);
+points(h.il$mids, h.il$counts, type="l", lwd=2, col=color.il);
+
+legend("topright", c("PacBio coverage", "Illumina coverage"), lwd=2, col=c(color.pb, color.il), bty="n", cex=1.3);
 
 
 ## ----showCoverageOverIdeogram, echo=FALSE, fit.height=6, fit.width=18, dpi=300, cache=TRUE----
@@ -153,9 +191,6 @@ for (chr in chroms) {
         il.mincov = c(il.mincov, min(il.covs$cov[i:(i+window)]));
     }
 
-    #points(pb.start[interval], pos + 0.1 +  0.3*(pb.covs$cov / pb.max)[interval], type="l", col=color.pb, lwd=0.5);
-    #points(il.start[interval], pos - 0.1 + -0.3*(il.covs$cov / il.max)[interval], type="l", col=color.il, lwd=0.5);
-
     points(pb.start[interval], pos + 0.1 +  0.3*(pb.mincov / max(pb.mincov, na.rm=TRUE)), type="l", col=color.pb, lwd=0.5);
     points(il.start[interval], pos - 0.1 + -0.3*(il.mincov / max(il.mincov, na.rm=TRUE)), type="l", col=color.il, lwd=0.5);
 }
@@ -195,7 +230,8 @@ showRegionalCoverage(region.chr4_centromere);
 
 ## ----coverageSubtelomericRepeats, echo=FALSE, cache=TRUE-----------------
 regions.telomeric = subset(access, type == "SubtelomericRepeat");
-for (i in 1:nrow(regions.telomeric)) {
+#for (i in 1:nrow(regions.telomeric)) {
+for (i in 1:2) {
     region.telomeric = regions.telomeric[i,];
     showRegionalCoverage(region.telomeric);
 }
@@ -207,8 +243,8 @@ f = read.table(paste(dir.results, "/pb/errors.per_position.txt", sep=""), header
 col.insertions = rgb(219, 56, 46, 100, maxColorValue=255);
 col.deletions = rgb(95, 169, 192, 100, maxColorValue=255);
 
-plot(f$deletionRate, pch=19, cex=0.2, col=col.insertions, bty="n", xlab="Distance from middle of contig (bp)", ylab="Error rate", cex.lab=1.3, cex.axis=1.3);
-points(f$insertionRate, pch=19, cex=0.2, col=col.deletions);
+plot(f$deletionRate, pch=19, cex=0.2, col=col.deletions, bty="n", xlab="Distance from middle of contig (bp)", ylab="Error rate", cex.lab=1.3, cex.axis=1.3);
+points(f$insertionRate, pch=19, cex=0.2, col=col.insertions);
 legend("topleft", c("Insertions", "Deletions"), fill=c(col.insertions, col.deletions), bty="n", cex=1.3);
 
 
