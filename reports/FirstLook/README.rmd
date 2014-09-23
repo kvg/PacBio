@@ -272,7 +272,7 @@ showRegionalCoverage <- function(region) {
 ```
 
 ### Centromere on chromosome 4
-```{r coverageCentromere, echo=FALSE, cache=TRUE}
+```{r coverageCentromere, echo=FALSE, cache=TRUE, fig.height=8, fig.width=12}
 region.chr4_centromere = subset(access, chrom == "Pf3D7_04_v3" & type == "Centromere")[1,];
 region.chr4_centromere$start = region.chr4_centromere$start - 10000;
 region.chr4_centromere$stop = region.chr4_centromere$stop + 10000;

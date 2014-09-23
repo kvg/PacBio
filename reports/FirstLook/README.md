@@ -79,27 +79,6 @@ It is evident that the PacBio coverage is roughly uniform across the entire leng
 ### Centromere on chromosome 4
 ![plot of chunk coverageCentromere](figure/coverageCentromere.png) 
 
-```
-##          chrom  start   stop       type
-## 27 Pf3D7_04_v3 632003 654529 Centromere
-##           chrom  start   stop            gene
-## 795 Pf3D7_04_v3 626891 633126   PF3D7_0414000
-## 796 Pf3D7_04_v3 634029 638905   PF3D7_0414100
-## 797 Pf3D7_04_v3 647389 648388 PF3D7_0414200.1
-## 798 Pf3D7_04_v3 647389 648388 PF3D7_0414200.2
-## 799 Pf3D7_04_v3 649893 650731   PF3D7_0414300
-## 800 Pf3D7_04_v3 652350 653554   PF3D7_0414400
-## 801 Pf3D7_04_v3 655025 657314   PF3D7_0414500
-##                                                 description color text
-## 795                 chromosome associated protein, putative  gray     
-## 796 conserved Plasmodium membrane protein, unknown function  gray     
-## 797                                 calmodulin-like protein  gray     
-## 798                                 calmodulin-like protein  gray     
-## 799          conserved Plasmodium protein, unknown function  gray     
-## 800          conserved Plasmodium protein, unknown function  gray     
-## 801                           RNA binding protein, putative  gray
-```
-
 
 ### All 28 masked telomeric regions
 ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions1.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions2.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions3.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions4.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions5.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions6.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions7.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions8.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions9.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions10.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions11.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions12.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions13.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions14.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions15.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions16.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions17.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions18.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions19.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions20.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions21.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions22.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions23.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions24.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions25.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions26.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions27.png) ![plot of chunk coverageMaskedRegions](figure/coverageMaskedRegions28.png) 
