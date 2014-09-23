@@ -2,6 +2,8 @@ A first look at the PacBio 3D7 data
 ===================================
 
 ```{r setup, echo=FALSE}
+opts_chunk$set(dev=c('png', 'pdf'));
+
 color.il = rgb(250, 164, 26, maxColorValue=255);
 color.pb = rgb(166, 42, 66, maxColorValue=255);
 
