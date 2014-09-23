@@ -183,7 +183,7 @@ Genome accessibility
 
 We sought to examine regions of the P. falciparum genome that are inaccessible with Illumina reads but accessible with PacBio reads.  We computed coverage profiles across each autosome by computing coverage at every nucleotide using the GATK's `DepthOfCoverage` tool, and showing the minimum coverage value found in 2,000-bp bins.  We've plotted the PacBio coverage above the appropriate ideogram and the Illumina coverage underneath it (and flipped upside-down) in the plot below.  Red and gray regions indicate areas of the genome deemed to be inaccessible (from Alistair Miles's accessibility calculations on MalariaGen datasets, personal communication).
 
-```{r showCoverageOverIdeogram, echo=FALSE, fig.height=6, fig.width=18, dpi=300, cache=TRUE}
+```{r showCoverageOverIdeogram, echo=FALSE, fig.height=6, fig.width=12, dpi=300, cache=TRUE}
 chroms = sort(na.exclude(grep("apico|M76611", unique(cov.pb$chrom), invert=TRUE, value=TRUE)));
 chroms.length = list();
 
@@ -263,9 +263,6 @@ showRegionalCoverage <- function(region) {
 
     overlappingGenes = subset(genes, chrom == region$chrom & ( (start <= region.left & stop >= region.left) | (start <= region.right & stop >= region.right) | (start <= region.left & stop >= region.right) | (start >= region.left & stop <= region.right) ));
 
-    print(region);
-    print(overlappingGenes);
-
     for (i in 1:nrow(overlappingGenes)) {
         overlappingGene = overlappingGenes[i,];
         rect(overlappingGene$start, -15 + -region.max/100, overlappingGene$stop, -15 + region.max/100, col=overlappingGene$color);
@@ -284,8 +281,10 @@ showRegionalCoverage(region.chr4_centromere);
 
 ### All 28 masked telomeric regions
 ```{r coverageMaskedRegions, echo=FALSE, cache=TRUE, fig.height=8, fig.width=12}
-for (i in 1:nrow(mask)) {
-    region.telomeric = mask[i,];
+mask.sorted = mask[order(mask$chrom, mask$co_pos_min),];
+
+for (i in 1:nrow(mask.sorted)) {
+    region.telomeric = mask.sorted[i,];
     colnames(region.telomeric) = c( "sample", "chrom", "co_pos_mid", "start", "stop", "co_pos_range", "cross", "co_from_parent", "co_to_parent" );
     showRegionalCoverage(region.telomeric);
 }
