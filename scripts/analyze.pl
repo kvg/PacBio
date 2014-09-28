@@ -42,6 +42,14 @@ my $dm = new DM(
 
 my $indiana8 = "java -Xmx8g -jar $binDir/indiana.jar";
 my $gatk8 = "java -Xmx8g -jar bin/GenomeAnalysisTK.v3.2.jar";
+my $nucmer = "~/opt/MUMmer3.23/nucmer";
+my $showaligns = "~/opt/MUMmer3.23/show-aligns";
+my $showcoords = "~/opt/MUMmer3.23/show-coords";
+my $showdiff = "~/opt/MUMmer3.23/show-diff";
+my $showsnps = "~/opt/MUMmer3.23/show-snps";
+my $showtiling = "~/opt/MUMmer3.23/show-tiling";
+my $deltafilter = "~/opt/MUMmer3.23/delta-filter";
+my $mummerplot = "~/opt/MUMmer3.23/mummerplot";
 
 my %bams = (
     'pb' => "$dataDir/Pfalc3D7/aligned_reads.bam",
@@ -53,9 +61,32 @@ my %seqs = (
     'il' => "$dataDir/PfCross/ERR019061_1.fastq.gz",
 );
 
+my %asms = (
+    'AsmTest1' => "data/ASMTest1.polished_assembly.fasta",
+);
+
 my %refs = (
     'pb' => "$resourcesDir/3D7.cshl.fasta",
     'il' => "/home/kiran/ngs/references/plasmodium/falciparum/3D7/PlasmoDB-9.0/PlasmoDB-9.0_Pfalciparum3D7_Genome.fasta",
+);
+
+my %existingAsms = (
+    "3D7" => "/home/kiran/ngs/references/plasmodium/falciparum/3D7/PlasmoDB-9.0/PlasmoDB-9.0_Pfalciparum3D7_Genome.fasta",
+    "7G8" => "/home/kiran/ngs/references/plasmodium/falciparum/7G8/BroadInstitute/plasmodium_falciparum__isolate_7g8__1_supercontigs.fasta",
+    "D10" => "/home/kiran/ngs/references/plasmodium/falciparum/D10/BroadInstitute/plasmodium_falciparum__isolate_d10__1_supercontigs.fasta",
+    "D6" => "/home/kiran/ngs/references/plasmodium/falciparum/D6/BroadInstitute/plasmodium_falciparum__isolate_d6__1_supercontigs.fasta",
+    "DD2" => "/home/kiran/ngs/references/plasmodium/falciparum/Dd2/BroadInstitute/plasmodium_falciparum__isolate_dd2__1_supercontigs.fasta",
+    "FCC-2" => "/home/kiran/ngs/references/plasmodium/falciparum/FCC-2.Hainan/BroadInstitute/hainan__1_supercontigs.fasta",
+    "HB3" => "/home/kiran/ngs/references/plasmodium/falciparum/HB3/BroadInstitute/plasmodium_falciparum__isolate_hb3__1_supercontigs.fasta",
+    "IGH-CR14" => "/home/kiran/ngs/references/plasmodium/falciparum/IGH-CR14/BroadInstitute/plasmodium_falciparum_igh-cr14_nucleus_1_supercontigs.fasta",
+    "IT" => "/home/kiran/ngs/references/plasmodium/falciparum/IT/PlasmoDB-9.0/PlasmoDB-9.0_PfalciparumIT_Genome.fasta",
+    "K1" => "/home/kiran/ngs/references/plasmodium/falciparum/K1/BroadInstitute/plasmodium_falciparum__isolate_k1__1_supercontigs.fasta",
+    "PFCLIN" => "/home/kiran/ngs/references/plasmodium/falciparum/PFCLIN/SangerInstitute/PFCLIN.20080302.contigs.fasta",
+    "RAJ116" => "/home/kiran/ngs/references/plasmodium/falciparum/RAJ116/BroadInstitute/plasmodium_falciparum_raj116_nucleus_1_supercontigs.fasta",
+    "RO-33" => "/home/kiran/ngs/references/plasmodium/falciparum/RO-33/BroadInstitute/plasmodium_falciparum__isolate_ro-33__1_supercontigs.fasta",
+    "SL" => "/home/kiran/ngs/references/plasmodium/falciparum/SL/BroadInstitute/plasmodium_falciparum__isolate_santa_lucia__1_supercontigs.fasta",
+    "V34.04" => "/home/kiran/ngs/references/plasmodium/falciparum/Senegal_V34.04/BroadInstitute/plasmodium_falciparum__isolate_senegal_v34.04__1_supercontigs.fasta",
+    "VS.1" => "/home/kiran/ngs/references/plasmodium/falciparum/VS.1/BroadInstitute/1__1_supercontigs.fasta",
 );
 
 my %pbrgs = (
@@ -117,6 +148,38 @@ foreach my $id (keys(%bams)) {
         my $lengthHistCmd = "$indiana8 lengthdist -f $id:$fq -b 100 -o $lengthHist -so $lengthStats";
         $dm->addRule($lengthHist, $fq, $lengthHistCmd);
     }
+}
+
+foreach my $asmid (keys(%asms)) {
+    my $contigs = $asms{$asmid};
+
+    my $outdir = "$resultsDir/$asmid";
+
+    my @tags;
+    push(@tags, "$asmid:$contigs");
+    foreach my $id (keys(%existingAsms)) {
+        push(@tags, "$id:$existingAsms{$id}");
+    }
+
+    my $bas = "$outdir/assemblies.stats";
+    my $basCmd = "$indiana8 BasicAssemblyStats -c " . join(" -c ", @tags) . " -o $bas";
+    $dm->addRule($bas, $contigs, $basCmd);
+
+    my $delta = "$outdir/$asmid.delta";
+    my $deltaCmd = "$nucmer -p $outdir/$asmid $refs{'il'} $contigs";
+    $dm->addRule($delta, $contigs, $deltaCmd);
+
+    my $filter = "$outdir/$asmid.filter";
+    my $filterCmd = "$deltafilter -q $delta > $filter";
+    $dm->addRule($filter, $delta, $filterCmd);
+
+    my $coords = "$outdir/$asmid.filter.coords";
+    my $coordsCmd = "$showcoords -rcl $filter > $coords";
+    $dm->addRule($coords, $filter, $coordsCmd);
+
+    my $dotplot = "$outdir/$asmid.filter.ps";
+    my $dotplotCmd = "$mummerplot $filter -R $refs{'il'} -Q $contigs --filter --layout --postscript --fat -p $outdir/$asmid.filter";
+    $dm->addRule($dotplot, $filter, $dotplotCmd);
 }
 
 $dm->execute();

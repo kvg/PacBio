@@ -91,3 +91,54 @@ Finally, we examined the error rate as a function of distance from the center of
 
 ![plot of chunk errorsByPosition](figure/errorsByPosition.png) 
 
+
+AsmTest1, the first assembly attempt
+------------------------------------
+
+To construct an initial draft assembly, we ran the `RS_HGAP_Assembly.2` secondary analysis protocol available in SMRT Portal.  Briefly, this processing protocol performs the following steps:
+
+1. Extract subreads (genomic sequence absent of the SMRT bell adaptors used to circularize the fragment and enable the polymerase to read it in multiple passes).
+2. Filter out low quality subreads.
+3. Compute a subread length threshold such that subreads greater than or equal to this length provide roughly 30x genome coverage.
+4. Select "seed" reads based on the computed subread length threshold.
+5. Map all of the filtered subreads to the seed reads using `BLASR`.
+6. Determine a consensus sequence from the subread alignments to the seed reads and preassemble (i.e. error-correct) the reads.
+7. Assemble the preassembled reads using the Celera overlap-consensus-layout assembler.
+8. Refine the assembly by mapping all raw data to the new assembly using `BLASR` and trimming low-quality ends of contigs.
+9. Improve the continuity of the assembly and remove errors using the quality-aware consensus algorithm, `Quiver`. 
+
+With the exception of the estimated genome size parameter (which we set to 23,000,000 bp), we left all default settings in this protocol unchanged.  Basic metrics on the resulting assembly, hereafter referred to as "AsmTest1", are presented in the table below.  For comparison, we have also provided metrics on every *P. falciparum* assembly currently available.
+
+|id  |id        |  numContigs|  minLength|  maxLength|  meanLength|      n50|  totalSequence|
+|:---|:---------|-----------:|----------:|----------:|-----------:|--------:|--------------:|
+|1   |3D7       |          16|       5967|    3291936|     1458302|  1687656|       23332831|
+|10  |IT        |          17|       6616|    3219929|     1351588|  1570953|       22976997|
+|3   |AsmTest1  |          34|      11443|    3293905|      697875|  1696391|       23727741|
+|9   |IGH-CR14  |         849|       2199|     120285|       25608|    37016|       21741172|
+|8   |HB3       |        1189|        201|     377975|       20402|    96469|       24258511|
+|13  |RAJ116    |        1199|       2042|      70306|       11765|    12998|       14106529|
+|6   |DD2       |        2837|        201|     102309|        7358|    19112|       20875591|
+|16  |V34.04    |        4329|        226|      16341|        3059|     3756|       13240777|
+|4   |D10       |        4471|        259|      19127|        2992|     3707|       13375079|
+|11  |K1        |        4772|        231|      18390|        2785|     3422|       13290906|
+|2   |7G8       |        4843|        204|      19000|        2948|     3832|       14278891|
+|7   |FCC-2     |        4956|        200|      17581|        2616|     3302|       12963854|
+|14  |RO-33     |        4991|        208|      19991|        2748|     3473|       13714138|
+|5   |D6        |        5011|        266|      15451|        2638|     3231|       13216528|
+|15  |SL        |        5193|        214|      55682|        2540|     3079|       13192745|
+|17  |VS.1      |        5856|        201|      22989|        3225|     4424|       18887633|
+|12  |PFCLIN    |       18711|       1001|      33813|        2366|     2992|       44265486|
+
+
+The AsmTest1 assembly compares quite favorably to the best assemblies, with 34 compared to 3D7's 16 and IT's 17.  The longest chromosome in the *P. falciparum* genome is chromosome 14 (3291936 bp).  The longest contig in the AsmTest1 assembly appears roughly this length, suggesting that we may have assemblied the majority (or the entirety) of chromosome 14 in a single contig.
+
+We compared AsmTest1 to the 3D7 canonical genome by aligning the two with `MUMMER`.
+
+
+```
+## Warning: NAs introduced by coercion
+```
+
+![plot of chunk dotplot](figure/dotplot.png) 
+
+
