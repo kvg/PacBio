@@ -134,7 +134,7 @@ The AsmTest1 assembly compares quite favorably to the best assemblies, with 34 c
 
 We compared AsmTest1 to the 3D7 canonical genome by performing an all-by-all (contigs vs. chromosomes) alignment with `MUMmer`.  Short, spurious alignments were filtered out.  The results are presented in the table below.  The near-entirety of chromosome 14 is assembled into a single contig.  On average, each chromosome is assembled into 4.4667 +/- 3.7391 contigs.  Each chromosome seems to be more-or-less fully recovered (note that the % coverage will add up to more than 100% in some cases as contigs may overlap slightly).
 
-One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position 3868, and only represents `subset(showCoords, REF == "M76611")$COV_Q` of its sequence.  It is not clear what the remaining sequence represents.
+One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position 3868, and only represents 13.74 of its sequence.  It is not clear what the remaining sequence represents.
 
 |REF          |QUERY             |       S1|       E1|       S2|       E2|   COV_R|   COV_Q|
 |:------------|:-----------------|--------:|--------:|--------:|--------:|-------:|-------:|
