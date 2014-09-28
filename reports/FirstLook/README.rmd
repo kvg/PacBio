@@ -336,14 +336,15 @@ The AsmTest1 assembly compares quite favorably to the best assemblies, with `r s
 
 We compared AsmTest1 to the 3D7 canonical genome by performing an all-by-all (contigs vs. chromosomes) alignment with `MUMmer`.  Short, spurious alignments were filtered out.  The results are presented in the table below.  The near-entirety of chromosome 14 is assembled into a single contig.  On average, each chromosome is assembled into `r mean(table(showCoords$REF))` +/- `r sd(table(showCoords$REF))` contigs.  Each chromosome seems to be more-or-less fully recovered (note that the % coverage will add up to more than 100% in some cases as contigs may overlap slightly).
 
+One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position `r subset(showCoords, REF == "M76611")$S2`, and only represents `subset(showCoords, REF == "M76611")$COV_Q` of its sequence.  It is not clear what the remaining sequence represents.
+
 ```{r showCoords, echo=FALSE, results='asis'}
 showCoords = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.filter.coord_summary", sep=""), header=FALSE, stringsAsFactors=FALSE);
 names(showCoords) = c( "S1", "E1", "S2", "E2", "LEN_1", "LEN_2", "LEN_R", "LEN_Q", "COV_R", "COV_Q", "REF", "QUERY" );
 showCoords$QUERY = gsub("\\|quiver", "", showCoords$QUERY);
 
-kable(showCoords[,c("REF", "QUERY", "S1", "E1", "S2", "E2", "COV_R")], row.names=FALSE);
+kable(showCoords[,c("REF", "QUERY", "S1", "E1", "S2", "E2", "COV_R", "COV_Q")], row.names=FALSE);
 ```
-
 
 We visualized these alignments as a multi-dot plot.  Nearly all of the assembly content lines up with the canonical assembly (as evidenced from the bulk of the data adhering approximately to the f(x) = x line).  Occassional spurious points do exist, likely due to some repetitive homologous regions among chromosomes.
 
