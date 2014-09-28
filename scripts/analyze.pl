@@ -180,6 +180,10 @@ foreach my $asmid (keys(%asms)) {
     my $dotplot = "$outdir/$asmid.filter.ps";
     my $dotplotCmd = "$mummerplot $filter -R $refs{'il'} -Q $contigs --filter --layout --postscript --fat -p $outdir/$asmid.filter";
     $dm->addRule($dotplot, $filter, $dotplotCmd);
+
+    my $coordSummary = "$outdir/$asmid.filter.filter.coord_summary";
+    my $coordSummaryCmd = "$showcoords -b -r -l -c -T -H $outdir/$asmid.filter.filter > $coordSummary";
+    $dm->addRule($coordSummary, $dotplot, $coordSummaryCmd);
 }
 
 $dm->execute();

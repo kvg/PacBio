@@ -334,7 +334,17 @@ kable(asmstats, row.names=FALSE);
 
 The AsmTest1 assembly compares quite favorably to the best assemblies, with `r subset(asmstats, id == "AsmTest1")$numContigs` compared to 3D7's `r subset(asmstats, id == "3D7")$numContigs` and IT's `r subset(asmstats, id == "IT")$numContigs`.  The longest chromosome in the *P. falciparum* genome is chromosome 14 (3291936 bp).  The longest contig in the AsmTest1 assembly appears roughly this length, suggesting that we may have assemblied the majority (or the entirety) of chromosome 14 in a single contig.
 
-We compared AsmTest1 to the 3D7 canonical genome by aligning the two with `MUMMER`.
+We compared AsmTest1 to the 3D7 canonical genome by performing an all-by-all (contigs vs. chromosomes) alignment with `MUMmer`.  Short, spurious alignments were filtered out.  The results are presented in the table below.  The near-entirety of chromosome 14 is assembled into a single contig.  On average, each chromosome is assembled into `r mean(table(showCoords$REF))` +/- `r sd(table(showCoords$REF))` contigs.  Each chromosome seems to be more-or-less fully recovered (note that the % coverage will add up to more than 100% in some cases as contigs may overlap slightly).
+
+```{r showCoords, echo=FALSE, results='asis'}
+showCoords = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.filter.coord_summary", sep=""), header=FALSE, stringsAsFactors=FALSE);
+names(showCoords) = c( "S1", "E1", "S2", "E2", "LEN_1", "LEN_2", "LEN_R", "LEN_Q", "COV_R", "COV_Q", "REF", "QUERY" );
+
+kable(showCoords[,c("REF", "QUERY", "S1", "S2", "E1", "E2", "LEN_1", "LEN_2", "COV_R")], row.names=FALSE);
+```
+
+
+We visualized these alignments as a multi-dot plot.  Nearly all of the assembly content lines up with the canonical assembly (as evidenced from the bulk of the data adhering approximately to the f(x) = x line).  Occassional spurious points do exist, likely due to some repetitive homologous regions among chromosomes.
 
 ```{r dotplot, echo=FALSE, fig.width=12, fig.height=12}
 gplines = readLines(paste(dir.results, "/AsmTest1/AsmTest1.filter.gp", sep=""));
@@ -372,7 +382,6 @@ plot(0, 0, type="n", xlim=c(0, xrange), ylim=c(0, yrange), bty="n", xlab="", yla
 axis(1, at=xaxis.at, labels=xaxis.labels, cex.axis=0.6, las=3);
 axis(2, at=yaxis.at, labels=yaxis.labels, cex.axis=0.6, las=1);
 
-abline(a=0, b=1, lty=2, col="gray");
 abline(v=as.numeric(xaxis.at), lty=2, col="gray90");
 abline(h=as.numeric(yaxis.at), lty=2, col="gray90");
 
