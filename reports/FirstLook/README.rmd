@@ -341,7 +341,7 @@ showCoords = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.filter.coo
 names(showCoords) = c( "S1", "E1", "S2", "E2", "LEN_1", "LEN_2", "LEN_R", "LEN_Q", "COV_R", "COV_Q", "REF", "QUERY" );
 showCoords$QUERY = gsub("\\|quiver", "", showCoords$QUERY);
 
-kable(showCoords[,c("REF", "QUERY", "S1", "S2", "E1", "E2", "COV_R")], row.names=FALSE);
+kable(showCoords[,c("REF", "QUERY", "S1", "E1", "S2", "E2", "COV_R")], row.names=FALSE);
 ```
 
 
