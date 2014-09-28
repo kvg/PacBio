@@ -109,35 +109,30 @@ To construct an initial draft assembly, we ran the `RS_HGAP_Assembly.2` secondar
 
 With the exception of the estimated genome size parameter (which we set to 23,000,000 bp), we left all default settings in this protocol unchanged.  Basic metrics on the resulting assembly, hereafter referred to as "AsmTest1", are presented in the table below.  For comparison, we have also provided metrics on every *P. falciparum* assembly currently available.
 
-|id  |id        |  numContigs|  minLength|  maxLength|  meanLength|      n50|  totalSequence|
-|:---|:---------|-----------:|----------:|----------:|-----------:|--------:|--------------:|
-|1   |3D7       |          16|       5967|    3291936|     1458302|  1687656|       23332831|
-|10  |IT        |          17|       6616|    3219929|     1351588|  1570953|       22976997|
-|3   |AsmTest1  |          34|      11443|    3293905|      697875|  1696391|       23727741|
-|9   |IGH-CR14  |         849|       2199|     120285|       25608|    37016|       21741172|
-|8   |HB3       |        1189|        201|     377975|       20402|    96469|       24258511|
-|13  |RAJ116    |        1199|       2042|      70306|       11765|    12998|       14106529|
-|6   |DD2       |        2837|        201|     102309|        7358|    19112|       20875591|
-|16  |V34.04    |        4329|        226|      16341|        3059|     3756|       13240777|
-|4   |D10       |        4471|        259|      19127|        2992|     3707|       13375079|
-|11  |K1        |        4772|        231|      18390|        2785|     3422|       13290906|
-|2   |7G8       |        4843|        204|      19000|        2948|     3832|       14278891|
-|7   |FCC-2     |        4956|        200|      17581|        2616|     3302|       12963854|
-|14  |RO-33     |        4991|        208|      19991|        2748|     3473|       13714138|
-|5   |D6        |        5011|        266|      15451|        2638|     3231|       13216528|
-|15  |SL        |        5193|        214|      55682|        2540|     3079|       13192745|
-|17  |VS.1      |        5856|        201|      22989|        3225|     4424|       18887633|
-|12  |PFCLIN    |       18711|       1001|      33813|        2366|     2992|       44265486|
+|id        |  numContigs|  minLength|  maxLength|  meanLength|      n50|  totalSequence|
+|:---------|-----------:|----------:|----------:|-----------:|--------:|--------------:|
+|3D7       |          16|       5967|    3291936|     1458302|  1687656|       23332831|
+|IT        |          17|       6616|    3219929|     1351588|  1570953|       22976997|
+|AsmTest1  |          34|      11443|    3293905|      697875|  1696391|       23727741|
+|IGH-CR14  |         849|       2199|     120285|       25608|    37016|       21741172|
+|HB3       |        1189|        201|     377975|       20402|    96469|       24258511|
+|RAJ116    |        1199|       2042|      70306|       11765|    12998|       14106529|
+|DD2       |        2837|        201|     102309|        7358|    19112|       20875591|
+|V34.04    |        4329|        226|      16341|        3059|     3756|       13240777|
+|D10       |        4471|        259|      19127|        2992|     3707|       13375079|
+|K1        |        4772|        231|      18390|        2785|     3422|       13290906|
+|7G8       |        4843|        204|      19000|        2948|     3832|       14278891|
+|FCC-2     |        4956|        200|      17581|        2616|     3302|       12963854|
+|RO-33     |        4991|        208|      19991|        2748|     3473|       13714138|
+|D6        |        5011|        266|      15451|        2638|     3231|       13216528|
+|SL        |        5193|        214|      55682|        2540|     3079|       13192745|
+|VS.1      |        5856|        201|      22989|        3225|     4424|       18887633|
+|PFCLIN    |       18711|       1001|      33813|        2366|     2992|       44265486|
 
 
 The AsmTest1 assembly compares quite favorably to the best assemblies, with 34 compared to 3D7's 16 and IT's 17.  The longest chromosome in the *P. falciparum* genome is chromosome 14 (3291936 bp).  The longest contig in the AsmTest1 assembly appears roughly this length, suggesting that we may have assemblied the majority (or the entirety) of chromosome 14 in a single contig.
 
 We compared AsmTest1 to the 3D7 canonical genome by aligning the two with `MUMMER`.
-
-
-```
-## Warning: NAs introduced by coercion
-```
 
 ![plot of chunk dotplot](figure/dotplot.png) 
 

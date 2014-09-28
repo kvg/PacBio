@@ -329,14 +329,14 @@ With the exception of the estimated genome size parameter (which we set to 23,00
 asmstats = read.table(paste(dir.results, "/AsmTest1/assemblies.stats", sep=""), header=TRUE, stringsAsFactors=FALSE);
 asmstats = asmstats[order(asmstats$numContigs),];
 
-kable(asmstats);
+kable(asmstats, row.names=FALSE);
 ```
 
 The AsmTest1 assembly compares quite favorably to the best assemblies, with `r subset(asmstats, id == "AsmTest1")$numContigs` compared to 3D7's `r subset(asmstats, id == "3D7")$numContigs` and IT's `r subset(asmstats, id == "IT")$numContigs`.  The longest chromosome in the *P. falciparum* genome is chromosome 14 (3291936 bp).  The longest contig in the AsmTest1 assembly appears roughly this length, suggesting that we may have assemblied the majority (or the entirety) of chromosome 14 in a single contig.
 
 We compared AsmTest1 to the 3D7 canonical genome by aligning the two with `MUMMER`.
 
-```{r dotplot, echo=FALSE, fig.width=12, fig.height=12, warnings=FALSE}
+```{r dotplot, echo=FALSE, fig.width=12, fig.height=12}
 gplines = readLines(paste(dir.results, "/AsmTest1/AsmTest1.filter.gp", sep=""));
 
 xaxis.labels.unparsed = strsplit(gsub(" $", "", gsub("^ ", "", gsub("[,\\\"]", "", grep("Pf3D7", gplines, value=TRUE)))), " ");
@@ -372,9 +372,9 @@ plot(0, 0, type="n", xlim=c(0, xrange), ylim=c(0, yrange), bty="n", xlab="", yla
 axis(1, at=xaxis.at, labels=xaxis.labels, cex.axis=0.6, las=3);
 axis(2, at=yaxis.at, labels=yaxis.labels, cex.axis=0.6, las=1);
 
-abline(a=0, b=1, lty=2, "gray");
-abline(v=xaxis.at, lty=2, col="gray90");
-abline(h=yaxis.at, lty=2, col="gray90");
+abline(a=0, b=1, lty=2, col="gray");
+abline(v=as.numeric(xaxis.at), lty=2, col="gray90");
+abline(h=as.numeric(yaxis.at), lty=2, col="gray90");
 
 for (i in seq(1, nrow(fw), by=2)) {
     points(fw$V1[i:(i+1)], fw$V2[i:(i+1)], col="red", type="p", cex=0.7);
