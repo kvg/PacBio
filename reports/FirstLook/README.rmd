@@ -336,7 +336,7 @@ The AsmTest1 assembly compares quite favorably to the best assemblies, with `r s
 
 We compared AsmTest1 to the 3D7 canonical genome by aligning the two with `MUMMER`.
 
-```{r dotplot, echo=FALSE, fig.width=12, fig.height=12}
+```{r dotplot, echo=FALSE, fig.width=12, fig.height=12, warnings=FALSE}
 gplines = readLines(paste(dir.results, "/AsmTest1/AsmTest1.filter.gp", sep=""));
 
 xaxis.labels.unparsed = strsplit(gsub(" $", "", gsub("^ ", "", gsub("[,\\\"]", "", grep("Pf3D7", gplines, value=TRUE)))), " ");
