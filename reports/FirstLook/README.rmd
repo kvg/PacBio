@@ -46,7 +46,7 @@ genes$text[grep("stevor", genes$description)] = "s";
 We prepared roughly 15ug of DNA from the canonical Plasmodium falciparum strain, 3D7, for sequencing on Cold Spring Harbor Laboratory's PacBio RS-II instrument.  This was sequenced on eight SMRT cells, which should yield approximately 100x coverage over the 23 megabase genome.  Having just received the filtered subreads (in unaligned and aligned form), we investigated some very basic properties of the data.
 
 Read length
-===========
+-----------
 
 ```{r readStats, echo=FALSE, results='asis'}
 ls.pb  = read.table(paste(dir.results, "/pb/lengthStats.txt",  sep=""), header=TRUE);
@@ -130,7 +130,7 @@ legend("topright", c( '@m140912_185114_42137_c100689352550000001823145102281580_
 ```
 
 Read alignment
-==============
+--------------
 
 ```{r loadCoverage, echo=FALSE, cache=TRUE}
 cov.pb = read.table(paste(dir.results, "/pb/coverage.simple.txt", sep=""), header=FALSE, stringsAsFactors=FALSE);
@@ -336,7 +336,7 @@ The AsmTest1 assembly compares quite favorably to the best assemblies, with `r s
 
 We compared AsmTest1 to the 3D7 canonical genome by performing an all-by-all (contigs vs. chromosomes) alignment with `MUMmer`.  Short, spurious alignments were filtered out.  The results are presented in the table below.  The near-entirety of chromosome 14 is assembled into a single contig.  On average, each chromosome is assembled into `r mean(table(showCoords$REF))` +/- `r sd(table(showCoords$REF))` contigs.  Each chromosome seems to be more-or-less fully recovered (note that the % coverage will add up to more than 100% in some cases as contigs may overlap slightly).
 
-One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position `r subset(showCoords, REF == "M76611")$S2`, and only represents `r subset(showCoords, REF == "M76611")$COV_Q` of its sequence.  It is not clear what the remaining sequence represents.
+One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position `r subset(showCoords, REF == "M76611")$S2`, and only represents `r subset(showCoords, REF == "M76611")$COV_Q`% of its sequence.  It is not clear what the remaining sequence represents.
 
 ```{r showCoords, echo=FALSE, results='asis'}
 showCoords = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.filter.coord_summary", sep=""), header=FALSE, stringsAsFactors=FALSE);
@@ -398,3 +398,61 @@ for (i in seq(1, nrow(rc), by=2)) {
 }
 ```
 
+As we have sequenced DNA from the 3D7 parasite, any differences should likely reflect errors in the sequence.  We therefore called SNPs between the two assemblies to find these errors.  The sums are presented in the table below.
+
+```{r variants, echo=FALSE, results='asis'}
+variants = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.filter.variant_summary", sep=""), header=FALSE, stringsAsFactors=FALSE);
+names(variants) = c( "P1", "REF", "ALT", "P2", "BUFF", "DIST", "R", "Q", "LEN_R", "LEN_Q", "FRM", "UNKNOWN", "REFERENCE", "QUERY" );
+
+variants.summary = cbind("SNP" = table(subset(variants, REFERENCE != "M76611" & REF != "." & ALT != ".")$REFERENCE),
+                         "INS" = table(subset(variants, REFERENCE != "M76611" & REF == "." & ALT != ".")$REFERENCE),
+                         "DEL" = table(subset(variants, REFERENCE != "M76611" & REF != "." & ALT == ".")$REFERENCE));
+variants.summary = rbind(variants.summary, c(sum(variants.summary[,"SNP"]), sum(variants.summary[,"INS"]), sum(variants.summary[,"DEL"])));
+
+kable(variants.summary);
+```
+
+We can further normalize these numbers by the length of the respective chromosome:
+
+```{r variantsNorm, echo=FALSE, results='asis'}
+chrom.lengths = unique(variants[,c("REFERENCE", "LEN_R")]);
+rownames(chrom.lengths) = chrom.lengths$REFERENCE;
+
+variants.pctsummary = variants.summary[1:nrow(variants.summary) - 1,];
+for (chrom in chrom.lengths$REFERENCE) {
+    if (chrom != "M76611") {
+        variants.pctsummary[chrom,] = sprintf("%0.2f%%", 100.0 * variants.summary[chrom,] / chrom.lengths[chrom, "LEN_R"]);
+    }
+}
+variants.pctsummary = rbind(variants.pctsummary, sprintf("%0.2f%%", 100.0*c(sum(variants.summary[,"SNP"]), sum(variants.summary[,"INS"]), sum(variants.summary[,"DEL"]))/23332831));
+```
+
+Overall, the SNP, insertion, and deletion rates are exceedingly low: amounting to `r sum(variants.summary[15,])` events in a 23 megabase genome.  The insertion rate is much higher than that of deletions and SNPs, perhaps due to the insertion error mode of the PacBio sequencing instrument.  All chromosomes appear reasonably similar in performance.
+
+
+```{r varTable, echo=FALSE, results='asis'}
+varTable = read.table(paste(dir.results, "/AsmTest1/AsmTest1.var.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
+colnames(varTable) = c( "geneName", "flags", "contig", "start", "MQ", "CIGAR", "QUAL", "UKN1", "UKN2", "NM", "MD", "AS" );
+varTable$NM = as.integer(gsub("NM:i:", "", varTable$NM));
+
+numIns = c();
+numDel = c();
+
+for (i in 1:nrow(varTable)) {
+    varTable$CIGAR
+    insAndDels = table(unlist(strsplit(gsub("\\d+", "", gsub("\\d+M", "", varTable$CIGAR[i])), "")));
+
+    numIns = c(numIns, ifelse(is.na(insAndDels["I"]), 0, insAndDels["I"]));
+    numDel = c(numDel, ifelse(is.na(insAndDels["D"]), 0, insAndDels["D"]));
+}
+
+varTable = cbind(varTable, NI = numIns, ND = numDel);
+
+kable(varTable[,c("geneName", "contig", "start", "CIGAR", "NM", "NI", "ND")]);
+
+numPerfect = nrow(subset(varTable, NM == 0 & NI == 0 & ND == 0));
+```
+
+Finally, we examined the recovery of the 60 members of the *var* gene family by aligning their full-length genomic sequence (both exons plus the intron) to the AsmTest1 assembly using `bwa mem`.  All 60 *var* genes were successfully aligned to the assembly.  `r numPerfect` were found to map with 100% identity.  The remaining have, on average, `r mean(subset(varTable, !(NM == 0 & NI == 0 & ND == 0))[,c("NM")])` mismatches, `r mean(subset(varTable, !(NM == 0 & NI == 0 & ND == 0))[,c("NI")])` insertions, and `r mean(subset(varTable, !(NM == 0 & NI == 0 & ND == 0))[,c("ND")])` deletions.  The overwhelming majority of indels are a single nucleotide in length.  Below, we show an example of some deletions found in gehe Pf3D7_1200100.
+
+![var1](figure/PF3D7_1200100.svg.png)

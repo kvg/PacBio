@@ -184,6 +184,22 @@ foreach my $asmid (keys(%asms)) {
     my $coordSummary = "$outdir/$asmid.filter.filter.coord_summary";
     my $coordSummaryCmd = "$showcoords -b -r -l -c -T -H $outdir/$asmid.filter.filter > $coordSummary";
     $dm->addRule($coordSummary, $dotplot, $coordSummaryCmd);
+
+    my $variantSummary = "$outdir/$asmid.filter.filter.variant_summary";
+    my $variantSummaryCmd = "$showsnps -l -r -T -H $outdir/$asmid.filter.filter > $variantSummary";
+    $dm->addRule($variantSummary, $dotplot, $variantSummaryCmd);
+
+    my $varSam = "$outdir/$asmid.var.sam";
+    my $varSamCmd = "bwa mem $contigs $resourcesDir/var.3D7.fasta | sed 's/\|quiver//g' > $varSam";
+    $dm->addRule($varSam, $contigs, $varSamCmd, 'nopostfix' => 1);
+
+    my $varBam = "$outdir/$asmid.var.bam";
+    my $varBamCmd = "java -Xmx8g -jar ~/repositories/Picard-Latest/dist/SortSam.jar I=$varSam O=$varBam SO=coordinate CREATE_INDEX=true";
+    $dm->addRule($varBam, $varSam, $varBamCmd);
+
+    my $varTable = "$outdir/$asmid.var.table";
+    my $varTableCmd = "grep -v '\@' $varSam | cut -f1-9,12-14 | column -t > $varTable";
+    $dm->addRule($varTable, $varSam, $varTableCmd);
 }
 
 $dm->execute();
