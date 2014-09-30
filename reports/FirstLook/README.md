@@ -132,6 +132,9 @@ With the exception of the estimated genome size parameter (which we set to 23,00
 
 The AsmTest1 assembly compares quite favorably to the best assemblies, with 34 compared to 3D7's 16 and IT's 17.  The longest chromosome in the *P. falciparum* genome is chromosome 14 (3291936 bp).  The longest contig in the AsmTest1 assembly appears roughly this length, suggesting that we may have assemblied the majority (or the entirety) of chromosome 14 in a single contig.
 
+Comparison to canonical genome, 3D7
+-----------------------------------
+
 We compared AsmTest1 to the 3D7 canonical genome by performing an all-by-all (contigs vs. chromosomes) alignment with `MUMmer`.  Short, spurious alignments were filtered out.  The results are presented in the table below.  The near-entirety of chromosome 14 is assembled into a single contig.  On average, each chromosome is assembled into 4.4667 +/- 3.7391 contigs.  Each chromosome seems to be more-or-less fully recovered (note that the % coverage will add up to more than 100% in some cases as contigs may overlap slightly).
 
 One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position 3868, and only represents 13.74% of its sequence.  It is not clear what the remaining sequence represents.
@@ -207,10 +210,16 @@ One strange finding from the table below is the observation that a few contigs c
 |Pf3D7_14_v3  |scf7180000000090  |        1|  3291936|      391|  3293241|  100.00|   99.97|
 
 
+Visualization as dotplot
+------------------------
+
 We visualized these alignments as a multi-dot plot.  Nearly all of the assembly content lines up with the canonical assembly (as evidenced from the bulk of the data adhering approximately to the f(x) = x line).  Occassional spurious points do exist, likely due to some repetitive homologous regions among chromosomes.
 
 ![plot of chunk dotplot](figure/dotplot.png) 
 
+
+Errors in the assembly
+----------------------
 
 As we have sequenced DNA from the 3D7 parasite, any differences should likely reflect errors in the sequence.  We therefore called SNPs between the two assemblies to find these errors.  The sums are presented in the table below.
 
@@ -235,76 +244,95 @@ As we have sequenced DNA from the 3D7 parasite, any differences should likely re
 
 We can further normalize these numbers by the length of the respective chromosome:
 
-
+|id           |SNP    |INS    |DEL    |
+|:------------|:------|:------|:------|
+|Pf3D7_01_v3  |0.02%  |0.12%  |0.05%  |
+|Pf3D7_02_v3  |0.02%  |0.05%  |0.02%  |
+|Pf3D7_03_v3  |0.03%  |0.05%  |0.03%  |
+|Pf3D7_04_v3  |0.01%  |0.07%  |0.06%  |
+|Pf3D7_05_v3  |0.01%  |0.04%  |0.01%  |
+|Pf3D7_06_v3  |0.04%  |0.05%  |0.01%  |
+|Pf3D7_07_v3  |0.01%  |0.04%  |0.02%  |
+|Pf3D7_08_v3  |0.01%  |0.04%  |0.02%  |
+|Pf3D7_09_v3  |0.00%  |0.05%  |0.02%  |
+|Pf3D7_10_v3  |0.04%  |0.05%  |0.02%  |
+|Pf3D7_11_v3  |0.02%  |0.05%  |0.02%  |
+|Pf3D7_12_v3  |0.01%  |0.05%  |0.02%  |
+|Pf3D7_13_v3  |0.01%  |0.05%  |0.01%  |
+|Pf3D7_14_v3  |0.00%  |0.04%  |0.01%  |
+|             |0.03%  |0.10%  |0.04%  |
 
 
 Overall, the SNP, insertion, and deletion rates are exceedingly low: amounting to 19580 events in a 23 megabase genome.  The insertion rate is much higher than that of deletions and SNPs, perhaps due to the insertion error mode of the PacBio sequencing instrument.  All chromosomes appear reasonably similar in performance.
 
+Recovery of the *var* repertoire
+--------------------------------
 
-|geneName       |contig            |    start|CIGAR                                                 |  NM|  NI|  ND|
-|:--------------|:-----------------|--------:|:-----------------------------------------------------|---:|---:|---:|
-|PF3D7_0100100  |scf7180000000113  |     2889|7617M                                                 |   0|   0|   0|
-|PF3D7_0115700  |scf7180000000113  |   581404|1655M1D5849M                                          |   1|   0|   1|
-|PF3D7_0200100  |scf7180000000110  |    23774|4187M1I47M1I1701M                                     |   2|   2|   0|
-|PF3D7_0223500  |scf7180000000110  |   913660|1409M1I22M1I116M1I220M1I31M1D5495M                    |   5|   4|   1|
-|PF3D7_0300100  |scf7180000000108  |  1018947|7518M                                                 |   0|   0|   0|
-|PF3D7_0324900  |scf7180000000108  |    24903|5425M1D418M1I1589M                                    |   2|   1|   1|
-|PF3D7_0400100  |scf7180000000121  |    29103|7025M1I89M1I1856M                                     |   2|   2|   0|
-|PF3D7_0400400  |scf7180000000121  |    45947|1488M1I99M1I7202M1D2515M                              |   3|   2|   1|
-|PF3D7_0412400  |scf7180000000121  |   546434|1423M1D609M1D71M2I5719M                               |   4|   1|   2|
-|PF3D7_0412700  |scf7180000000121  |   562113|7048M1D628M                                           |   1|   0|   1|
-|PF3D7_0412900  |scf7180000000121  |   577257|1744M1I154M1I105M1I5243M1D610M                        |   4|   3|   1|
-|PF3D7_0413100  |scf7180000000121  |   592583|7901M                                                 |   0|   0|   0|
-|PF3D7_0420700  |scf7180000000121  |   935742|1531M1I5313M                                          |   1|   1|   0|
-|PF3D7_0420900  |scf7180000000123  |    11900|1953M1I4643M1D1008M                                   |   2|   1|   1|
-|PF3D7_0421100  |scf7180000000122  |     7733|1748M1I16M1D5780M                                     |   2|   1|   1|
-|PF3D7_0421300  |scf7180000000122  |    29576|1671M1I326M1I5562M                                    |   2|   2|   0|
-|PF3D7_0425800  |scf7180000000122  |   217801|11399M                                                |   0|   0|   0|
-|PF3D7_0426000  |scf7180000000122  |   234430|7174M                                                 |   0|   0|   0|
-|PF3D7_0500100  |scf7180000000107  |    13858|5777M2I55M1I1693M                                     |   4|   2|   0|
-|PF3D7_0600200  |scf7180000000102  |  1306876|1475M1I7857M                                          |   1|   1|   0|
-|PF3D7_0600400  |scf7180000000102  |  1296989|4136M                                                 |   0|   0|   0|
-|PF3D7_0617400  |scf7180000000102  |   587149|8374M                                                 |   0|   0|   0|
-|PF3D7_0632500  |scf7180000000097  |    52370|12485M                                                |   0|   0|   0|
-|PF3D7_0632800  |scf7180000000097  |    36171|5870M1I1960M                                          |   1|   1|   0|
-|PF3D7_0700100  |scf7180000000106  |    43524|1765M2D306M1I5705M                                    |   3|   1|   1|
-|PF3D7_0711700  |scf7180000000104  |   941248|7476M                                                 |   0|   0|   0|
-|PF3D7_0712000  |scf7180000000104  |   925540|5653M1D2141M                                          |   1|   0|   1|
-|PF3D7_0712300  |scf7180000000104  |   894486|584M1D7031M                                           |   1|   0|   1|
-|PF3D7_0712400  |scf7180000000104  |   885927|6921M                                                 |   0|   0|   0|
-|PF3D7_0712600  |scf7180000000104  |   870697|7583M                                                 |   0|   0|   0|
-|PF3D7_0712800  |scf7180000000104  |   856081|7538M                                                 |   0|   0|   0|
-|PF3D7_0712900  |scf7180000000104  |   847272|5926M1I1481M                                          |   1|   1|   0|
-|PF3D7_0733000  |scf7180000000104  |    18566|6797M1I36M1I25M1I1786M                                |   3|   3|   0|
-|PF3D7_0800100  |scf7180000000105  |    22999|5695M1I1597M                                          |   1|   1|   0|
-|PF3D7_0800200  |scf7180000000105  |    31337|9334M                                                 |   0|   0|   0|
-|PF3D7_0800300  |scf7180000000105  |    42585|8227M1I1764M                                          |   1|   1|   0|
-|PF3D7_0808600  |scf7180000000105  |   432928|7887M                                                 |   0|   0|   0|
-|PF3D7_0808700  |scf7180000000105  |   442171|5845M1D1810M                                          |   1|   0|   1|
-|PF3D7_0809100  |scf7180000000105  |   479875|5738M1I1517M                                          |   1|   1|   0|
-|PF3D7_0833500  |scf7180000000105  |  1456528|1870M1D5786M                                          |   1|   0|   1|
-|PF3D7_0900100  |scf7180000000118  |    21355|5634M2D2172M                                          |   2|   0|   1|
-|PF3D7_0937600  |scf7180000000119  |    19292|4118M                                                 |   0|   0|   0|
-|PF3D7_0937800  |scf7180000000120  |     2225|508M1D1455M1I131M1I45M1I5616M                         |   6|   3|   1|
-|PF3D7_1000100  |scf7180000000099  |    29010|7675M                                                 |   0|   0|   0|
-|PF3D7_1041300  |scf7180000000099  |  1666163|1986M1I5561M                                          |   1|   1|   0|
-|PF3D7_1100100  |scf7180000000098  |    55846|1496M1I162M1I5779M                                    |   2|   2|   0|
-|PF3D7_1100200  |scf7180000000098  |    45058|8001M1D211M1I1508M                                    |   2|   1|   1|
-|PF3D7_1150400  |scf7180000000091  |  2907612|8263M1D1807M                                          |   1|   0|   1|
-|PF3D7_1200100  |scf7180000000092  |    17854|5331M2D51M2D2143M                                     |   4|   0|   2|
-|PF3D7_1200400  |scf7180000000092  |    33589|7745M1I1492M                                          |   1|   1|   0|
-|PF3D7_1200600  |scf7180000000092  |    47672|1626M1I8391M                                          |   1|   1|   0|
-|PF3D7_1219300  |scf7180000000092  |   768052|1725M1I130M2D56M1D5632M                               |   4|   1|   2|
-|PF3D7_1240300  |scf7180000000092  |  1701053|6877M1D192M1I287M1I1580M                              |   3|   2|   1|
-|PF3D7_1240400  |scf7180000000092  |  1711414|5667M1D504M1I1807M                                    |   2|   1|   1|
-|PF3D7_1240600  |scf7180000000092  |  1757581|1840M3I6040M                                          |   3|   1|   0|
-|PF3D7_1240900  |scf7180000000092  |  1773547|7866M                                                 |   0|   0|   0|
-|PF3D7_1255200  |scf7180000000092  |  2279481|1479M1I452M1I2653M3D3106M                             |   5|   2|   1|
-|PF3D7_1300100  |scf7180000000091  |    22863|7424M                                                 |   0|   0|   0|
-|PF3D7_1300300  |scf7180000000091  |    35456|10784M                                                |   0|   0|   0|
-|PF3D7_1373500  |scf7180000000095  |    90223|1626M1I28M1I71M1I35M1I54M2I37M1I10M1I70M2I89M1I5524M  |  13|   9|   0|
+|geneName       |contig            |    start|  NM|  NI|  ND|CIGAR                                                 |
+|:--------------|:-----------------|--------:|---:|---:|---:|:-----------------------------------------------------|
+|PF3D7_0100100  |scf7180000000113  |     2889|   0|   0|   0|7617M                                                 |
+|PF3D7_0115700  |scf7180000000113  |   581404|   1|   0|   1|1655M1D5849M                                          |
+|PF3D7_0200100  |scf7180000000110  |    23774|   2|   2|   0|4187M1I47M1I1701M                                     |
+|PF3D7_0223500  |scf7180000000110  |   913660|   5|   4|   1|1409M1I22M1I116M1I220M1I31M1D5495M                    |
+|PF3D7_0300100  |scf7180000000108  |  1018947|   0|   0|   0|7518M                                                 |
+|PF3D7_0324900  |scf7180000000108  |    24903|   2|   1|   1|5425M1D418M1I1589M                                    |
+|PF3D7_0400100  |scf7180000000121  |    29103|   2|   2|   0|7025M1I89M1I1856M                                     |
+|PF3D7_0400400  |scf7180000000121  |    45947|   3|   2|   1|1488M1I99M1I7202M1D2515M                              |
+|PF3D7_0412400  |scf7180000000121  |   546434|   4|   1|   2|1423M1D609M1D71M2I5719M                               |
+|PF3D7_0412700  |scf7180000000121  |   562113|   1|   0|   1|7048M1D628M                                           |
+|PF3D7_0412900  |scf7180000000121  |   577257|   4|   3|   1|1744M1I154M1I105M1I5243M1D610M                        |
+|PF3D7_0413100  |scf7180000000121  |   592583|   0|   0|   0|7901M                                                 |
+|PF3D7_0420700  |scf7180000000121  |   935742|   1|   1|   0|1531M1I5313M                                          |
+|PF3D7_0420900  |scf7180000000123  |    11900|   2|   1|   1|1953M1I4643M1D1008M                                   |
+|PF3D7_0421100  |scf7180000000122  |     7733|   2|   1|   1|1748M1I16M1D5780M                                     |
+|PF3D7_0421300  |scf7180000000122  |    29576|   2|   2|   0|1671M1I326M1I5562M                                    |
+|PF3D7_0425800  |scf7180000000122  |   217801|   0|   0|   0|11399M                                                |
+|PF3D7_0426000  |scf7180000000122  |   234430|   0|   0|   0|7174M                                                 |
+|PF3D7_0500100  |scf7180000000107  |    13858|   4|   2|   0|5777M2I55M1I1693M                                     |
+|PF3D7_0600200  |scf7180000000102  |  1306876|   1|   1|   0|1475M1I7857M                                          |
+|PF3D7_0600400  |scf7180000000102  |  1296989|   0|   0|   0|4136M                                                 |
+|PF3D7_0617400  |scf7180000000102  |   587149|   0|   0|   0|8374M                                                 |
+|PF3D7_0632500  |scf7180000000097  |    52370|   0|   0|   0|12485M                                                |
+|PF3D7_0632800  |scf7180000000097  |    36171|   1|   1|   0|5870M1I1960M                                          |
+|PF3D7_0700100  |scf7180000000106  |    43524|   3|   1|   1|1765M2D306M1I5705M                                    |
+|PF3D7_0711700  |scf7180000000104  |   941248|   0|   0|   0|7476M                                                 |
+|PF3D7_0712000  |scf7180000000104  |   925540|   1|   0|   1|5653M1D2141M                                          |
+|PF3D7_0712300  |scf7180000000104  |   894486|   1|   0|   1|584M1D7031M                                           |
+|PF3D7_0712400  |scf7180000000104  |   885927|   0|   0|   0|6921M                                                 |
+|PF3D7_0712600  |scf7180000000104  |   870697|   0|   0|   0|7583M                                                 |
+|PF3D7_0712800  |scf7180000000104  |   856081|   0|   0|   0|7538M                                                 |
+|PF3D7_0712900  |scf7180000000104  |   847272|   1|   1|   0|5926M1I1481M                                          |
+|PF3D7_0733000  |scf7180000000104  |    18566|   3|   3|   0|6797M1I36M1I25M1I1786M                                |
+|PF3D7_0800100  |scf7180000000105  |    22999|   1|   1|   0|5695M1I1597M                                          |
+|PF3D7_0800200  |scf7180000000105  |    31337|   0|   0|   0|9334M                                                 |
+|PF3D7_0800300  |scf7180000000105  |    42585|   1|   1|   0|8227M1I1764M                                          |
+|PF3D7_0808600  |scf7180000000105  |   432928|   0|   0|   0|7887M                                                 |
+|PF3D7_0808700  |scf7180000000105  |   442171|   1|   0|   1|5845M1D1810M                                          |
+|PF3D7_0809100  |scf7180000000105  |   479875|   1|   1|   0|5738M1I1517M                                          |
+|PF3D7_0833500  |scf7180000000105  |  1456528|   1|   0|   1|1870M1D5786M                                          |
+|PF3D7_0900100  |scf7180000000118  |    21355|   2|   0|   1|5634M2D2172M                                          |
+|PF3D7_0937600  |scf7180000000119  |    19292|   0|   0|   0|4118M                                                 |
+|PF3D7_0937800  |scf7180000000120  |     2225|   6|   3|   1|508M1D1455M1I131M1I45M1I5616M                         |
+|PF3D7_1000100  |scf7180000000099  |    29010|   0|   0|   0|7675M                                                 |
+|PF3D7_1041300  |scf7180000000099  |  1666163|   1|   1|   0|1986M1I5561M                                          |
+|PF3D7_1100100  |scf7180000000098  |    55846|   2|   2|   0|1496M1I162M1I5779M                                    |
+|PF3D7_1100200  |scf7180000000098  |    45058|   2|   1|   1|8001M1D211M1I1508M                                    |
+|PF3D7_1150400  |scf7180000000091  |  2907612|   1|   0|   1|8263M1D1807M                                          |
+|PF3D7_1200100  |scf7180000000092  |    17854|   4|   0|   2|5331M2D51M2D2143M                                     |
+|PF3D7_1200400  |scf7180000000092  |    33589|   1|   1|   0|7745M1I1492M                                          |
+|PF3D7_1200600  |scf7180000000092  |    47672|   1|   1|   0|1626M1I8391M                                          |
+|PF3D7_1219300  |scf7180000000092  |   768052|   4|   1|   2|1725M1I130M2D56M1D5632M                               |
+|PF3D7_1240300  |scf7180000000092  |  1701053|   3|   2|   1|6877M1D192M1I287M1I1580M                              |
+|PF3D7_1240400  |scf7180000000092  |  1711414|   2|   1|   1|5667M1D504M1I1807M                                    |
+|PF3D7_1240600  |scf7180000000092  |  1757581|   3|   1|   0|1840M3I6040M                                          |
+|PF3D7_1240900  |scf7180000000092  |  1773547|   0|   0|   0|7866M                                                 |
+|PF3D7_1255200  |scf7180000000092  |  2279481|   5|   2|   1|1479M1I452M1I2653M3D3106M                             |
+|PF3D7_1300100  |scf7180000000091  |    22863|   0|   0|   0|7424M                                                 |
+|PF3D7_1300300  |scf7180000000091  |    35456|   0|   0|   0|10784M                                                |
+|PF3D7_1373500  |scf7180000000095  |    90223|  13|   9|   0|1626M1I28M1I71M1I35M1I54M2I37M1I10M1I70M2I89M1I5524M  |
 
 
-Finally, we examined the recovery of the 60 members of the *var* gene family by aligning their full-length genomic sequence (both exons plus the intron) to the AsmTest1 assembly using `bwa mem`.  All 60 *var* genes were successfully aligned to the assembly.  19 were found to map with 100% identity.  The remaining have, on average, 2.4634 mismatches, 1.3902 insertions, and 0.6341 deletions.  The overwhelming majority of indels are a single nucleotide in length.  Below, we show an example of some deletions found in gehe Pf3D7_1200100.
+Finally, we examined the recovery of the 60 members of the *var* gene family by aligning their full-length genomic sequence (both exons plus the intron) to the AsmTest1 assembly using `bwa mem`.  All 60 *var* genes were successfully aligned to the assembly.  Information on each alignment is shown in the table above (NM, NI, and NI columns represent the numbers of mismatches, insertions, and deletions observed, respectively).  19 were found to map with 100% identity.  The remaining have, on average, 2.4634 mismatches, 1.3902 insertions, and 0.6341 deletions.  The overwhelming majority of indels are a single nucleotide in length.  Below, we show an example of some insertions found in gene PF3D7_1200100.
 
 ![var1](figure/PF3D7_1200100.svg.png)
+> A portion of var gene PF3D7_1200100, aligned to the AsmTest1 assembly.  Here, the reads are actually the full-length sequence of the gene.  Therefore, apparent deletions in the gene represent insertions in the assembly.  Click and choose the "Raw" option to zoom in.
