@@ -89,6 +89,24 @@ my %existingAsms = (
     "VS.1" => "/home/kiran/ngs/references/plasmodium/falciparum/VS.1/BroadInstitute/1__1_supercontigs.fasta",
 );
 
+my %rois = (
+    'varGenes' => "$resourcesDir/var.3D7.annotated.gff",
+    'varExons' => "$resourcesDir/var.3D7.annotated.gff",
+    'rifinGenes' => "$resourcesDir/rifin.3D7.gff",
+    'rifinExons' => "$resourcesDir/rifin.3D7.gff",
+    'stevorGenes' => "$resourcesDir/stevor.3D7.gff",
+    'stevorExons' => "$resourcesDir/stevor.3D7.gff",
+);
+
+my %roiTypes = (
+    'varGenes' => "gene",
+    'varExons' => "exon",
+    'rifinGenes' => "gene",
+    'rifinExons' => "exon",
+    'stevorGenes' => "gene",
+    'stevorExons' => "exon",
+);
+
 my %pbrgs = (
     'pb0' => '@m140912_185114_42137_c100689352550000001823145102281580_s1_p0',
     'pb1' => '@m140912_220917_42137_c100689352550000001823145102281581_s1_p0',
@@ -103,6 +121,15 @@ my %pbrgs = (
 # ==============
 # ANALYSIS RULES
 # ==============
+
+my %roiFastas;
+foreach my $roiId (keys(%rois)) {
+    my $roi = "$resultsDir/roi.$roiId.fasta";
+    my $roiCmd = "$indiana8 ExtractSequenceFeature -r $refs{'il'} -g $rois{$roiId} -t $roiTypes{$roiId} -o $roi";
+    $dm->addRule($roi, $rois{$roiId}, $roiCmd);
+
+    $roiFastas{$roiId} = $roi;
+}
 
 foreach my $id (keys(%pbrgs)) {
     my $rg = $pbrgs{$id};
@@ -189,17 +216,19 @@ foreach my $asmid (keys(%asms)) {
     my $variantSummaryCmd = "$showsnps -l -r -T -H $outdir/$asmid.filter.filter > $variantSummary";
     $dm->addRule($variantSummary, $dotplot, $variantSummaryCmd);
 
-    my $varSam = "$outdir/$asmid.var.sam";
-    my $varSamCmd = "bwa mem $contigs $resourcesDir/var.3D7.fasta | sed 's/\|quiver//g' > $varSam";
-    $dm->addRule($varSam, $contigs, $varSamCmd, 'nopostfix' => 1);
+    foreach my $roiId (keys(%roiFastas)) {
+        my $roiSam = "$outdir/$asmid.$roiId.sam";
+        my $roiSamCmd = "bwa mem $contigs $roiFastas{$roiId} | sed 's/\|quiver//g' > $roiSam";
+        $dm->addRule($roiSam, $contigs, $roiSamCmd, 'nopostfix' => 1);
 
-    my $varBam = "$outdir/$asmid.var.bam";
-    my $varBamCmd = "java -Xmx8g -jar ~/repositories/Picard-Latest/dist/SortSam.jar I=$varSam O=$varBam SO=coordinate CREATE_INDEX=true";
-    $dm->addRule($varBam, $varSam, $varBamCmd);
+        my $roiBam = "$outdir/$asmid.$roiId.bam";
+        my $roiBamCmd = "java -Xmx8g -jar ~/repositories/Picard-Latest/dist/SortSam.jar I=$roiSam O=$roiBam SO=coordinate CREATE_INDEX=true";
+        $dm->addRule($roiBam, $roiSam, $roiBamCmd);
 
-    my $varTable = "$outdir/$asmid.var.table";
-    my $varTableCmd = "grep -v '\@' $varSam | cut -f1-9,12-14 | column -t > $varTable";
-    $dm->addRule($varTable, $varSam, $varTableCmd);
+        my $roiTable = "$outdir/$asmid.$roiId.table";
+        my $roiTableCmd = "grep -v '\@' $roiSam | cut -f1-9,12-14 | column -t > $roiTable";
+        $dm->addRule($roiTable, $roiSam, $roiTableCmd);
+    }
 }
 
 $dm->execute();
