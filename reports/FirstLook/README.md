@@ -271,6 +271,7 @@ Recovery of the *var* repertoire
 |geneName       |contig            |    start|  NM|  NI|  ND|CIGAR                                                 |
 |:--------------|:-----------------|--------:|---:|---:|---:|:-----------------------------------------------------|
 |PF3D7_0100100  |scf7180000000113  |     2889|   0|   0|   0|7617M                                                 |
+|PF3D7_0100300  |scf7180000000113  |    15746|   0|   0|   0|4141M                                                 |
 |PF3D7_0115700  |scf7180000000113  |   581404|   1|   0|   1|1655M1D5849M                                          |
 |PF3D7_0200100  |scf7180000000110  |    23774|   2|   2|   0|4187M1I47M1I1701M                                     |
 |PF3D7_0223500  |scf7180000000110  |   913660|   5|   4|   1|1409M1I22M1I116M1I220M1I31M1D5495M                    |
@@ -289,6 +290,7 @@ Recovery of the *var* repertoire
 |PF3D7_0425800  |scf7180000000122  |   217801|   0|   0|   0|11399M                                                |
 |PF3D7_0426000  |scf7180000000122  |   234430|   0|   0|   0|7174M                                                 |
 |PF3D7_0500100  |scf7180000000107  |    13858|   4|   2|   0|5777M2I55M1I1693M                                     |
+|PF3D7_0533100  |scf7180000000107  |  1328058|   0|   0|   0|9495M                                                 |
 |PF3D7_0600200  |scf7180000000102  |  1306876|   1|   1|   0|1475M1I7857M                                          |
 |PF3D7_0600400  |scf7180000000102  |  1296989|   0|   0|   0|4136M                                                 |
 |PF3D7_0617400  |scf7180000000102  |   587149|   0|   0|   0|8374M                                                 |
@@ -332,7 +334,17 @@ Recovery of the *var* repertoire
 |PF3D7_1373500  |scf7180000000095  |    90223|  13|   9|   0|1626M1I28M1I71M1I35M1I54M2I37M1I10M1I70M2I89M1I5524M  |
 
 
-Finally, we examined the recovery of the 60 members of the *var* gene family by aligning their full-length genomic sequence (both exons plus the intron) to the AsmTest1 assembly using `bwa mem`.  All 60 *var* genes were successfully aligned to the assembly.  Information on each alignment is shown in the table above (NM, NI, and NI columns represent the numbers of mismatches, insertions, and deletions observed, respectively).  19 were found to map with 100% identity.  The remaining have, on average, 2.4634 mismatches, 1.3902 insertions, and 0.6341 deletions.  The overwhelming majority of indels are a single nucleotide in length.  Below, we show an example of some insertions found in gene PF3D7_1200100.
+We examined the recovery of the 62 members of the *var* gene family by aligning their full-length genomic sequences (exons and introns) to the AsmTest1 assembly using `bwa mem`.  All 62 *var* genes were successfully aligned to the assembly (all had mapping quality greater than 0; only 1 had mapping quality less than 60).  Information on each alignment is shown in the table above (NM, NI, and ND columns represent the numbers of mismatches, insertions, and deletions observed, respectively).  21 were found to map with 100% identity.  The remaining have, on average, 2.4634 mismatches, 1.3902 insertions, and 0.6341 deletions.  The overwhelming majority of indels are a single nucleotide in length.
 
-![var1](figure/PF3D7_1200100.svg.png)
-> A portion of var gene PF3D7_1200100, aligned to the AsmTest1 assembly.  Here, the reads are actually the full-length sequence of the gene.  Therefore, apparent deletions in the gene represent insertions in the assembly.  Click and choose the "Raw" option to zoom in.
+
+
+
+It seemed likely that many of these errors occur in intronic regions where high repetitive sequence content might contribute to misassembly.  We investigated this thought by aligning the exons of the var genes separately and enumerating errors observed in exons and introns.  We ignored 11 genes with poor exon alignments (i.e. with mapping quality less than 10).  The results are presented in the table below.  91.7808% of the errors are found in intronic regions.  Exon 2 of the *var* gene (the short exon) is base-for-base perfect when compared to the canonical reference.
+
+|id            |  total|  intron|  exon1|  exon2|
+|:-------------|------:|-------:|------:|------:|
+|all           |    146|     134|     12|      0|
+|  mismatches  |     81|      73|      8|      0|
+|  insertions  |     46|      45|      1|      0|
+|  deletions   |     19|      16|      3|      0|
+

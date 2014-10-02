@@ -444,7 +444,7 @@ Recovery of the *var* repertoire
 --------------------------------
 
 ```{r varTable, echo=FALSE, results='asis'}
-varTable = read.table(paste(dir.results, "/AsmTest1/AsmTest1.var.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
+varTable = read.table(paste(dir.results, "/AsmTest1/AsmTest1.varGenes.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
 colnames(varTable) = c( "geneName", "flags", "contig", "start", "MQ", "CIGAR", "QUAL", "UKN1", "UKN2", "NM", "MD", "AS" );
 varTable$NM = as.integer(gsub("NM:i:", "", varTable$NM));
 
@@ -452,7 +452,6 @@ numIns = c();
 numDel = c();
 
 for (i in 1:nrow(varTable)) {
-    varTable$CIGAR
     insAndDels = table(unlist(strsplit(gsub("\\d+", "", gsub("\\d+M", "", varTable$CIGAR[i])), "")));
 
     numIns = c(numIns, ifelse(is.na(insAndDels["I"]), 0, insAndDels["I"]));
@@ -466,7 +465,82 @@ kable(varTable[,c("geneName", "contig", "start", "NM", "NI", "ND", "CIGAR")]);
 numPerfect = nrow(subset(varTable, NM == 0 & NI == 0 & ND == 0));
 ```
 
-Finally, we examined the recovery of the 60 members of the *var* gene family by aligning their full-length genomic sequence (both exons plus the intron) to the AsmTest1 assembly using `bwa mem`.  All 60 *var* genes were successfully aligned to the assembly.  Information on each alignment is shown in the table above (NM, NI, and NI columns represent the numbers of mismatches, insertions, and deletions observed, respectively).  `r numPerfect` were found to map with 100% identity.  The remaining have, on average, `r mean(subset(varTable, !(NM == 0 & NI == 0 & ND == 0))[,c("NM")])` mismatches, `r mean(subset(varTable, !(NM == 0 & NI == 0 & ND == 0))[,c("NI")])` insertions, and `r mean(subset(varTable, !(NM == 0 & NI == 0 & ND == 0))[,c("ND")])` deletions.  The overwhelming majority of indels are a single nucleotide in length.  Below, we show an example of some insertions found in gene PF3D7_1200100.
+We examined the recovery of the `r nrow(varTable)` members of the *var* gene family by aligning their full-length genomic sequences (exons and introns) to the AsmTest1 assembly using `bwa mem`.  All `r nrow(varTable)` *var* genes were successfully aligned to the assembly (all had mapping quality greater than 0; only `r sum(varTable$MQ < 60)` had mapping quality less than 60).  Information on each alignment is shown in the table above (NM, NI, and ND columns represent the numbers of mismatches, insertions, and deletions observed, respectively).  `r numPerfect` were found to map with 100% identity.  The remaining have, on average, `r mean(subset(varTable, !(NM == 0 & NI == 0 & ND == 0))[,c("NM")])` mismatches, `r mean(subset(varTable, !(NM == 0 & NI == 0 & ND == 0))[,c("NI")])` insertions, and `r mean(subset(varTable, !(NM == 0 & NI == 0 & ND == 0))[,c("ND")])` deletions.  The overwhelming majority of indels are a single nucleotide in length.
 
-![var1](figure/PF3D7_1200100.svg.png)
-> A portion of var gene PF3D7_1200100, aligned to the AsmTest1 assembly.  Here, the reads are actually the full-length sequence of the gene.  Therefore, apparent deletions in the gene represent insertions in the assembly.  Click and choose the "Raw" option to zoom in.
+```{r varMismatchLocationSummary, echo=FALSE}
+varExons = read.table(paste(dir.results, "/AsmTest1/AsmTest1.varExons.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
+colnames(varExons) = c( "exonName", "flags", "contig", "start", "MQ", "CIGAR", "QUAL", "UKN1", "UKN2", "NM", "MD", "AS" );
+varExons$NM = as.integer(gsub("NM:i:", "", varExons$NM));
+varExons$geneName = unlist(lapply(strsplit(gsub("exon_", "", varExons$exonName), "-"), function(x) { return(x[1]); }));
+varExons$exonNumber = unlist(lapply(strsplit(gsub("exon_", "", varExons$exonName), "-"), function(x) { return(x[2]); }));
+
+numIns = c();
+numDel = c();
+
+for (i in 1:nrow(varExons)) {
+    insAndDels = table(unlist(strsplit(gsub("\\d+", "", gsub("\\d+M", "", varExons$CIGAR[i])), "")));
+
+    numIns = c(numIns, ifelse(is.na(insAndDels["I"]), 0, insAndDels["I"]));
+    numDel = c(numDel, ifelse(is.na(insAndDels["D"]), 0, insAndDels["D"]));
+}
+
+varExons = cbind(varExons, NI = numIns, ND = numDel);
+
+genesToProcess = unique(varExons$geneName[!(varExons$geneName %in% subset(varExons, MQ < 10)$geneName)]);
+
+list.nm = list();
+list.ni = list();
+list.nd = list();
+list.ne = list();
+for (gene in genesToProcess) {
+    nm.total = subset(varTable, geneName == gene)$NM;
+    ni.total = subset(varTable, geneName == gene)$NI;
+    nd.total = subset(varTable, geneName == gene)$ND;
+
+    nm.exon1 = subset(varExons, geneName == gene & exonNumber == 1)$NM;
+    ni.exon1 = subset(varExons, geneName == gene & exonNumber == 1)$NI;
+    nd.exon1 = subset(varExons, geneName == gene & exonNumber == 1)$ND;
+
+    nm.exon2 = subset(varExons, geneName == gene & exonNumber == 2)$NM;
+    ni.exon2 = subset(varExons, geneName == gene & exonNumber == 2)$NI;
+    nd.exon2 = subset(varExons, geneName == gene & exonNumber == 2)$ND;
+
+    nm.intron = nm.total - nm.exon1 - nm.exon2;
+    ni.intron = ni.total - ni.exon1 - ni.exon2;
+    nd.intron = nd.total - nd.exon1 - nd.exon2;
+
+    list.nm[["total"]] = c(list.nm[["total"]], nm.total);
+    list.nm[["exon1"]] = c(list.nm[["exon1"]], nm.exon1);
+    list.nm[["exon2"]] = c(list.nm[["exon2"]], nm.exon2);
+    list.nm[["intron"]] = c(list.nm[["intron"]], nm.intron);
+
+    list.ni[["total"]] = c(list.ni[["total"]], ni.total);
+    list.ni[["exon1"]] = c(list.ni[["exon1"]], ni.exon1);
+    list.ni[["exon2"]] = c(list.ni[["exon2"]], ni.exon2);
+    list.ni[["intron"]] = c(list.ni[["intron"]], ni.intron);
+
+    list.nd[["total"]] = c(list.nd[["total"]], nd.total);
+    list.nd[["exon1"]] = c(list.nd[["exon1"]], nd.exon1);
+    list.nd[["exon2"]] = c(list.nd[["exon2"]], nd.exon2);
+    list.nd[["intron"]] = c(list.nd[["intron"]], nd.intron);
+
+    list.ne[["total"]] = c(list.ne[["total"]], nm.total + ni.total + nd.total);
+    list.ne[["exon1"]] = c(list.ne[["exon1"]], nm.exon1 + ni.exon1 + nd.exon1);
+    list.ne[["exon2"]] = c(list.ne[["exon2"]], nm.exon2 + ni.exon2 + nd.exon2);
+    list.ne[["intron"]] = c(list.ne[["intron"]], nm.intron + ni.intron + nd.intron);
+}
+
+matrix.ne = cbind(total = sum(list.ne[["total"]]), intron = sum(list.ne[["intron"]]), exon1 = sum(list.ne[["exon1"]]), exon2 = sum(list.ne[["exon2"]]));
+matrix.nm = cbind(total = sum(list.nm[["total"]]), intron = sum(list.nm[["intron"]]), exon1 = sum(list.nm[["exon1"]]), exon2 = sum(list.nm[["exon2"]]));
+matrix.ni = cbind(total = sum(list.ni[["total"]]), intron = sum(list.ni[["intron"]]), exon1 = sum(list.ni[["exon1"]]), exon2 = sum(list.ni[["exon2"]]));
+matrix.nd = cbind(total = sum(list.nd[["total"]]), intron = sum(list.nd[["intron"]]), exon1 = sum(list.nd[["exon1"]]), exon2 = sum(list.nd[["exon2"]]));
+
+matrix.all = rbind(all = matrix.ne, mismatches = matrix.nm, insertions = matrix.ni, deletions = matrix.nd);
+rownames(matrix.all) = c("all", "  mismatches", "  insertions", "  deletions");
+```
+
+It seemed likely that many of these errors occur in intronic regions where high repetitive sequence content might contribute to misassembly.  We investigated this thought by aligning the exons of the var genes separately and enumerating errors observed in exons and introns.  We ignored `r length(subset(varExons, MQ < 10)$geneName)` genes with poor exon alignments (i.e. with mapping quality less than 10).  The results are presented in the table below.  `r as.double(100 * matrix.ne[,"intron"] / matrix.ne[,"total"])`% of the errors are found in intronic regions.  Exon 2 of the *var* gene (the short exon) is base-for-base perfect when compared to the canonical reference.
+
+```{r showVarMismatchLocationSummary, echo=FALSE, results='asis'}
+kable(matrix.all);
+```
