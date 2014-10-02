@@ -1,0 +1,29 @@
+##gff-version	3
+##feature-ontology	so.obo
+##attribute-ontology	gff3_attributes.obo
+##sequence-region	M76611	1	5967
+##sequence-region	PFC10_API_IRAB	1	34242
+##sequence-region	Pf3D7_01_v3	1	640851
+##sequence-region	Pf3D7_02_v3	1	947102
+##sequence-region	Pf3D7_03_v3	1	1067971
+##sequence-region	Pf3D7_04_v3	1	1200490
+##sequence-region	Pf3D7_05_v3	1	1343557
+##sequence-region	Pf3D7_06_v3	1	1418242
+##sequence-region	Pf3D7_07_v3	1	1445207
+##sequence-region	Pf3D7_08_v3	1	1472805
+##sequence-region	Pf3D7_09_v3	1	1541735
+##sequence-region	Pf3D7_10_v3	1	1687656
+##sequence-region	Pf3D7_11_v3	1	2038340
+##sequence-region	Pf3D7_12_v3	1	2271494
+##sequence-region	Pf3D7_13_v3	1	2925236
+##sequence-region	Pf3D7_14_v3	1	3291936
+Pf3D7_01_v3	ApiDB	gene	495244	500076	.	+	.	ID=PF3D7_0113100;Name=PF3D7_0113100;description=surface-associated+interspersed+gene+1.1+%28SURFIN+1.1%29+%28SURF1.1%29;size=4833;web_id=PF3D7_0113100;locus_tag=PF3D7_0113100;size=4833;Alias=6594250,SURF1.1,12368867,PFA0625w,124505881,MAL1P3.07,CAB63562.1,PF3D7_0113100,XP_001351054.1,PFA0625w,cytoadherencescheme,proteinsLocalizpath
+Pf3D7_01_v3	ApiDB	gene	512086	517855	.	+	.	ID=PF3D7_0113600;Name=PF3D7_0113600;description=surface-associated+interspersed+gene+%28SURFIN%29%2C+pseudogene+%28SURF1.2%29;size=5770;web_id=PF3D7_0113600;locus_tag=PF3D7_0113600;size=5770;Alias=PFA0655,SURF1.2,MAL1P12a,PFA0650w,PFA0655w,MAL1P3.12,3D7surf1.2,MAL1P3.12a,PF3D7_0113600,PFA0650w,cytoadherencescheme,proteinsLocalizpath
+Pf3D7_01_v3	ApiDB	gene	577704	583789	.	+	.	ID=PF3D7_0115000;Name=PF3D7_0115000;description=surface-associated+interspersed+protein+1.3+%28SURFIN+1.3%29+%28SURF1.3%29;size=6086;web_id=PF3D7_0115000;locus_tag=PF3D7_0115000;size=6086;Alias=SURF1.3,12368867,23477001,PFA0725w,124505917,MAL1P4.21,3D7surf1.3,CAD48961.1,PF3D7_0115000,XP_001351072.1,PFA0725w,cytoadherencescheme,proteinsLocalizpath
+Pf3D7_04_v3	ApiDB	gene	127712	134468	.	-	.	ID=PF3D7_0402200;Name=PF3D7_0402200;description=surface-associated+interspersed+gene+4.1%2C+pseudogene+%28SURFIN4.1%29+%28SURF4.1%29;size=6757;web_id=PF3D7_0402200;locus_tag=PF3D7_0402200;size=6757;Alias=812527,C0H486,SURF4.1,12368867,PFD0100c,PFD0105c,MAL4P1.20,MAL4P1.21,3D7Surf4.1,PF3D7_0402200,PFD0100c,cytoadherencescheme,proteinsLocalizpath
+Pf3D7_04_v3	ApiDB	gene	1099811	1107111	.	+	.	ID=PF3D7_0424400;Name=PF3D7_0424400;description=surface-associated+interspersed+gene+4.2%2C+%28SURFIN4.2%29+%28SURF4.2%29;size=7301;web_id=PF3D7_0424400;locus_tag=PF3D7_0424400;size=7301;Alias=812428,Q8IFM2,SURF4.2,12368867,23498306,PFD1160w,124505611,3D7Surf4.2,CAD49278.1,MAL4P1.227,PF3D7_0424400,XP_001351547.1,PFD1160w,cytoadherencescheme,proteinsLocalizpath
+Pf3D7_08_v3	ApiDB	gene	65716	71785	.	-	.	ID=PF3D7_0800700;Name=PF3D7_0800700;description=surface-associated+interspersed+gene+8.3+%28SURFIN8.3%29+%28SURF8.3%29;size=6070;web_id=PF3D7_0800700;locus_tag=PF3D7_0800700;size=6070;Alias=cytoadherencescheme,2655360,C0H4Y2,3D7Surf8.3,PF3D7_0800700,MAL8P1.162,SURF8.3,proteinsLocalizpath,MAL8P1.162
+Pf3D7_08_v3	ApiDB	gene	1310637	1316955	.	+	.	ID=PF3D7_0830800;Name=PF3D7_0830800;description=surface-associated+interspersed+gene+8.2+%28SURFIN8.2%29+%28SURF8.2%29;size=6319;web_id=PF3D7_0830800;locus_tag=PF3D7_0830800;size=6319;Alias=PF08_0002,2655451,CAD51072.1,PF08_0002,Q8IBD4,23498992,cytoadherencescheme,124512180,PF3D7_0830800,XP_001349223.1,SURF8.2,3D7Surf8.2,proteinsLocalizpath
+Pf3D7_08_v3	ApiDB	gene	1325144	1331187	.	+	.	ID=PF3D7_0831100;Name=PF3D7_0831100;description=surface-associated+interspersed+gene+8.1%2C+%28SURFIN8.1%29+%28SURF8.1%29;size=6044;web_id=PF3D7_0831100;locus_tag=PF3D7_0831100;size=6044;Alias=2655214,MAL8P1.1,225632290,cytoadherencescheme,XP_002808891.1,PF3D7_0831100,proteinsLocalizpath,C0H4Z4,CAX64169.1,296005112,SURF8.1,MAL8P1.1,3D7Surf8.1
+Pf3D7_13_v3	ApiDB	gene	102842	109471	.	+	.	ID=PF3D7_1301800;Name=PF3D7_1301800;description=surface-associated+interspersed+gene+13.1+%28SURFIN13.1%29%2C+pseudogene+%28SURF13.1%29;size=6630;web_id=PF3D7_1301800;locus_tag=PF3D7_1301800;size=6630;Alias=3D7Surf13.1,proteinsLocalizpath,Q8IEI9,PF13_0075,814052,cytoadherencescheme,PF13_0075,PF3D7_1301800,PF13_0074,SURF13.1
+Pf3D7_14_v3	ApiDB	gene	3193285	3199478	.	+	.	ID=PF3D7_1477600;Name=PF3D7_1477600;description=surface-associated+interspersed+protein+14.1+%28SURFIN+14.1%29+%28Surf14.1%29;size=6194;web_id=PF3D7_1477600;locus_tag=PF3D7_1477600;size=6194;Alias=PF14_0747,812329,cytoadherencescheme,Q8IK59,Surf14.1,PF14_0747,12368864,PF3D7_1477600,proteinsLocalizpath

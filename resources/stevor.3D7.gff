@@ -1,0 +1,205 @@
+##gff-version	3
+##feature-ontology	so.obo
+##attribute-ontology	gff3_attributes.obo
+##sequence-region	M76611	1	5967
+##sequence-region	PFC10_API_IRAB	1	34242
+##sequence-region	Pf3D7_01_v3	1	640851
+##sequence-region	Pf3D7_02_v3	1	947102
+##sequence-region	Pf3D7_03_v3	1	1067971
+##sequence-region	Pf3D7_04_v3	1	1200490
+##sequence-region	Pf3D7_05_v3	1	1343557
+##sequence-region	Pf3D7_06_v3	1	1418242
+##sequence-region	Pf3D7_07_v3	1	1445207
+##sequence-region	Pf3D7_08_v3	1	1472805
+##sequence-region	Pf3D7_09_v3	1	1541735
+##sequence-region	Pf3D7_10_v3	1	1687656
+##sequence-region	Pf3D7_11_v3	1	2038340
+##sequence-region	Pf3D7_12_v3	1	2271494
+##sequence-region	Pf3D7_13_v3	1	2925236
+##sequence-region	Pf3D7_14_v3	1	3291936
+Pf3D7_01_v3	ApiDB	gene	87203	88177	.	-	.	ID=PF3D7_0101800;Name=PF3D7_0101800;description=stevor;size=975;web_id=PF3D7_0101800;locus_tag=PF3D7_0101800;size=975;Alias=23510593,PFA0090c,124505673,MAL1P1.9b,rosetting,CAD48978.1,PF3D7_0101800,XP_001350950.1,PFA0090c,cytoadherencescheme
+Pf3D7_01_v3	ApiDB	mRNA	87203	88177	.	-	.	ID=rna_PF3D7_0101800-1;Name=PF3D7_0101800-1;description=PF3D7_0101800-1;size=975;Parent=PF3D7_0101800;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0101800,NCBI_gi:124505673,NCBI_gi:23510593,taxon:36329
+Pf3D7_01_v3	ApiDB	CDS	88109	88177	.	-	0	ID=cds_PF3D7_0101800-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0101800-1
+Pf3D7_01_v3	ApiDB	CDS	87203	88003	.	-	0	ID=cds_PF3D7_0101800-1;Name=cds;description=.;size=801;Parent=rna_PF3D7_0101800-1
+Pf3D7_01_v3	ApiDB	exon	88109	88177	.	-	.	ID=exon_PF3D7_0101800-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0101800-1
+Pf3D7_01_v3	ApiDB	exon	87203	88003	.	-	.	ID=exon_PF3D7_0101800-2;Name=exon;description=exon;size=801;Parent=rna_PF3D7_0101800-1
+Pf3D7_01_v3	ApiDB	gene	598465	599472	.	+	.	ID=PF3D7_0115400;Name=PF3D7_0115400;description=stevor+%28stevor%29;size=1008;web_id=PF3D7_0115400;locus_tag=PF3D7_0115400;size=1008;Alias=stevor,23477006,PFA0750w,124505927,MAL1P4.26,rosetting,CAD48966.1,PF3D7_0115400,XP_001351077.1,apicoplastgene,PFA0750w,cytoadherencescheme
+Pf3D7_01_v3	ApiDB	mRNA	598465	599472	.	+	.	ID=rna_PF3D7_0115400-1;Name=PF3D7_0115400-1;description=PF3D7_0115400-1;size=1008;Parent=PF3D7_0115400;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0115400,NCBI_gi:124505927,NCBI_gi:23477006,taxon:36329
+Pf3D7_01_v3	ApiDB	CDS	598465	598533	.	+	0	ID=cds_PF3D7_0115400-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0115400-1
+Pf3D7_01_v3	ApiDB	CDS	598636	599472	.	+	0	ID=cds_PF3D7_0115400-1;Name=cds;description=.;size=837;Parent=rna_PF3D7_0115400-1
+Pf3D7_01_v3	ApiDB	exon	598465	598533	.	+	.	ID=exon_PF3D7_0115400-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0115400-1
+Pf3D7_01_v3	ApiDB	exon	598636	599472	.	+	.	ID=exon_PF3D7_0115400-2;Name=exon;description=exon;size=837;Parent=rna_PF3D7_0115400-1
+Pf3D7_02_v3	ApiDB	gene	38287	39303	.	-	.	ID=PF3D7_0200400;Name=PF3D7_0200400;description=stevor;size=1017;web_id=PF3D7_0200400;locus_tag=PF3D7_0200400;size=1017;Alias=812600,O96111,3845075,9804551,12368864,12477793,PFB0025c,124799942,PF02_0004,rosetting,AAC71795.1,PF3D7_0200400,XP_001349518.1,apicoplastgene,PFB0025c,cytoadherencescheme
+Pf3D7_02_v3	ApiDB	mRNA	38287	39303	.	-	.	ID=rna_PF3D7_0200400-1;Name=PF3D7_0200400-1;description=PF3D7_0200400-1;size=1017;Parent=PF3D7_0200400;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0200400,NCBI_gi:124799942,NCBI_gi:3845075,taxon:36329
+Pf3D7_02_v3	ApiDB	CDS	39235	39303	.	-	0	ID=cds_PF3D7_0200400-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0200400-1
+Pf3D7_02_v3	ApiDB	CDS	38287	39132	.	-	0	ID=cds_PF3D7_0200400-1;Name=cds;description=.;size=846;Parent=rna_PF3D7_0200400-1
+Pf3D7_02_v3	ApiDB	exon	39235	39303	.	-	.	ID=exon_PF3D7_0200400-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0200400-1
+Pf3D7_02_v3	ApiDB	exon	38287	39132	.	-	.	ID=exon_PF3D7_0200400-2;Name=exon;description=exon;size=846;Parent=rna_PF3D7_0200400-1
+Pf3D7_02_v3	ApiDB	gene	66529	67545	.	+	.	ID=PF3D7_0201300;Name=PF3D7_0201300;description=stevor;size=1017;web_id=PF3D7_0201300;locus_tag=PF3D7_0201300;size=1017;Alias=812609,O96118,9804551,12368864,12477793,PFB0065w,254688441,258596854,PF02_0013,rosetting,AAC71803.3,PF3D7_0201300,XP_001349527.2,PFB0065w,cytoadherencescheme
+Pf3D7_02_v3	ApiDB	mRNA	66529	67545	.	+	.	ID=rna_PF3D7_0201300-1;Name=PF3D7_0201300-1;description=PF3D7_0201300-1;size=1017;Parent=PF3D7_0201300;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0201300,NCBI_gi:254688441,NCBI_gi:258596854,taxon:36329
+Pf3D7_02_v3	ApiDB	CDS	66529	66597	.	+	0	ID=cds_PF3D7_0201300-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0201300-1
+Pf3D7_02_v3	ApiDB	CDS	66697	67545	.	+	0	ID=cds_PF3D7_0201300-1;Name=cds;description=.;size=849;Parent=rna_PF3D7_0201300-1
+Pf3D7_02_v3	ApiDB	exon	66529	66597	.	+	.	ID=exon_PF3D7_0201300-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0201300-1
+Pf3D7_02_v3	ApiDB	exon	66697	67545	.	+	.	ID=exon_PF3D7_0201300-2;Name=exon;description=exon;size=849;Parent=rna_PF3D7_0201300-1
+Pf3D7_02_v3	ApiDB	gene	860466	861504	.	+	.	ID=PF3D7_0221400;Name=PF3D7_0221400;description=stevor;size=1039;web_id=PF3D7_0221400;locus_tag=PF3D7_0221400;size=1039;Alias=812795,O96283,9804551,12368864,12477793,PFB0955w,254688496,258596945,PF02_0199,rosetting,AAC71980.3,PF3D7_0221400,XP_001349713.2,apicoplastgene,PFB0955w,cytoadherencescheme
+Pf3D7_02_v3	ApiDB	mRNA	860466	861504	.	+	.	ID=rna_PF3D7_0221400-1;Name=PF3D7_0221400-1;description=PF3D7_0221400-1;size=1039;Parent=PF3D7_0221400;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0221400,NCBI_gi:254688496,NCBI_gi:258596945,taxon:36329
+Pf3D7_02_v3	ApiDB	CDS	860466	860534	.	+	0	ID=cds_PF3D7_0221400-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0221400-1
+Pf3D7_02_v3	ApiDB	CDS	860650	861504	.	+	0	ID=cds_PF3D7_0221400-1;Name=cds;description=.;size=855;Parent=rna_PF3D7_0221400-1
+Pf3D7_02_v3	ApiDB	exon	860466	860534	.	+	.	ID=exon_PF3D7_0221400-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0221400-1
+Pf3D7_02_v3	ApiDB	exon	860650	861504	.	+	.	ID=exon_PF3D7_0221400-2;Name=exon;description=exon;size=855;Parent=rna_PF3D7_0221400-1
+Pf3D7_02_v3	ApiDB	gene	899430	900445	.	+	.	ID=PF3D7_0222800;Name=PF3D7_0222800;description=stevor;size=1016;web_id=PF3D7_0222800;locus_tag=PF3D7_0222800;size=1016;Alias=812812,O96291,9804551,12368864,PFB1020w,254688498,258596949,PF02_0216,rosetting,AAC71991.3,PF3D7_0222800,XP_001349730.2,apicoplastgene,PFB1020w,cytoadherencescheme
+Pf3D7_02_v3	ApiDB	mRNA	899430	900445	.	+	.	ID=rna_PF3D7_0222800-1;Name=PF3D7_0222800-1;description=PF3D7_0222800-1;size=1016;Parent=PF3D7_0222800;Ontology_term=GO:0016020;Dbxref=ApiDB_PlasmoDB:PF3D7_0222800,NCBI_gi:254688498,NCBI_gi:258596949,taxon:36329
+Pf3D7_02_v3	ApiDB	CDS	899430	899498	.	+	0	ID=cds_PF3D7_0222800-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0222800-1
+Pf3D7_02_v3	ApiDB	CDS	899600	900445	.	+	0	ID=cds_PF3D7_0222800-1;Name=cds;description=.;size=846;Parent=rna_PF3D7_0222800-1
+Pf3D7_02_v3	ApiDB	exon	899430	899498	.	+	.	ID=exon_PF3D7_0222800-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0222800-1
+Pf3D7_02_v3	ApiDB	exon	899600	900445	.	+	.	ID=exon_PF3D7_0222800-2;Name=exon;description=exon;size=846;Parent=rna_PF3D7_0222800-1
+Pf3D7_03_v3	ApiDB	gene	52280	53273	.	-	.	ID=PF3D7_0300400;Name=PF3D7_0300400;description=stevor;size=994;web_id=PF3D7_0300400;locus_tag=PF3D7_0300400;size=994;Alias=814324,Q9U5L9,4494022,MAL3P8.4,PFC0025c,124504679,rosetting,CAB39117.1,PF3D7_0300400,XP_001351082.1,PFC0025c,cytoadherencescheme
+Pf3D7_03_v3	ApiDB	mRNA	52280	53273	.	-	.	ID=rna_PF3D7_0300400-1;Name=PF3D7_0300400-1;description=PF3D7_0300400-1;size=994;Parent=PF3D7_0300400;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0300400,NCBI_gi:124504679,NCBI_gi:4494022,taxon:36329
+Pf3D7_03_v3	ApiDB	CDS	53205	53273	.	-	0	ID=cds_PF3D7_0300400-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0300400-1
+Pf3D7_03_v3	ApiDB	CDS	52280	53101	.	-	0	ID=cds_PF3D7_0300400-1;Name=cds;description=.;size=822;Parent=rna_PF3D7_0300400-1
+Pf3D7_03_v3	ApiDB	exon	53205	53273	.	-	.	ID=exon_PF3D7_0300400-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0300400-1
+Pf3D7_03_v3	ApiDB	exon	52280	53101	.	-	.	ID=exon_PF3D7_0300400-2;Name=exon;description=exon;size=822;Parent=rna_PF3D7_0300400-1
+Pf3D7_03_v3	ApiDB	gene	1021998	1023008	.	+	.	ID=PF3D7_0324600;Name=PF3D7_0324600;description=stevor+%283D7-stevorT3-2%29+%28stevor%29;size=1011;web_id=PF3D7_0324600;locus_tag=PF3D7_0324600;size=1011;Alias=814561,Q9U5M0,stevor,4494000,PFC1105w,124505149,MAL3P7.52,rosetting,CAB39059.1,PF3D7_0324600,XP_001351316.1,PFC1105w,cytoadherencescheme
+Pf3D7_03_v3	ApiDB	mRNA	1021998	1023008	.	+	.	ID=rna_PF3D7_0324600-1;Name=PF3D7_0324600-1;description=PF3D7_0324600-1;size=1011;Parent=PF3D7_0324600;Dbxref=ApiDB_PlasmoDB:PF3D7_0324600,NCBI_gi:124505149,NCBI_gi:4494000,taxon:36329
+Pf3D7_03_v3	ApiDB	CDS	1021998	1022066	.	+	0	ID=cds_PF3D7_0324600-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0324600-1
+Pf3D7_03_v3	ApiDB	CDS	1022172	1023008	.	+	0	ID=cds_PF3D7_0324600-1;Name=cds;description=.;size=837;Parent=rna_PF3D7_0324600-1
+Pf3D7_03_v3	ApiDB	exon	1021998	1022066	.	+	.	ID=exon_PF3D7_0324600-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0324600-1
+Pf3D7_03_v3	ApiDB	exon	1022172	1023008	.	+	.	ID=exon_PF3D7_0324600-2;Name=exon;description=exon;size=837;Parent=rna_PF3D7_0324600-1
+Pf3D7_04_v3	ApiDB	gene	66601	67573	.	-	.	ID=PF3D7_0400800;Name=PF3D7_0400800;description=stevor;size=973;web_id=PF3D7_0400800;locus_tag=PF3D7_0400800;size=973;Alias=812539,Q8I215,23498132,MAL4P1.7,PFD0035c,124505165,rosetting,CAD49099.1,PF3D7_0400800,XP_001351324.1,PFD0035c,cytoadherencescheme
+Pf3D7_04_v3	ApiDB	mRNA	66601	67573	.	-	.	ID=rna_PF3D7_0400800-1;Name=PF3D7_0400800-1;description=PF3D7_0400800-1;size=973;Parent=PF3D7_0400800;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0400800,NCBI_gi:124505165,NCBI_gi:23498132,taxon:36329
+Pf3D7_04_v3	ApiDB	CDS	67505	67573	.	-	0	ID=cds_PF3D7_0400800-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0400800-1
+Pf3D7_04_v3	ApiDB	CDS	66601	67401	.	-	0	ID=cds_PF3D7_0400800-1;Name=cds;description=.;size=801;Parent=rna_PF3D7_0400800-1
+Pf3D7_04_v3	ApiDB	exon	67505	67573	.	-	.	ID=exon_PF3D7_0400800-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0400800-1
+Pf3D7_04_v3	ApiDB	exon	66601	67401	.	-	.	ID=exon_PF3D7_0400800-2;Name=exon;description=exon;size=801;Parent=rna_PF3D7_0400800-1
+Pf3D7_04_v3	ApiDB	gene	159279	160314	.	-	.	ID=PF3D7_0402600;Name=PF3D7_0402600;description=stevor;size=1036;web_id=PF3D7_0402600;locus_tag=PF3D7_0402600;size=1036;Alias=812506,Q8I201,23498147,PFD0125c,PFD0130c,124505195,MAL4P1.26,rosetting,CAD49117.1,PF3D7_0402600,XP_001351339.1,apicoplastgene,PFD0125c,cytoadherencescheme
+Pf3D7_04_v3	ApiDB	mRNA	159279	160314	.	-	.	ID=rna_PF3D7_0402600-1;Name=PF3D7_0402600-1;description=PF3D7_0402600-1;size=1036;Parent=PF3D7_0402600;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0402600,NCBI_gi:124505195,NCBI_gi:23498147,taxon:36329
+Pf3D7_04_v3	ApiDB	CDS	160267	160314	.	-	0	ID=cds_PF3D7_0402600-1;Name=cds;description=.;size=48;Parent=rna_PF3D7_0402600-1
+Pf3D7_04_v3	ApiDB	CDS	159279	160136	.	-	0	ID=cds_PF3D7_0402600-1;Name=cds;description=.;size=858;Parent=rna_PF3D7_0402600-1
+Pf3D7_04_v3	ApiDB	exon	160267	160314	.	-	.	ID=exon_PF3D7_0402600-1;Name=exon;description=exon;size=48;Parent=rna_PF3D7_0402600-1
+Pf3D7_04_v3	ApiDB	exon	159279	160136	.	-	.	ID=exon_PF3D7_0402600-2;Name=exon;description=exon;size=858;Parent=rna_PF3D7_0402600-1
+Pf3D7_04_v3	ApiDB	gene	1146672	1147697	.	-	.	ID=PF3D7_0425500;Name=PF3D7_0425500;description=stevor;size=1026;web_id=PF3D7_0425500;locus_tag=PF3D7_0425500;size=1026;Alias=rosetting,PF3D7_0425500,XP_001351559.1,23498318,PFD1220c,CAD49290.1,cytoadherencescheme,PFD1220c,812405,MAL4P1.239,124505635,apicoplastgene,Q8IFL0
+Pf3D7_04_v3	ApiDB	mRNA	1146672	1147697	.	-	.	ID=rna_PF3D7_0425500-1;Name=PF3D7_0425500-1;description=PF3D7_0425500-1;size=1026;Parent=PF3D7_0425500;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0425500,NCBI_gi:124505635,NCBI_gi:23498318,taxon:36329
+Pf3D7_04_v3	ApiDB	CDS	1147650	1147697	.	-	0	ID=cds_PF3D7_0425500-1;Name=cds;description=.;size=48;Parent=rna_PF3D7_0425500-1
+Pf3D7_04_v3	ApiDB	CDS	1146672	1147538	.	-	0	ID=cds_PF3D7_0425500-1;Name=cds;description=.;size=867;Parent=rna_PF3D7_0425500-1
+Pf3D7_04_v3	ApiDB	exon	1147650	1147697	.	-	.	ID=exon_PF3D7_0425500-1;Name=exon;description=exon;size=48;Parent=rna_PF3D7_0425500-1
+Pf3D7_04_v3	ApiDB	exon	1146672	1147538	.	-	.	ID=exon_PF3D7_0425500-2;Name=exon;description=exon;size=867;Parent=rna_PF3D7_0425500-1
+Pf3D7_06_v3	ApiDB	gene	738259	739265	.	-	.	ID=PF3D7_0617600;Name=PF3D7_0617600;description=stevor+%28Stevor%29;size=1007;web_id=PF3D7_0617600;locus_tag=PF3D7_0617600;size=1007;Alias=2270.t00066,Stevor,PFF0850c,apicoplastgene,3885795,rosetting,XP_966161.1,PF3D7_0617600,cytoadherencescheme,PFF0850c,MAL6P1.251,CAG24991.1,46361127,C6KT16,86171178
+Pf3D7_06_v3	ApiDB	mRNA	738259	739265	.	-	.	ID=rna_PF3D7_0617600-1;Name=PF3D7_0617600-1;description=PF3D7_0617600-1;size=1007;Parent=PF3D7_0617600;Ontology_term=GO:0020033,GO:0016020,GO:0020002;Dbxref=ApiDB_PlasmoDB:PF3D7_0617600,NCBI_gi:46361127,NCBI_gi:86171178,taxon:36329
+Pf3D7_06_v3	ApiDB	CDS	739197	739265	.	-	0	ID=cds_PF3D7_0617600-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0617600-1
+Pf3D7_06_v3	ApiDB	CDS	738259	739098	.	-	0	ID=cds_PF3D7_0617600-1;Name=cds;description=.;size=840;Parent=rna_PF3D7_0617600-1
+Pf3D7_06_v3	ApiDB	exon	739197	739265	.	-	.	ID=exon_PF3D7_0617600-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0617600-1
+Pf3D7_06_v3	ApiDB	exon	738259	739098	.	-	.	ID=exon_PF3D7_0617600-2;Name=exon;description=exon;size=840;Parent=rna_PF3D7_0617600-1
+Pf3D7_06_v3	ApiDB	gene	1333013	1334035	.	+	.	ID=PF3D7_0631900;Name=PF3D7_0631900;description=stevor+%28stevor%29;size=1023;web_id=PF3D7_0631900;locus_tag=PF3D7_0631900;size=1023;Alias=3885823,rosetting,296004750,cytoadherencescheme,PFF1550w,PF3D7_0631900,MAL6P1.10,225631781,2270.t00314,XP_966299.2,stevor,C6KTF1,PFF1550w,CAG25131.2
+Pf3D7_06_v3	ApiDB	mRNA	1333013	1334035	.	+	.	ID=rna_PF3D7_0631900-1;Name=PF3D7_0631900-1;description=PF3D7_0631900-1;size=1023;Parent=PF3D7_0631900;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0631900,NCBI_gi:225631781,NCBI_gi:296004750,taxon:36329
+Pf3D7_06_v3	ApiDB	CDS	1333013	1333081	.	+	0	ID=cds_PF3D7_0631900-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0631900-1
+Pf3D7_06_v3	ApiDB	CDS	1333193	1334035	.	+	0	ID=cds_PF3D7_0631900-1;Name=cds;description=.;size=843;Parent=rna_PF3D7_0631900-1
+Pf3D7_06_v3	ApiDB	exon	1333013	1333081	.	+	.	ID=exon_PF3D7_0631900-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0631900-1
+Pf3D7_06_v3	ApiDB	exon	1333193	1334035	.	+	.	ID=exon_PF3D7_0631900-2;Name=exon;description=exon;size=843;Parent=rna_PF3D7_0631900-1
+Pf3D7_07_v3	ApiDB	gene	36922	37927	.	-	.	ID=PF3D7_0700400;Name=PF3D7_0700400;description=stevor;size=1006;web_id=PF3D7_0700400;locus_tag=PF3D7_0700400;size=1006;Alias=PF3D7_0700400,MAL8P1.217,C0H507,rosetting,9221946,cytoadherencescheme,MAL8P1.217
+Pf3D7_07_v3	ApiDB	mRNA	36922	37927	.	-	.	ID=rna_PF3D7_0700400-1;Name=PF3D7_0700400-1;description=PF3D7_0700400-1;size=1006;Parent=PF3D7_0700400;Dbxref=ApiDB_PlasmoDB:PF3D7_0700400,taxon:36329
+Pf3D7_07_v3	ApiDB	CDS	37859	37927	.	-	0	ID=cds_PF3D7_0700400-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0700400-1
+Pf3D7_07_v3	ApiDB	CDS	36922	37755	.	-	0	ID=cds_PF3D7_0700400-1;Name=cds;description=.;size=834;Parent=rna_PF3D7_0700400-1
+Pf3D7_07_v3	ApiDB	exon	37859	37927	.	-	.	ID=exon_PF3D7_0700400-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0700400-1
+Pf3D7_07_v3	ApiDB	exon	36922	37755	.	-	.	ID=exon_PF3D7_0700400-2;Name=exon;description=exon;size=834;Parent=rna_PF3D7_0700400-1
+Pf3D7_07_v3	ApiDB	gene	1385635	1386626	.	+	.	ID=PF3D7_0732000;Name=PF3D7_0732000;description=stevor+%28stevor%29;size=992;web_id=PF3D7_0732000;locus_tag=PF3D7_0732000;size=992;Alias=2655182,PF07_0130,stevor,124512156,cytoadherencescheme,XP_001349211.1,Q8IBE5,CAD51059.1,apicoplastgene,23498979,rosetting,PF3D7_0732000,PF07_0130
+Pf3D7_07_v3	ApiDB	mRNA	1385635	1386626	.	+	.	ID=rna_PF3D7_0732000-1;Name=PF3D7_0732000-1;description=PF3D7_0732000-1;size=992;Parent=PF3D7_0732000;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0732000,NCBI_gi:124512156,NCBI_gi:23498979,taxon:36329
+Pf3D7_07_v3	ApiDB	CDS	1385635	1385703	.	+	0	ID=cds_PF3D7_0732000-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0732000-1
+Pf3D7_07_v3	ApiDB	CDS	1385805	1386626	.	+	0	ID=cds_PF3D7_0732000-1;Name=cds;description=.;size=822;Parent=rna_PF3D7_0732000-1
+Pf3D7_07_v3	ApiDB	exon	1385635	1385703	.	+	.	ID=exon_PF3D7_0732000-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0732000-1
+Pf3D7_07_v3	ApiDB	exon	1385805	1386626	.	+	.	ID=exon_PF3D7_0732000-2;Name=exon;description=exon;size=822;Parent=rna_PF3D7_0732000-1
+Pf3D7_08_v3	ApiDB	gene	1383349	1384377	.	-	.	ID=PF3D7_0832000;Name=PF3D7_0832000;description=stevor;size=1029;web_id=PF3D7_0832000;locus_tag=PF3D7_0832000;size=1029;Alias=9221927,XP_002808742.1,PF3D7_0832000,cytoadherencescheme,MAL7P1.227,296004780,MAL7P1.227,225632126,C0H4J5,rosetting,CAX64015.1
+Pf3D7_08_v3	ApiDB	mRNA	1383349	1384377	.	-	.	ID=rna_PF3D7_0832000-1;Name=PF3D7_0832000-1;description=PF3D7_0832000-1;size=1029;Parent=PF3D7_0832000;Dbxref=ApiDB_PlasmoDB:PF3D7_0832000,NCBI_gi:225632126,NCBI_gi:296004780,taxon:36329
+Pf3D7_08_v3	ApiDB	CDS	1384330	1384377	.	-	0	ID=cds_PF3D7_0832000-1;Name=cds;description=.;size=48;Parent=rna_PF3D7_0832000-1
+Pf3D7_08_v3	ApiDB	CDS	1383349	1384212	.	-	0	ID=cds_PF3D7_0832000-1;Name=cds;description=.;size=864;Parent=rna_PF3D7_0832000-1
+Pf3D7_08_v3	ApiDB	exon	1384330	1384377	.	-	.	ID=exon_PF3D7_0832000-1;Name=exon;description=exon;size=48;Parent=rna_PF3D7_0832000-1
+Pf3D7_08_v3	ApiDB	exon	1383349	1384212	.	-	.	ID=exon_PF3D7_0832000-2;Name=exon;description=exon;size=864;Parent=rna_PF3D7_0832000-1
+Pf3D7_08_v3	ApiDB	gene	1399560	1400583	.	-	.	ID=PF3D7_0832400;Name=PF3D7_0832400;description=stevor;size=1024;web_id=PF3D7_0832400;locus_tag=PF3D7_0832400;size=1024;Alias=MAL7P1.223,9221926,MAL7P1.223,cytoadherencescheme,PF3D7_0832400,rosetting,C0H4J1
+Pf3D7_08_v3	ApiDB	mRNA	1399560	1400583	.	-	.	ID=rna_PF3D7_0832400-1;Name=PF3D7_0832400-1;description=PF3D7_0832400-1;size=1024;Parent=PF3D7_0832400;Dbxref=ApiDB_PlasmoDB:PF3D7_0832400,taxon:36329
+Pf3D7_08_v3	ApiDB	CDS	1400515	1400583	.	-	0	ID=cds_PF3D7_0832400-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0832400-1
+Pf3D7_08_v3	ApiDB	CDS	1399560	1400405	.	-	0	ID=cds_PF3D7_0832400-1;Name=cds;description=.;size=846;Parent=rna_PF3D7_0832400-1
+Pf3D7_08_v3	ApiDB	exon	1400515	1400583	.	-	.	ID=exon_PF3D7_0832400-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0832400-1
+Pf3D7_08_v3	ApiDB	exon	1399560	1400405	.	-	.	ID=exon_PF3D7_0832400-2;Name=exon;description=exon;size=846;Parent=rna_PF3D7_0832400-1
+Pf3D7_08_v3	ApiDB	gene	1405835	1406999	.	-	.	ID=PF3D7_0832600;Name=PF3D7_0832600;description=stevor;size=1165;web_id=PF3D7_0832600;locus_tag=PF3D7_0832600;size=1165;Alias=C0H4I9,CAX64009.1,XP_002808736.1,296004768,cytoadherencescheme,PF3D7_0832600,rosetting,9221886,225632120,MAL7P1.310,MAL7P1.310
+Pf3D7_08_v3	ApiDB	mRNA	1405835	1406999	.	-	.	ID=rna_PF3D7_0832600-1;Name=PF3D7_0832600-1;description=PF3D7_0832600-1;size=1165;Parent=PF3D7_0832600;Dbxref=ApiDB_PlasmoDB:PF3D7_0832600,NCBI_gi:225632120,NCBI_gi:296004768,taxon:36329
+Pf3D7_08_v3	ApiDB	CDS	1406931	1406999	.	-	0	ID=cds_PF3D7_0832600-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0832600-1
+Pf3D7_08_v3	ApiDB	CDS	1405835	1406719	.	-	0	ID=cds_PF3D7_0832600-1;Name=cds;description=.;size=885;Parent=rna_PF3D7_0832600-1
+Pf3D7_08_v3	ApiDB	exon	1406931	1406999	.	-	.	ID=exon_PF3D7_0832600-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0832600-1
+Pf3D7_08_v3	ApiDB	exon	1405835	1406719	.	-	.	ID=exon_PF3D7_0832600-2;Name=exon;description=exon;size=885;Parent=rna_PF3D7_0832600-1
+Pf3D7_08_v3	ApiDB	gene	1414283	1415293	.	+	.	ID=PF3D7_0832900;Name=PF3D7_0832900;description=stevor+%28stevor%29;size=1011;web_id=PF3D7_0832900;locus_tag=PF3D7_0832900;size=1011;Alias=225632117,MAL7P1.218,9221924,rosetting,cytoadherencescheme,296004762,CAX64006.1,PF3D7_0832900,MAL7P1.218,stevor,XP_002808733.1,C0H4I6
+Pf3D7_08_v3	ApiDB	mRNA	1414283	1415293	.	+	.	ID=rna_PF3D7_0832900-1;Name=PF3D7_0832900-1;description=PF3D7_0832900-1;size=1011;Parent=PF3D7_0832900;Dbxref=ApiDB_PlasmoDB:PF3D7_0832900,NCBI_gi:225632117,NCBI_gi:296004762,taxon:36329
+Pf3D7_08_v3	ApiDB	CDS	1414283	1414345	.	+	0	ID=cds_PF3D7_0832900-1;Name=cds;description=.;size=63;Parent=rna_PF3D7_0832900-1
+Pf3D7_08_v3	ApiDB	CDS	1414442	1415293	.	+	0	ID=cds_PF3D7_0832900-1;Name=cds;description=.;size=852;Parent=rna_PF3D7_0832900-1
+Pf3D7_08_v3	ApiDB	exon	1414283	1414345	.	+	.	ID=exon_PF3D7_0832900-1;Name=exon;description=exon;size=63;Parent=rna_PF3D7_0832900-1
+Pf3D7_08_v3	ApiDB	exon	1414442	1415293	.	+	.	ID=exon_PF3D7_0832900-2;Name=exon;description=exon;size=852;Parent=rna_PF3D7_0832900-1
+Pf3D7_09_v3	ApiDB	gene	55074	56081	.	-	.	ID=PF3D7_0900900;Name=PF3D7_0900900;description=stevor+%28STEVOR%29;size=1008;web_id=PF3D7_0900900;locus_tag=PF3D7_0900900;size=1008;Alias=Q8I3D8,813293,cytoadherencescheme,rosetting,PFI0045c,STEVOR,PF3D7_0900900,PFI0045c
+Pf3D7_09_v3	ApiDB	mRNA	55074	56081	.	-	.	ID=rna_PF3D7_0900900-1;Name=PF3D7_0900900-1;description=PF3D7_0900900-1;size=1008;Parent=PF3D7_0900900;Dbxref=ApiDB_PlasmoDB:PF3D7_0900900,taxon:36329
+Pf3D7_09_v3	ApiDB	CDS	56013	56081	.	-	0	ID=cds_PF3D7_0900900-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0900900-1
+Pf3D7_09_v3	ApiDB	CDS	55074	55907	.	-	0	ID=cds_PF3D7_0900900-1;Name=cds;description=.;size=834;Parent=rna_PF3D7_0900900-1
+Pf3D7_09_v3	ApiDB	exon	56013	56081	.	-	.	ID=exon_PF3D7_0900900-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0900900-1
+Pf3D7_09_v3	ApiDB	exon	55074	55907	.	-	.	ID=exon_PF3D7_0900900-2;Name=exon;description=exon;size=834;Parent=rna_PF3D7_0900900-1
+Pf3D7_09_v3	ApiDB	gene	77861	78874	.	+	.	ID=PF3D7_0901600;Name=PF3D7_0901600;description=stevor+%28STEVOR%29;size=1014;web_id=PF3D7_0901600;locus_tag=PF3D7_0901600;size=1014;Alias=PFI0080w,cytoadherencescheme,813296,PF3D7_0901600,CAD51702.1,rosetting,XP_001351891.1,PFI0080w,23504918,124506587,STEVOR,Q8I3D1
+Pf3D7_09_v3	ApiDB	mRNA	77861	78874	.	+	.	ID=rna_PF3D7_0901600-1;Name=PF3D7_0901600-1;description=PF3D7_0901600-1;size=1014;Parent=PF3D7_0901600;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_0901600,NCBI_gi:124506587,NCBI_gi:23504918,taxon:36329
+Pf3D7_09_v3	ApiDB	CDS	77861	77929	.	+	0	ID=cds_PF3D7_0901600-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_0901600-1
+Pf3D7_09_v3	ApiDB	CDS	78032	78874	.	+	0	ID=cds_PF3D7_0901600-1;Name=cds;description=.;size=843;Parent=rna_PF3D7_0901600-1
+Pf3D7_09_v3	ApiDB	exon	77861	77929	.	+	.	ID=exon_PF3D7_0901600-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_0901600-1
+Pf3D7_09_v3	ApiDB	exon	78032	78874	.	+	.	ID=exon_PF3D7_0901600-2;Name=exon;description=exon;size=843;Parent=rna_PF3D7_0901600-1
+Pf3D7_10_v3	ApiDB	gene	1605930	1606953	.	+	.	ID=PF3D7_1040200;Name=PF3D7_1040200;description=stevor;size=1024;web_id=PF3D7_1040200;locus_tag=PF3D7_1040200;size=1024;Alias=rosetting,cytoadherencescheme,12477793,124803046,XP_001347679.1,PF3D7_1040200,PF10_0395,Q8IJ07,18474651,AAN35592.1,810552,23495263,PF10_0395,12368864
+Pf3D7_10_v3	ApiDB	mRNA	1605930	1606953	.	+	.	ID=rna_PF3D7_1040200-1;Name=PF3D7_1040200-1;description=PF3D7_1040200-1;size=1024;Parent=PF3D7_1040200;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_1040200,NCBI_gi:124803046,NCBI_gi:23495263,taxon:36329
+Pf3D7_10_v3	ApiDB	CDS	1605930	1605998	.	+	0	ID=cds_PF3D7_1040200-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_1040200-1
+Pf3D7_10_v3	ApiDB	CDS	1606105	1606953	.	+	0	ID=cds_PF3D7_1040200-1;Name=cds;description=.;size=849;Parent=rna_PF3D7_1040200-1
+Pf3D7_10_v3	ApiDB	exon	1605930	1605998	.	+	.	ID=exon_PF3D7_1040200-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_1040200-1
+Pf3D7_10_v3	ApiDB	exon	1606105	1606953	.	+	.	ID=exon_PF3D7_1040200-2;Name=exon;description=exon;size=849;Parent=rna_PF3D7_1040200-1
+Pf3D7_11_v3	ApiDB	gene	2009875	2010902	.	+	.	ID=PF3D7_1149900;Name=PF3D7_1149900;description=stevor;size=1028;web_id=PF3D7_1149900;locus_tag=PF3D7_1149900;size=1028;Alias=PF11_0516,cytoadherencescheme,124804991,PF3D7_1149900,apicoplastgene,12368864,12477793,811048,23496429,AAN36085.1,rosetting,Q8IHM4,PF11_0516,XP_001348172.1
+Pf3D7_11_v3	ApiDB	mRNA	2009875	2010902	.	+	.	ID=rna_PF3D7_1149900-1;Name=PF3D7_1149900-1;description=PF3D7_1149900-1;size=1028;Parent=PF3D7_1149900;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_1149900,NCBI_gi:124804991,NCBI_gi:23496429,taxon:36329
+Pf3D7_11_v3	ApiDB	CDS	2009875	2009943	.	+	0	ID=cds_PF3D7_1149900-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_1149900-1
+Pf3D7_11_v3	ApiDB	CDS	2010045	2010902	.	+	0	ID=cds_PF3D7_1149900-1;Name=cds;description=.;size=858;Parent=rna_PF3D7_1149900-1
+Pf3D7_11_v3	ApiDB	exon	2009875	2009943	.	+	.	ID=exon_PF3D7_1149900-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_1149900-1
+Pf3D7_11_v3	ApiDB	exon	2010045	2010902	.	+	.	ID=exon_PF3D7_1149900-2;Name=exon;description=exon;size=858;Parent=rna_PF3D7_1149900-1
+Pf3D7_12_v3	ApiDB	gene	2204724	2205714	.	+	.	ID=PF3D7_1254100;Name=PF3D7_1254100;description=stevor+%28stevor%29;size=991;web_id=PF3D7_1254100;locus_tag=PF3D7_1254100;size=991;Alias=apicoplastgene,AAN36604.1,12368864,rosetting,XP_001350924.1,2277.t00520,23497054,Q8I4P6,MAL12P1.517,811572,stevor,PF3D7_1254100,PFL2610w,124807163,cytoadherencescheme,PFL2610w
+Pf3D7_12_v3	ApiDB	mRNA	2204724	2205714	.	+	.	ID=rna_PF3D7_1254100-1;Name=PF3D7_1254100-1;description=PF3D7_1254100-1;size=991;Parent=PF3D7_1254100;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_1254100,NCBI_gi:124807163,NCBI_gi:23497054,taxon:36329
+Pf3D7_12_v3	ApiDB	CDS	2204724	2204792	.	+	0	ID=cds_PF3D7_1254100-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_1254100-1
+Pf3D7_12_v3	ApiDB	CDS	2204896	2205714	.	+	0	ID=cds_PF3D7_1254100-1;Name=cds;description=.;size=819;Parent=rna_PF3D7_1254100-1
+Pf3D7_12_v3	ApiDB	exon	2204724	2204792	.	+	.	ID=exon_PF3D7_1254100-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_1254100-1
+Pf3D7_12_v3	ApiDB	exon	2204896	2205714	.	+	.	ID=exon_PF3D7_1254100-2;Name=exon;description=exon;size=819;Parent=rna_PF3D7_1254100-1
+Pf3D7_12_v3	ApiDB	gene	2211543	2212554	.	+	.	ID=PF3D7_1254300;Name=PF3D7_1254300;description=stevor+%28stevor%29;size=1012;web_id=PF3D7_1254300;locus_tag=PF3D7_1254300;size=1012;Alias=XP_001350926.2,MAL12P1.519,811574,2277.t00522,PF3D7_1254300,Q8I4P4,PFL2620w,254945435,258597606,PFL2620w,12368864,cytoadherencescheme,AAN36606.2,rosetting,stevor
+Pf3D7_12_v3	ApiDB	mRNA	2211543	2212554	.	+	.	ID=rna_PF3D7_1254300-1;Name=PF3D7_1254300-1;description=PF3D7_1254300-1;size=1012;Parent=PF3D7_1254300;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_1254300,NCBI_gi:254945435,NCBI_gi:258597606,taxon:36329
+Pf3D7_12_v3	ApiDB	CDS	2211543	2211611	.	+	0	ID=cds_PF3D7_1254300-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_1254300-1
+Pf3D7_12_v3	ApiDB	CDS	2211715	2212554	.	+	0	ID=cds_PF3D7_1254300-1;Name=cds;description=.;size=840;Parent=rna_PF3D7_1254300-1
+Pf3D7_12_v3	ApiDB	exon	2211543	2211611	.	+	.	ID=exon_PF3D7_1254300-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_1254300-1
+Pf3D7_12_v3	ApiDB	exon	2211715	2212554	.	+	.	ID=exon_PF3D7_1254300-2;Name=exon;description=exon;size=840;Parent=rna_PF3D7_1254300-1
+Pf3D7_12_v3	ApiDB	gene	2221835	2222848	.	+	.	ID=PF3D7_1254600;Name=PF3D7_1254600;description=stevor+%28stevor%29;size=1014;web_id=PF3D7_1254600;locus_tag=PF3D7_1254600;size=1014;Alias=2277.t00525,PFL2635w,PF3D7_1254600,Q8I4P1,stevor,PFL2635w,12368864,cytoadherencescheme,MAL12P1.522,811577,rosetting
+Pf3D7_12_v3	ApiDB	mRNA	2221835	2222848	.	+	.	ID=rna_PF3D7_1254600-1;Name=PF3D7_1254600-1;description=PF3D7_1254600-1;size=1014;Parent=PF3D7_1254600;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_1254600,taxon:36329
+Pf3D7_12_v3	ApiDB	CDS	2221835	2221903	.	+	0	ID=cds_PF3D7_1254600-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_1254600-1
+Pf3D7_12_v3	ApiDB	CDS	2222009	2222848	.	+	0	ID=cds_PF3D7_1254600-1;Name=cds;description=.;size=840;Parent=rna_PF3D7_1254600-1
+Pf3D7_12_v3	ApiDB	exon	2221835	2221903	.	+	.	ID=exon_PF3D7_1254600-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_1254600-1
+Pf3D7_12_v3	ApiDB	exon	2222009	2222848	.	+	.	ID=exon_PF3D7_1254600-2;Name=exon;description=exon;size=840;Parent=rna_PF3D7_1254600-1
+Pf3D7_13_v3	ApiDB	gene	62515	63547	.	-	.	ID=PF3D7_1300900;Name=PF3D7_1300900;description=stevor+%28stevor%29;size=1033;web_id=PF3D7_1300900;locus_tag=PF3D7_1300900;size=1033;Alias=MAL13P1.7,MAL13P1.7,23615162,apicoplastgene,124512778,813959,Q8IEU4,rosetting,stevor,PF3D7_1300900,cytoadherencescheme,CAD52151.1,PF13_0009,XP_001349745.1
+Pf3D7_13_v3	ApiDB	mRNA	62515	63547	.	-	.	ID=rna_PF3D7_1300900-1;Name=PF3D7_1300900-1;description=PF3D7_1300900-1;size=1033;Parent=PF3D7_1300900;Dbxref=ApiDB_PlasmoDB:PF3D7_1300900,NCBI_gi:124512778,NCBI_gi:23615162,taxon:36329
+Pf3D7_13_v3	ApiDB	CDS	63479	63547	.	-	0	ID=cds_PF3D7_1300900-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_1300900-1
+Pf3D7_13_v3	ApiDB	CDS	62515	63372	.	-	0	ID=cds_PF3D7_1300900-1;Name=cds;description=.;size=858;Parent=rna_PF3D7_1300900-1
+Pf3D7_13_v3	ApiDB	exon	63479	63547	.	-	.	ID=exon_PF3D7_1300900-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_1300900-1
+Pf3D7_13_v3	ApiDB	exon	62515	63372	.	-	.	ID=exon_PF3D7_1300900-2;Name=exon;description=exon;size=858;Parent=rna_PF3D7_1300900-1
+Pf3D7_13_v3	ApiDB	gene	2863866	2864869	.	+	.	ID=PF3D7_1372800;Name=PF3D7_1372800;description=stevor;size=1004;web_id=PF3D7_1372800;locus_tag=PF3D7_1372800;size=1004;Alias=cytoadherencescheme,CAX64414.1,C0H5N4,9222028,XP_002809131.1,rosetting,MAL13P1.505,MAL13P1.505,PF3D7_1372800,296005634,225632081
+Pf3D7_13_v3	ApiDB	mRNA	2863866	2864869	.	+	.	ID=rna_PF3D7_1372800-1;Name=PF3D7_1372800-1;description=PF3D7_1372800-1;size=1004;Parent=PF3D7_1372800;Dbxref=ApiDB_PlasmoDB:PF3D7_1372800,NCBI_gi:225632081,NCBI_gi:296005634,taxon:36329
+Pf3D7_13_v3	ApiDB	CDS	2863866	2863928	.	+	0	ID=cds_PF3D7_1372800-1;Name=cds;description=.;size=63;Parent=rna_PF3D7_1372800-1
+Pf3D7_13_v3	ApiDB	CDS	2864030	2864869	.	+	0	ID=cds_PF3D7_1372800-1;Name=cds;description=.;size=840;Parent=rna_PF3D7_1372800-1
+Pf3D7_13_v3	ApiDB	exon	2863866	2863928	.	+	.	ID=exon_PF3D7_1372800-1;Name=exon;description=exon;size=63;Parent=rna_PF3D7_1372800-1
+Pf3D7_13_v3	ApiDB	exon	2864030	2864869	.	+	.	ID=exon_PF3D7_1372800-2;Name=exon;description=exon;size=840;Parent=rna_PF3D7_1372800-1
+Pf3D7_14_v3	ApiDB	gene	24337	25320	.	-	.	ID=PF3D7_1400700;Name=PF3D7_1400700;description=stevor;size=984;web_id=PF3D7_1400700;locus_tag=PF3D7_1400700;size=984;Alias=PF14_0007,AAN36621.1,Q8IM81,811603,124807943,PF14_0007,23497072,12368864,PF3D7_1400700,XP_001348182.1,cytoadherencescheme,rosetting
+Pf3D7_14_v3	ApiDB	mRNA	24337	25320	.	-	.	ID=rna_PF3D7_1400700-1;Name=PF3D7_1400700-1;description=PF3D7_1400700-1;size=984;Parent=PF3D7_1400700;Ontology_term=GO:0016020;Dbxref=ApiDB_PlasmoDB:PF3D7_1400700,NCBI_gi:124807943,NCBI_gi:23497072,taxon:36329
+Pf3D7_14_v3	ApiDB	CDS	25252	25320	.	-	0	ID=cds_PF3D7_1400700-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_1400700-1
+Pf3D7_14_v3	ApiDB	CDS	24337	25149	.	-	0	ID=cds_PF3D7_1400700-1;Name=cds;description=.;size=813;Parent=rna_PF3D7_1400700-1
+Pf3D7_14_v3	ApiDB	exon	25252	25320	.	-	.	ID=exon_PF3D7_1400700-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_1400700-1
+Pf3D7_14_v3	ApiDB	exon	24337	25149	.	-	.	ID=exon_PF3D7_1400700-2;Name=exon;description=exon;size=813;Parent=rna_PF3D7_1400700-1
+Pf3D7_14_v3	ApiDB	gene	3269494	3270496	.	+	.	ID=PF3D7_1479500;Name=PF3D7_1479500;description=stevor;size=1003;web_id=PF3D7_1479500;locus_tag=PF3D7_1479500;size=1003;Alias=12368864,PF3D7_1479500,12477793,cytoadherencescheme,PF14_0767,Q8IK43,AAN37379.1,XP_001348940.1,812348,rosetting,124810593,23497842,PF14_0767
+Pf3D7_14_v3	ApiDB	mRNA	3269494	3270496	.	+	.	ID=rna_PF3D7_1479500-1;Name=PF3D7_1479500-1;description=PF3D7_1479500-1;size=1003;Parent=PF3D7_1479500;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_1479500,NCBI_gi:124810593,NCBI_gi:23497842,taxon:36329
+Pf3D7_14_v3	ApiDB	CDS	3269494	3269562	.	+	0	ID=cds_PF3D7_1479500-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_1479500-1
+Pf3D7_14_v3	ApiDB	CDS	3269666	3270496	.	+	0	ID=cds_PF3D7_1479500-1;Name=cds;description=.;size=831;Parent=rna_PF3D7_1479500-1
+Pf3D7_14_v3	ApiDB	exon	3269494	3269562	.	+	.	ID=exon_PF3D7_1479500-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_1479500-1
+Pf3D7_14_v3	ApiDB	exon	3269666	3270496	.	+	.	ID=exon_PF3D7_1479500-2;Name=exon;description=exon;size=831;Parent=rna_PF3D7_1479500-1
+Pf3D7_14_v3	ApiDB	gene	3282729	3283752	.	+	.	ID=PF3D7_1479900;Name=PF3D7_1479900;description=stevor;size=1024;web_id=PF3D7_1479900;locus_tag=PF3D7_1479900;size=1024;Alias=Q8IK39,PF3D7_1479900,PF14_0771,12368864,PF14_0771,rosetting,12477793,812352,cytoadherencescheme
+Pf3D7_14_v3	ApiDB	mRNA	3282729	3283752	.	+	.	ID=rna_PF3D7_1479900-1;Name=PF3D7_1479900-1;description=PF3D7_1479900-1;size=1024;Parent=PF3D7_1479900;Ontology_term=GO:0016020,GO:0020036;Dbxref=ApiDB_PlasmoDB:PF3D7_1479900,taxon:36329
+Pf3D7_14_v3	ApiDB	CDS	3282729	3282797	.	+	0	ID=cds_PF3D7_1479900-1;Name=cds;description=.;size=69;Parent=rna_PF3D7_1479900-1
+Pf3D7_14_v3	ApiDB	CDS	3282907	3283752	.	+	0	ID=cds_PF3D7_1479900-1;Name=cds;description=.;size=846;Parent=rna_PF3D7_1479900-1
+Pf3D7_14_v3	ApiDB	exon	3282729	3282797	.	+	.	ID=exon_PF3D7_1479900-1;Name=exon;description=exon;size=69;Parent=rna_PF3D7_1479900-1
+Pf3D7_14_v3	ApiDB	exon	3282907	3283752	.	+	.	ID=exon_PF3D7_1479900-2;Name=exon;description=exon;size=846;Parent=rna_PF3D7_1479900-1
