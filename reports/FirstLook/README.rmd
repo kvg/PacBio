@@ -407,7 +407,7 @@ for (i in seq(1, nrow(rc), by=2)) {
 Errors in the assembly
 ----------------------
 
-As we have sequenced DNA from the 3D7 parasite, any differences should likely reflect errors in the sequence.  We therefore called SNPs between the two assemblies to find these errors.  The sums are presented in the table below.
+As we have sequenced DNA from the 3D7 parasite, any differences should likely reflect errors in the sequence.  We therefore called SNPs between the two assemblies to find these errors.  The sums are presented in the table below, as well as the percent of bases per chromosome these errors represent.
 
 ```{r variants, echo=FALSE, results='asis'}
 variants = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.filter.variant_summary", sep=""), header=FALSE, stringsAsFactors=FALSE);
@@ -418,27 +418,26 @@ variants.summary = cbind("SNP" = table(subset(variants, REFERENCE != "M76611" & 
                          "DEL" = table(subset(variants, REFERENCE != "M76611" & REF != "." & ALT == ".")$REFERENCE));
 variants.summary = rbind(variants.summary, c(sum(variants.summary[,"SNP"]), sum(variants.summary[,"INS"]), sum(variants.summary[,"DEL"])));
 
-kable(variants.summary);
-```
-
-We can further normalize these numbers by the length of the respective chromosome:
-
-```{r variantsNorm, echo=FALSE, results='asis'}
 chrom.lengths = unique(variants[,c("REFERENCE", "LEN_R")]);
 rownames(chrom.lengths) = chrom.lengths$REFERENCE;
 
 variants.pctsummary = variants.summary[1:nrow(variants.summary) - 1,];
 for (chrom in chrom.lengths$REFERENCE) {
     if (chrom != "M76611") {
-        variants.pctsummary[chrom,] = sprintf("%0.2f%%", 100.0 * variants.summary[chrom,] / chrom.lengths[chrom, "LEN_R"]);
+        variants.pctsummary[chrom,] = 100.0 * variants.summary[chrom,] / chrom.lengths[chrom, "LEN_R"];
     }
 }
-variants.pctsummary = rbind(variants.pctsummary, sprintf("%0.2f%%", 100.0*c(sum(variants.summary[,"SNP"]), sum(variants.summary[,"INS"]), sum(variants.summary[,"DEL"]))/23332831));
+variants.pctsummary = rbind(variants.pctsummary, 100.0*c(sum(variants.summary[,"SNP"]), sum(variants.summary[,"INS"]), sum(variants.summary[,"DEL"]))/23332831);
 
-kable(variants.pctsummary);
+variants.fullsummary = variants.summary;
+variants.fullsummary[,1] = sprintf("%s (%.2f%%)", variants.summary[,1], variants.pctsummary[,1]);
+variants.fullsummary[,2] = sprintf("%s (%.2f%%)", variants.summary[,2], variants.pctsummary[,2]);
+variants.fullsummary[,3] = sprintf("%s (%.2f%%)", variants.summary[,3], variants.pctsummary[,3]);
+
+kable(variants.fullsummary);
 ```
 
-Overall, the SNP, insertion, and deletion rates are exceedingly low: amounting to `r sum(variants.summary[15,])` events in a 23 megabase genome.  The insertion rate is much higher than that of deletions and SNPs, perhaps due to the insertion error mode of the PacBio sequencing instrument.  All chromosomes appear reasonably similar in performance.
+Overall, the SNP, insertion, and deletion rates are exceedingly low: amounting to `r sum(variants.summary[15,])` events in a 23 megabase genome (`r sum(variants.pctsummary[nrow(variants.pctsummary),])`%).  The insertion rate is much higher than that of deletions and SNPs, perhaps due to the insertion error mode of the PacBio sequencing instrument.  All chromosomes appear reasonably similar in performance.
 
 Recovery of the *var* repertoire
 --------------------------------
@@ -539,7 +538,7 @@ matrix.all = rbind(all = matrix.ne, mismatches = matrix.nm, insertions = matrix.
 rownames(matrix.all) = c("all", "  mismatches", "  insertions", "  deletions");
 ```
 
-It seemed likely that many of these errors occur in intronic regions where high repetitive sequence content might contribute to misassembly.  We investigated this thought by aligning the exons of the var genes separately and enumerating errors observed in exons and introns.  We ignored `r length(subset(varExons, MQ < 10)$geneName)` genes with poor exon alignments (i.e. with mapping quality less than 10).  The results are presented in the table below.  `r as.double(100 * matrix.ne[,"intron"] / matrix.ne[,"total"])`% of the errors are found in intronic regions.  Exon 2 of the *var* gene (the short exon) is base-for-base perfect when compared to the canonical reference.
+It seemed likely that many of these errors occur in intronic regions where high repetitive sequence content might contribute to misassembly.  We investigated this hypothesis by aligning the exons of the var genes separately and enumerating errors observed in exons and introns.  We ignored `r length(subset(varExons, MQ < 10)$geneName)` genes with poor exon alignments (i.e. with mapping quality less than 10).  The results are presented in the table below.  `r as.double(100 * matrix.ne[,"intron"] / matrix.ne[,"total"])`% of the errors are found in intronic regions.  Exon 2 of the *var* gene (the short exon) is base-for-base perfect when compared to the canonical reference.
 
 ```{r showVarMismatchLocationSummary, echo=FALSE, results='asis'}
 kable(matrix.all);
