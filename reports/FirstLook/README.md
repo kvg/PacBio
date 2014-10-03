@@ -221,49 +221,28 @@ We visualized these alignments as a multi-dot plot.  Nearly all of the assembly 
 Errors in the assembly
 ----------------------
 
-As we have sequenced DNA from the 3D7 parasite, any differences should likely reflect errors in the sequence.  We therefore called SNPs between the two assemblies to find these errors.  The sums are presented in the table below.
+As we have sequenced DNA from the 3D7 parasite, any differences should likely reflect errors in the sequence.  We therefore called SNPs between the two assemblies to find these errors.  The sums are presented in the table below, as well as the percent of bases per chromosome these errors represent.
 
-|id           |   SNP|    INS|   DEL|
-|:------------|-----:|------:|-----:|
-|Pf3D7_01_v3  |   119|    763|   291|
-|Pf3D7_02_v3  |   164|    475|   162|
-|Pf3D7_03_v3  |   272|    523|   290|
-|Pf3D7_04_v3  |   141|    856|   713|
-|Pf3D7_05_v3  |   111|    531|   175|
-|Pf3D7_06_v3  |   504|    731|   180|
-|Pf3D7_07_v3  |   194|    609|   320|
-|Pf3D7_08_v3  |   134|    597|   251|
-|Pf3D7_09_v3  |    61|    713|   259|
-|Pf3D7_10_v3  |   732|    810|   308|
-|Pf3D7_11_v3  |   310|   1008|   459|
-|Pf3D7_12_v3  |   232|   1202|   390|
-|Pf3D7_13_v3  |   231|   1493|   409|
-|Pf3D7_14_v3  |   152|   1309|   396|
-|             |  3357|  11620|  4603|
-
-
-We can further normalize these numbers by the length of the respective chromosome:
-
-|id           |SNP    |INS    |DEL    |
-|:------------|:------|:------|:------|
-|Pf3D7_01_v3  |0.02%  |0.12%  |0.05%  |
-|Pf3D7_02_v3  |0.02%  |0.05%  |0.02%  |
-|Pf3D7_03_v3  |0.03%  |0.05%  |0.03%  |
-|Pf3D7_04_v3  |0.01%  |0.07%  |0.06%  |
-|Pf3D7_05_v3  |0.01%  |0.04%  |0.01%  |
-|Pf3D7_06_v3  |0.04%  |0.05%  |0.01%  |
-|Pf3D7_07_v3  |0.01%  |0.04%  |0.02%  |
-|Pf3D7_08_v3  |0.01%  |0.04%  |0.02%  |
-|Pf3D7_09_v3  |0.00%  |0.05%  |0.02%  |
-|Pf3D7_10_v3  |0.04%  |0.05%  |0.02%  |
-|Pf3D7_11_v3  |0.02%  |0.05%  |0.02%  |
-|Pf3D7_12_v3  |0.01%  |0.05%  |0.02%  |
-|Pf3D7_13_v3  |0.01%  |0.05%  |0.01%  |
-|Pf3D7_14_v3  |0.00%  |0.04%  |0.01%  |
-|             |0.03%  |0.10%  |0.04%  |
+|id           |SNP           |INS            |DEL           |
+|:------------|:-------------|:--------------|:-------------|
+|Pf3D7_01_v3  |119 (0.02%)   |763 (0.12%)    |291 (0.05%)   |
+|Pf3D7_02_v3  |164 (0.02%)   |475 (0.05%)    |162 (0.02%)   |
+|Pf3D7_03_v3  |272 (0.03%)   |523 (0.05%)    |290 (0.03%)   |
+|Pf3D7_04_v3  |141 (0.01%)   |856 (0.07%)    |713 (0.06%)   |
+|Pf3D7_05_v3  |111 (0.01%)   |531 (0.04%)    |175 (0.01%)   |
+|Pf3D7_06_v3  |504 (0.04%)   |731 (0.05%)    |180 (0.01%)   |
+|Pf3D7_07_v3  |194 (0.01%)   |609 (0.04%)    |320 (0.02%)   |
+|Pf3D7_08_v3  |134 (0.01%)   |597 (0.04%)    |251 (0.02%)   |
+|Pf3D7_09_v3  |61 (0.00%)    |713 (0.05%)    |259 (0.02%)   |
+|Pf3D7_10_v3  |732 (0.04%)   |810 (0.05%)    |308 (0.02%)   |
+|Pf3D7_11_v3  |310 (0.02%)   |1008 (0.05%)   |459 (0.02%)   |
+|Pf3D7_12_v3  |232 (0.01%)   |1202 (0.05%)   |390 (0.02%)   |
+|Pf3D7_13_v3  |231 (0.01%)   |1493 (0.05%)   |409 (0.01%)   |
+|Pf3D7_14_v3  |152 (0.00%)   |1309 (0.04%)   |396 (0.01%)   |
+|             |3357 (0.03%)  |11620 (0.10%)  |4603 (0.04%)  |
 
 
-Overall, the SNP, insertion, and deletion rates are exceedingly low: amounting to 19580 events in a 23 megabase genome.  The insertion rate is much higher than that of deletions and SNPs, perhaps due to the insertion error mode of the PacBio sequencing instrument.  All chromosomes appear reasonably similar in performance.
+Overall, the SNP, insertion, and deletion rates are exceedingly low: amounting to 19580 events in a 23 megabase genome (0.1678%).  The insertion rate is much higher than that of deletions and SNPs, perhaps due to the insertion error mode of the PacBio sequencing instrument.  All chromosomes appear reasonably similar in performance.
 
 Recovery of the *var* repertoire
 --------------------------------
@@ -339,7 +318,7 @@ We examined the recovery of the 62 members of the *var* gene family by aligning 
 
 
 
-It seemed likely that many of these errors occur in intronic regions where high repetitive sequence content might contribute to misassembly.  We investigated this thought by aligning the exons of the var genes separately and enumerating errors observed in exons and introns.  We ignored 11 genes with poor exon alignments (i.e. with mapping quality less than 10).  The results are presented in the table below.  91.7808% of the errors are found in intronic regions.  Exon 2 of the *var* gene (the short exon) is base-for-base perfect when compared to the canonical reference.
+It seemed likely that many of these errors occur in intronic regions where high repetitive sequence content might contribute to misassembly.  We investigated this hypothesis by aligning the exons of the var genes separately and enumerating errors observed in exons and introns.  We ignored 11 genes with poor exon alignments (i.e. with mapping quality less than 10).  The results are presented in the table below.  91.7808% of the errors are found in intronic regions.  Exon 2 of the *var* gene (the short exon) is base-for-base perfect when compared to the canonical reference.
 
 |id            |  total|  intron|  exon1|  exon2|
 |:-------------|------:|-------:|------:|------:|
