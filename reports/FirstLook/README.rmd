@@ -339,7 +339,7 @@ Comparison to canonical genome, 3D7
 
 We compared AsmTest1 to the 3D7 canonical genome by performing an all-by-all (contigs vs. chromosomes) alignment with `MUMmer`.  Short, spurious alignments were filtered out.  The results are presented in the table below.  The near-entirety of chromosome 14 is assembled into a single contig.  On average, each chromosome is assembled into `r mean(table(showCoords$REF))` +/- `r sd(table(showCoords$REF))` contigs.  Each chromosome seems to be more-or-less fully recovered (note that the % coverage will add up to more than 100% in some cases as contigs may overlap slightly).
 
-One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position `r subset(showCoords, REF == "M76611")$S2`, and only represents `r subset(showCoords, REF == "M76611")$COV_Q`% of its sequence.  It is not clear what the remaining sequence represents.
+One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position `r subset(showCoords, REF == "M76611")$S2`, and only represents `r subset(showCoords, REF == "M76611")$COV_Q`% of its sequence.  This is probably due to the fact that the mitochondrial chromosome is circular, and the read length is substantially longer than the chromosome.  Hence, we've likely picked up several copies of it, and they've all been concatenated together into a single contig.  Errors or microheteroplasmy may explain why these repeats do not get collapsed into a single contig of the expected size.
 
 ```{r showCoords, echo=FALSE, results='asis'}
 showCoords = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.filter.coord_summary", sep=""), header=FALSE, stringsAsFactors=FALSE);
@@ -542,4 +542,37 @@ It seemed likely that many of these errors occur in intronic regions where high 
 
 ```{r showVarMismatchLocationSummary, echo=FALSE, results='asis'}
 kable(matrix.all);
+```
+
+Acknowledgements
+----------------
+
+Thanks to Kwiatkowski lab members:
+
+* Susana Campino, Mihir Kekre, Eleanor Drury for their work on culturing the 3D7 parasite to the necessary level in order to extract the requisite amount of genomic DNA for PacBio sequencing.
+* Alistair Miles for the P. falciparum genome accessibility calculations and other useful discussions.
+* Dawn Muddyman and Claire Nathwani for administrative support.
+* Dominic Kwiatkowski for access to data and collaboration.
+
+Thanks to CSHL Pacific Biosciences Sequencing Service:
+
+* Senem Mavruk Eskipehlivan
+* Elena Ghiban
+* Melissa deBastide
+* Patricia Mocombe
+* Stephanie Muller
+* Maureen Bell
+* Eric Antoniou
+* Michael Schatz
+
+Thanks to McVean lab members:
+
+* Isaac Turner for discussions on generating and validating *de novo* assemblies.
+* Gil McVean for PhD advising and not kicking me out of his lab in the first year when I suggested we sequence dinosaurs.
+
+Session info
+------------
+
+```{r sessionInfo}
+sessionInfo();
 ```

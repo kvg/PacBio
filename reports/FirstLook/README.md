@@ -137,7 +137,7 @@ Comparison to canonical genome, 3D7
 
 We compared AsmTest1 to the 3D7 canonical genome by performing an all-by-all (contigs vs. chromosomes) alignment with `MUMmer`.  Short, spurious alignments were filtered out.  The results are presented in the table below.  The near-entirety of chromosome 14 is assembled into a single contig.  On average, each chromosome is assembled into 4.4667 +/- 3.7391 contigs.  Each chromosome seems to be more-or-less fully recovered (note that the % coverage will add up to more than 100% in some cases as contigs may overlap slightly).
 
-One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position 3868, and only represents 13.74% of its sequence.  It is not clear what the remaining sequence represents.
+One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position 3868, and only represents 13.74% of its sequence.  This is probably due to the fact that the mitochondrial chromosome is circular, and the read length is substantially longer than the chromosome.  Hence, we've likely picked up several copies of it, and they've all been concatenated together into a single contig.  Errors or microheteroplasmy may explain why these repeats do not get collapsed into a single contig of the expected size.
 
 |REF          |QUERY             |       S1|       E1|       S2|       E2|   COV_R|   COV_Q|
 |:------------|:-----------------|--------:|--------:|--------:|--------:|-------:|-------:|
@@ -326,4 +326,62 @@ It seemed likely that many of these errors occur in intronic regions where high 
 |  mismatches  |     81|      73|      8|      0|
 |  insertions  |     46|      45|      1|      0|
 |  deletions   |     19|      16|      3|      0|
+
+
+Acknowledgements
+----------------
+
+Thanks to Kwiatkowski lab members:
+
+* Susana Campino, Mihir Kekre, Eleanor Drury for their work on culturing the 3D7 parasite to the necessary level in order to extract the requisite amount of genomic DNA for PacBio sequencing.
+* Alistair Miles for the P. falciparum genome accessibility calculations and other useful discussions.
+* Dawn Muddyman and Claire Nathwani for administrative support.
+* Dominic Kwiatkowski for access to data and collaboration.
+
+Thanks to CSHL Pacific Biosciences Sequencing Service:
+
+* Senem Mavruk Eskipehlivan
+* Elena Ghiban
+* Melissa deBastide
+* Patricia Mocombe
+* Stephanie Muller
+* Maureen Bell
+* Eric Antoniou
+* Michael Schatz
+
+Thanks to McVean lab members:
+
+* Isaac Turner for discussions on generating and validating *de novo* assemblies.
+* Gil McVean for PhD advising and not kicking me out of his lab in the first year when I suggested we sequence dinosaurs.
+
+Session info
+------------
+
+
+```r
+sessionInfo()
+```
+
+```
+## R version 3.1.0 (2014-04-10)
+## Platform: x86_64-unknown-linux-gnu (64-bit)
+## 
+## locale:
+##  [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+##  [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
+##  [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] knitr_1.5
+## 
+## loaded via a namespace (and not attached):
+## [1] digest_0.6.4   evaluate_0.5.5 formatR_0.10   stringr_0.6.2 
+## [5] tools_3.1.0
+```
 
