@@ -1,5 +1,7 @@
 
 ## ----setup, echo=FALSE---------------------------------------------------
+opts_chunk$set(dev=c('png', 'pdf'));
+
 color.il = rgb(250, 164, 26, maxColorValue=255);
 color.pb = rgb(166, 42, 66, maxColorValue=255);
 
@@ -27,6 +29,16 @@ colnames(genes) = c("chrom", "start", "stop", "gene", "description");
 for (i in 1:nrow(genes)) {
     genes$description[i] = gsub("\\+", " ", URLdecode(genes$description[i]));
 }
+
+genes$color = "gray";
+genes$color[grep("VAR|erythrocyte membrane protein|PfEMP1", genes$description)] = rgb(255, 0, 71, maxColorValue=255);
+genes$color[grep("RIF|rifin", genes$description)] = rgb(255, 200, 33, maxColorValue=255);
+genes$color[grep("stevor", genes$description)] = rgb(0, 155, 204, maxColorValue=255);
+
+genes$text = "";
+genes$text[grep("VAR|erythrocyte membrane protein|PfEMP1", genes$description)] = "v";
+genes$text[grep("RIF|rifin", genes$description)] = "r";
+genes$text[grep("stevor", genes$description)] = "s";
 
 
 ## ----readStats, echo=FALSE, results='asis'-------------------------------
@@ -141,7 +153,7 @@ points(h.il$mids, h.il$counts, type="l", lwd=2, col=color.il);
 legend("topright", c("PacBio coverage", "Illumina coverage"), lwd=2, col=c(color.pb, color.il), bty="n", cex=1.3);
 
 
-## ----showCoverageOverIdeogram, echo=FALSE, fit.height=6, fit.width=18, dpi=300, cache=TRUE----
+## ----showCoverageOverIdeogram, echo=FALSE, fig.height=6, fig.width=12, dpi=300, cache=TRUE----
 chroms = sort(na.exclude(grep("apico|M76611", unique(cov.pb$chrom), invert=TRUE, value=TRUE)));
 chroms.length = list();
 
@@ -208,31 +220,38 @@ showRegionalCoverage <- function(region) {
     region.max = max(region.cov.pb$cov, region.cov.il$cov);
 
     par(mar=c(5, 4, 4, 2)+0.1);
-    plot(0, 0, type="n", xlim=c(region$start - region.window, region$stop + region.window), ylim=c(-region.max/100, region.max), bty="n", xlab="Position (bp)", ylab="Coverage", cex=1.3, cex.axis=1.3, cex.lab=1.3, main=paste(region$chrom, ":", region$start, "-", region$stop, sep=""));
-
-    submask = subset(mask, chrom == chr);
-    rect(submask$co_pos_min, -region.max/100, submask$co_pos_max, region.max/100, col="gray", border=NA);
+    plot(0, 0, type="n", xlim=c(region$start - region.window, region$stop + region.window), ylim=c(-15, region.max), bty="n", xlab="Position (bp)", ylab="Coverage", cex=1.3, cex.axis=1.3, cex.lab=1.3, main=paste(region$chrom, ":", region$start, "-", region$stop, sep=""));
 
     acc = subset(access, chrom == region$chrom)
-    rect(acc$start, -region.max/100, acc$stop, region.max/100, col="red", border=NA);
-
-    rect(region.left, -region.max/100, region.right, region.max/100);
+    rect(acc$start, -5 + -region.max/100, acc$stop, -5 + region.max/100, col=rgb(255, 0, 0, 150, maxColorValue=255), border=NA);
+    rect(0, -5 + -region.max/100, chroms.length[[region$chrom]], -5 + region.max/100);
 
     points(region.cov.pb$start, region.cov.pb$cov, type="l", col=color.pb, lwd=1);
     points(region.cov.il$start, region.cov.il$cov, type="l", col=color.il, lwd=1);
+
+    overlappingGenes = subset(genes, chrom == region$chrom & ( (start <= region.left & stop >= region.left) | (start <= region.right & stop >= region.right) | (start <= region.left & stop >= region.right) | (start >= region.left & stop <= region.right) ));
+
+    for (i in 1:nrow(overlappingGenes)) {
+        overlappingGene = overlappingGenes[i,];
+        rect(overlappingGene$start, -15 + -region.max/100, overlappingGene$stop, -15 + region.max/100, col=overlappingGene$color);
+        text(overlappingGene$start + (overlappingGene$stop - overlappingGene$start)/2, -15, labels=overlappingGene$text, cex=0.7);
+    }
 }
 
 
-## ----coverageCentromere, echo=FALSE, cache=TRUE--------------------------
+## ----coverageCentromere, echo=FALSE, cache=TRUE, fig.height=8, fig.width=12----
 region.chr4_centromere = subset(access, chrom == "Pf3D7_04_v3" & type == "Centromere")[1,];
+region.chr4_centromere$start = region.chr4_centromere$start - 10000;
+region.chr4_centromere$stop = region.chr4_centromere$stop + 10000;
 showRegionalCoverage(region.chr4_centromere);
 
 
-## ----coverageSubtelomericRepeats, echo=FALSE, cache=TRUE-----------------
-regions.telomeric = subset(access, type == "SubtelomericRepeat");
-#for (i in 1:nrow(regions.telomeric)) {
-for (i in 1:2) {
-    region.telomeric = regions.telomeric[i,];
+## ----coverageMaskedRegions, echo=FALSE, cache=TRUE, fig.height=8, fig.width=12----
+mask.sorted = mask[order(mask$chrom, mask$co_pos_min),];
+
+for (i in 1:nrow(mask.sorted)) {
+    region.telomeric = mask.sorted[i,];
+    colnames(region.telomeric) = c( "sample", "chrom", "co_pos_mid", "start", "stop", "co_pos_range", "cross", "co_from_parent", "co_to_parent" );
     showRegionalCoverage(region.telomeric);
 }
 
@@ -246,5 +265,200 @@ col.deletions = rgb(95, 169, 192, 100, maxColorValue=255);
 plot(f$deletionRate, pch=19, cex=0.2, col=col.deletions, bty="n", xlab="Distance from middle of contig (bp)", ylab="Error rate", cex.lab=1.3, cex.axis=1.3);
 points(f$insertionRate, pch=19, cex=0.2, col=col.insertions);
 legend("topleft", c("Insertions", "Deletions"), fill=c(col.insertions, col.deletions), bty="n", cex=1.3);
+
+
+## ----assemblyStats, echo=FALSE, results='asis'---------------------------
+asmstats = read.table(paste(dir.results, "/AsmTest1/assemblies.stats", sep=""), header=TRUE, stringsAsFactors=FALSE);
+asmstats = asmstats[order(asmstats$numContigs),];
+
+kable(asmstats, row.names=FALSE);
+
+
+## ----showCoords, echo=FALSE, results='asis'------------------------------
+showCoords = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.filter.coord_summary", sep=""), header=FALSE, stringsAsFactors=FALSE);
+names(showCoords) = c( "S1", "E1", "S2", "E2", "LEN_1", "LEN_2", "LEN_R", "LEN_Q", "COV_R", "COV_Q", "REF", "QUERY" );
+showCoords$QUERY = gsub("\\|quiver", "", showCoords$QUERY);
+
+kable(showCoords[,c("REF", "QUERY", "S1", "E1", "S2", "E2", "COV_R", "COV_Q")], row.names=FALSE);
+
+
+## ----dotplot, echo=FALSE, fig.width=12, fig.height=12--------------------
+gplines = readLines(paste(dir.results, "/AsmTest1/AsmTest1.filter.gp", sep=""));
+
+xaxis.labels.unparsed = strsplit(gsub(" $", "", gsub("^ ", "", gsub("[,\\\"]", "", grep("Pf3D7", gplines, value=TRUE)))), " ");
+xaxis.labels = c();
+xaxis.at = c();
+for (i in 1:length(xaxis.labels.unparsed)) {
+    label = xaxis.labels.unparsed[[i]][1];
+    at = xaxis.labels.unparsed[[i]][2];
+
+    xaxis.labels = c(xaxis.labels, label);
+    xaxis.at = c(xaxis.at, at);
+}
+
+yaxis.labels.unparsed = strsplit(gsub(" $", "", gsub("^ ", "", gsub("[,\\\"]", "", grep("scf", gplines, value=TRUE)))), " ");
+yaxis.labels = c();
+yaxis.at = c();
+for (i in 1:length(yaxis.labels.unparsed)) {
+    label = yaxis.labels.unparsed[[i]][1];
+    at = yaxis.labels.unparsed[[i]][2];
+
+    yaxis.labels = c(yaxis.labels, label);
+    yaxis.at = c(yaxis.at, at);
+}
+
+xrange = as.integer(gsub("^\\[1:|\\]", "", unlist(strsplit(grep("xrange", gplines, value=TRUE), " "))[3]));
+yrange = as.integer(gsub("^\\[1:|\\]", "", unlist(strsplit(grep("yrange", gplines, value=TRUE), " "))[3]));
+
+fw = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.fplot", sep=""), header=FALSE, stringsAsFactors=FALSE);
+rc = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.rplot", sep=""), header=FALSE, stringsAsFactors=FALSE);
+
+par(mar=c(6, 9, 2, 2));
+plot(0, 0, type="n", xlim=c(0, xrange), ylim=c(0, yrange), bty="n", xlab="", ylab="", xaxt="n", yaxt="n");
+axis(1, at=xaxis.at, labels=xaxis.labels, cex.axis=0.6, las=3);
+axis(2, at=yaxis.at, labels=yaxis.labels, cex.axis=0.6, las=1);
+
+abline(v=as.numeric(xaxis.at), lty=2, col="gray90");
+abline(h=as.numeric(yaxis.at), lty=2, col="gray90");
+
+for (i in seq(1, nrow(fw), by=2)) {
+    points(fw$V1[i:(i+1)], fw$V2[i:(i+1)], col="red", type="p", cex=0.7);
+    points(fw$V1[i:(i+1)], fw$V2[i:(i+1)], col="red", type="l", lwd=2);
+}
+
+for (i in seq(1, nrow(rc), by=2)) {
+    points(rc$V1[i:(i+1)], rc$V2[i:(i+1)], col="blue", type="p", cex=0.7);
+    points(rc$V1[i:(i+1)], rc$V2[i:(i+1)], col="blue", type="l", lwd=2);
+}
+
+
+## ----variants, echo=FALSE, results='asis'--------------------------------
+variants = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.filter.variant_summary", sep=""), header=FALSE, stringsAsFactors=FALSE);
+names(variants) = c( "P1", "REF", "ALT", "P2", "BUFF", "DIST", "R", "Q", "LEN_R", "LEN_Q", "FRM", "UNKNOWN", "REFERENCE", "QUERY" );
+
+variants.summary = cbind("SNP" = table(subset(variants, REFERENCE != "M76611" & REF != "." & ALT != ".")$REFERENCE),
+                         "INS" = table(subset(variants, REFERENCE != "M76611" & REF == "." & ALT != ".")$REFERENCE),
+                         "DEL" = table(subset(variants, REFERENCE != "M76611" & REF != "." & ALT == ".")$REFERENCE));
+variants.summary = rbind(variants.summary, c(sum(variants.summary[,"SNP"]), sum(variants.summary[,"INS"]), sum(variants.summary[,"DEL"])));
+
+chrom.lengths = unique(variants[,c("REFERENCE", "LEN_R")]);
+rownames(chrom.lengths) = chrom.lengths$REFERENCE;
+
+variants.pctsummary = variants.summary[1:nrow(variants.summary) - 1,];
+for (chrom in chrom.lengths$REFERENCE) {
+    if (chrom != "M76611") {
+        variants.pctsummary[chrom,] = 100.0 * variants.summary[chrom,] / chrom.lengths[chrom, "LEN_R"];
+    }
+}
+variants.pctsummary = rbind(variants.pctsummary, 100.0*c(sum(variants.summary[,"SNP"]), sum(variants.summary[,"INS"]), sum(variants.summary[,"DEL"]))/23332831);
+
+variants.fullsummary = variants.summary;
+variants.fullsummary[,1] = sprintf("%s (%.2f%%)", variants.summary[,1], variants.pctsummary[,1]);
+variants.fullsummary[,2] = sprintf("%s (%.2f%%)", variants.summary[,2], variants.pctsummary[,2]);
+variants.fullsummary[,3] = sprintf("%s (%.2f%%)", variants.summary[,3], variants.pctsummary[,3]);
+
+kable(variants.fullsummary);
+
+
+## ----varTable, echo=FALSE, results='asis'--------------------------------
+varTable = read.table(paste(dir.results, "/AsmTest1/AsmTest1.varGenes.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
+colnames(varTable) = c( "geneName", "flags", "contig", "start", "MQ", "CIGAR", "QUAL", "UKN1", "UKN2", "NM", "MD", "AS" );
+varTable$NM = as.integer(gsub("NM:i:", "", varTable$NM));
+
+numIns = c();
+numDel = c();
+
+for (i in 1:nrow(varTable)) {
+    insAndDels = table(unlist(strsplit(gsub("\\d+", "", gsub("\\d+M", "", varTable$CIGAR[i])), "")));
+
+    numIns = c(numIns, ifelse(is.na(insAndDels["I"]), 0, insAndDels["I"]));
+    numDel = c(numDel, ifelse(is.na(insAndDels["D"]), 0, insAndDels["D"]));
+}
+
+varTable = cbind(varTable, NI = numIns, ND = numDel);
+
+kable(varTable[,c("geneName", "contig", "start", "NM", "NI", "ND", "CIGAR")]);
+
+numPerfect = nrow(subset(varTable, NM == 0 & NI == 0 & ND == 0));
+
+
+## ----varMismatchLocationSummary, echo=FALSE------------------------------
+varExons = read.table(paste(dir.results, "/AsmTest1/AsmTest1.varExons.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
+colnames(varExons) = c( "exonName", "flags", "contig", "start", "MQ", "CIGAR", "QUAL", "UKN1", "UKN2", "NM", "MD", "AS" );
+varExons$NM = as.integer(gsub("NM:i:", "", varExons$NM));
+varExons$geneName = unlist(lapply(strsplit(gsub("exon_", "", varExons$exonName), "-"), function(x) { return(x[1]); }));
+varExons$exonNumber = unlist(lapply(strsplit(gsub("exon_", "", varExons$exonName), "-"), function(x) { return(x[2]); }));
+
+numIns = c();
+numDel = c();
+
+for (i in 1:nrow(varExons)) {
+    insAndDels = table(unlist(strsplit(gsub("\\d+", "", gsub("\\d+M", "", varExons$CIGAR[i])), "")));
+
+    numIns = c(numIns, ifelse(is.na(insAndDels["I"]), 0, insAndDels["I"]));
+    numDel = c(numDel, ifelse(is.na(insAndDels["D"]), 0, insAndDels["D"]));
+}
+
+varExons = cbind(varExons, NI = numIns, ND = numDel);
+
+genesToProcess = unique(varExons$geneName[!(varExons$geneName %in% subset(varExons, MQ < 10)$geneName)]);
+
+list.nm = list();
+list.ni = list();
+list.nd = list();
+list.ne = list();
+for (gene in genesToProcess) {
+    nm.total = subset(varTable, geneName == gene)$NM;
+    ni.total = subset(varTable, geneName == gene)$NI;
+    nd.total = subset(varTable, geneName == gene)$ND;
+
+    nm.exon1 = subset(varExons, geneName == gene & exonNumber == 1)$NM;
+    ni.exon1 = subset(varExons, geneName == gene & exonNumber == 1)$NI;
+    nd.exon1 = subset(varExons, geneName == gene & exonNumber == 1)$ND;
+
+    nm.exon2 = subset(varExons, geneName == gene & exonNumber == 2)$NM;
+    ni.exon2 = subset(varExons, geneName == gene & exonNumber == 2)$NI;
+    nd.exon2 = subset(varExons, geneName == gene & exonNumber == 2)$ND;
+
+    nm.intron = nm.total - nm.exon1 - nm.exon2;
+    ni.intron = ni.total - ni.exon1 - ni.exon2;
+    nd.intron = nd.total - nd.exon1 - nd.exon2;
+
+    list.nm[["total"]] = c(list.nm[["total"]], nm.total);
+    list.nm[["exon1"]] = c(list.nm[["exon1"]], nm.exon1);
+    list.nm[["exon2"]] = c(list.nm[["exon2"]], nm.exon2);
+    list.nm[["intron"]] = c(list.nm[["intron"]], nm.intron);
+
+    list.ni[["total"]] = c(list.ni[["total"]], ni.total);
+    list.ni[["exon1"]] = c(list.ni[["exon1"]], ni.exon1);
+    list.ni[["exon2"]] = c(list.ni[["exon2"]], ni.exon2);
+    list.ni[["intron"]] = c(list.ni[["intron"]], ni.intron);
+
+    list.nd[["total"]] = c(list.nd[["total"]], nd.total);
+    list.nd[["exon1"]] = c(list.nd[["exon1"]], nd.exon1);
+    list.nd[["exon2"]] = c(list.nd[["exon2"]], nd.exon2);
+    list.nd[["intron"]] = c(list.nd[["intron"]], nd.intron);
+
+    list.ne[["total"]] = c(list.ne[["total"]], nm.total + ni.total + nd.total);
+    list.ne[["exon1"]] = c(list.ne[["exon1"]], nm.exon1 + ni.exon1 + nd.exon1);
+    list.ne[["exon2"]] = c(list.ne[["exon2"]], nm.exon2 + ni.exon2 + nd.exon2);
+    list.ne[["intron"]] = c(list.ne[["intron"]], nm.intron + ni.intron + nd.intron);
+}
+
+matrix.ne = cbind(total = sum(list.ne[["total"]]), intron = sum(list.ne[["intron"]]), exon1 = sum(list.ne[["exon1"]]), exon2 = sum(list.ne[["exon2"]]));
+matrix.nm = cbind(total = sum(list.nm[["total"]]), intron = sum(list.nm[["intron"]]), exon1 = sum(list.nm[["exon1"]]), exon2 = sum(list.nm[["exon2"]]));
+matrix.ni = cbind(total = sum(list.ni[["total"]]), intron = sum(list.ni[["intron"]]), exon1 = sum(list.ni[["exon1"]]), exon2 = sum(list.ni[["exon2"]]));
+matrix.nd = cbind(total = sum(list.nd[["total"]]), intron = sum(list.nd[["intron"]]), exon1 = sum(list.nd[["exon1"]]), exon2 = sum(list.nd[["exon2"]]));
+
+matrix.all = rbind(all = matrix.ne, mismatches = matrix.nm, insertions = matrix.ni, deletions = matrix.nd);
+rownames(matrix.all) = c("all", "  mismatches", "  insertions", "  deletions");
+
+
+## ----showVarMismatchLocationSummary, echo=FALSE, results='asis'----------
+kable(matrix.all);
+
+
+## ----sessionInfo---------------------------------------------------------
+sessionInfo();
 
 
