@@ -142,12 +142,6 @@ We compared AsmTest1 to the 3D7 canonical genome by performing an all-by-all (co
 
 One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position 3868, and only represents 13.74% of its sequence.  This is probably due to the fact that the mitochondrial chromosome is circular, and the read length is substantially longer than the chromosome.  Hence, we've likely picked up several copies of it, and they've all been concatenated together into a single contig.  Errors or microheteroplasmy may explain why these repeats do not get collapsed into a single contig of the expected size.
 
-
-```r
-kable(showCoords[, c("REF", "QUERY", "S1", "E1", "S2", "E2", "COV_R", "COV_Q")], 
-    row.names = FALSE)
-```
-
 |REF          |QUERY             |       S1|       E1|       S2|       E2|   COV_R|   COV_Q|
 |:------------|:-----------------|--------:|--------:|--------:|--------:|-------:|-------:|
 |M76611       |scf7180000000116  |        1|     5967|     3868|     9834|  100.00|   13.74|
