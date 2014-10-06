@@ -135,9 +135,43 @@ The AsmTest1 assembly compares quite favorably to the best assemblies, with 34 c
 Comparison to canonical genome, 3D7
 -----------------------------------
 
-We compared AsmTest1 to the 3D7 canonical genome by performing an all-by-all (contigs vs. chromosomes) alignment with `MUMmer`.  Short, spurious alignments were filtered out.  The results are presented in the table below.  The near-entirety of chromosome 14 is assembled into a single contig.  On average, each chromosome is assembled into 4.4667 +/- 3.7391 contigs.  Each chromosome seems to be more-or-less fully recovered (note that the % coverage will add up to more than 100% in some cases as contigs may overlap slightly).
+We compared AsmTest1 to the 3D7 canonical genome by performing an all-by-all (contigs vs. chromosomes) alignment with `MUMmer`.  Short, spurious alignments were filtered out.  The results are presented in the table below.  The near-entirety of chromosome 14 is assembled into a single contig.  On average, each chromosome is assembled into 
 
-One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position 3868, and only represents 13.74% of its sequence.  This is probably due to the fact that the mitochondrial chromosome is circular, and the read length is substantially longer than the chromosome.  Hence, we've likely picked up several copies of it, and they've all been concatenated together into a single contig.  Errors or microheteroplasmy may explain why these repeats do not get collapsed into a single contig of the expected size.
+```
+
+Error in table(showCoords$REF) : object 'showCoords' not found
+
+```
+
+ +/- 
+
+```
+
+Error in table(showCoords$REF) : object 'showCoords' not found
+
+```
+
+ contigs.  Each chromosome seems to be more-or-less fully recovered (note that the % coverage will add up to more than 100% in some cases as contigs may overlap slightly).
+
+One strange finding from the table below is the observation that a few contigs contain a lot more content than the reference genome.  For instance, the mitochondrial genome, M76611, is 5967 bp long.  This is 100% contained by the scf7180000000116 contig.  Yet, the alignment starts at position 
+
+```
+
+Error in subset(showCoords, REF == "M76611") : 
+  object 'showCoords' not found
+
+```
+
+, and only represents 
+
+```
+
+Error in subset(showCoords, REF == "M76611") : 
+  object 'showCoords' not found
+
+```
+
+% of its sequence.  This is probably due to the fact that the mitochondrial chromosome is circular, and the read length is substantially longer than the chromosome.  Hence, we've likely picked up several copies of it, and they've all been concatenated together into a single contig.  Errors or microheteroplasmy may explain why these repeats do not get collapsed into a single contig of the expected size.
 
 |REF          |QUERY             |       S1|       E1|       S2|       E2|   COV_R|   COV_Q|
 |:------------|:-----------------|--------:|--------:|--------:|--------:|-------:|-------:|
@@ -340,19 +374,19 @@ Thanks to Kwiatkowski lab members:
 
 Thanks to CSHL Pacific Biosciences Sequencing Service:
 
-* Senem Mavruk Eskipehlivan
-* Elena Ghiban
-* Melissa deBastide
-* Patricia Mocombe
-* Stephanie Muller
-* Maureen Bell
-* Eric Antoniou
-* Michael Schatz
+* Senem Mavruk Eskipehlivan: Technician, PacBio sequencer operation
+* Elena Ghiban: Bioinformatic staff, PacBio server management
+* Melissa deBastide: Lead bioinformatics of the genome center
+* Patricia Mocombe: Technician, PacBio sequencing library construction
+* Stephanie Muller: Technician, responsible for receiving samples and archiving metadata into LIMS
+* Maureen Bell: Financial officer
+* Eric Antoniou: research investigator and operation manager of the genome center
+* Michael Schatz: Associate Professor, de novo assembly using PacBio reads
 
 Thanks to McVean lab members:
 
 * Isaac Turner for discussions on generating and validating *de novo* assemblies.
-* Gil McVean for PhD advising and not kicking me out of his lab in the first year when I suggested we sequence dinosaurs.
+* Gil McVean for PhD advising
 
 Session info
 ------------

@@ -556,19 +556,19 @@ Thanks to Kwiatkowski lab members:
 
 Thanks to CSHL Pacific Biosciences Sequencing Service:
 
-* Senem Mavruk Eskipehlivan
-* Elena Ghiban
-* Melissa deBastide
-* Patricia Mocombe
-* Stephanie Muller
-* Maureen Bell
-* Eric Antoniou
-* Michael Schatz
+* Senem Mavruk Eskipehlivan: Technician, PacBio sequencer operation
+* Elena Ghiban: Bioinformatic staff, PacBio server management
+* Melissa deBastide: Lead bioinformatics of the genome center
+* Patricia Mocombe: Technician, PacBio sequencing library construction
+* Stephanie Muller: Technician, responsible for receiving samples and archiving metadata into LIMS
+* Maureen Bell: Financial officer
+* Eric Antoniou: research investigator and operation manager of the genome center
+* Michael Schatz: Associate Professor, de novo assembly using PacBio reads
 
 Thanks to McVean lab members:
 
 * Isaac Turner for discussions on generating and validating *de novo* assemblies.
-* Gil McVean for PhD advising and not kicking me out of his lab in the first year when I suggested we sequence dinosaurs.
+* Gil McVean for PhD advising
 
 Session info
 ------------
