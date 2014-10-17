@@ -112,8 +112,8 @@ With the exception of the estimated genome size parameter (which we set to 23,00
 |id        |  numContigs|  minLength|  maxLength|  meanLength|      n50|  totalSequence|
 |:---------|-----------:|----------:|----------:|-----------:|--------:|--------------:|
 |3D7       |          16|       5967|    3291936|     1458302|  1687656|       23332831|
-|IT        |          17|       6616|    3219929|     1351588|  1570953|       22976997|
 |AsmTest1  |          34|      11443|    3293905|      697875|  1696391|       23727741|
+|IT        |          56|        580|    3219929|      409892|  1570953|       22953932|
 |IGH-CR14  |         849|       2199|     120285|       25608|    37016|       21741172|
 |HB3       |        1189|        201|     377975|       20402|    96469|       24258511|
 |RAJ116    |        1199|       2042|      70306|       11765|    12998|       14106529|
@@ -130,7 +130,7 @@ With the exception of the estimated genome size parameter (which we set to 23,00
 |PFCLIN    |       18711|       1001|      33813|        2366|     2992|       44265486|
 
 
-The AsmTest1 assembly compares quite favorably to the best assemblies, with 34 compared to 3D7's 16 and IT's 17.  The longest chromosome in the *P. falciparum* genome is chromosome 14 (3291936 bp).  The longest contig in the AsmTest1 assembly appears roughly this length, suggesting that we may have assemblied the majority (or the entirety) of chromosome 14 in a single contig.
+The AsmTest1 assembly compares quite favorably to the best assemblies, with 34 compared to 3D7's 16 and IT's 56.  The longest chromosome in the *P. falciparum* genome is chromosome 14 (3291936 bp).  The longest contig in the AsmTest1 assembly appears roughly this length, suggesting that we may have assemblied the majority (or the entirety) of chromosome 14 in a single contig.
 
 Comparison to canonical genome, 3D7
 -----------------------------------
