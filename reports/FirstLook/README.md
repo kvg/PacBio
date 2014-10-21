@@ -326,9 +326,9 @@ It seemed likely that many of these errors occur in intronic regions where high 
 |id            |  total|  intron|  exon1|  exon2|
 |:-------------|------:|-------:|------:|------:|
 |all           |    146|     134|     12|      0|
-|  mismatches  |     81|      73|      8|      0|
-|  insertions  |     46|      45|      1|      0|
-|  deletions   |     19|      16|      3|      0|
+|- mismatches  |     81|      73|      8|      0|
+|- insertions  |     46|      45|      1|      0|
+|- deletions   |     19|      16|      3|      0|
 
 
 Further polishing with Illumina data
@@ -344,6 +344,8 @@ As we have additional Illumina data for this sample, we were curious to see if i
 6. Filter SNPs and indels (`GATK`).
 7. Modify the assembly by incorporating the alternate allele from filtered variants (`GATK`).
 
+The table below presents error counts within *var* genes for the unpolished and polished assemblies. 
+
 
 
 
@@ -358,6 +360,8 @@ As we have additional Illumina data for this sample, we were curious to see if i
 |- insertions  |     25|      24|      1|      0|
 |- deletions   |     12|      11|      1|      0|
 
+
+There is evidently an improvement in the error rate within the *var* genes.  After polishing, the number of perfectly reconstructed *var* genes increases from 21 to 32.  This should improve when we get better Illumina data (the data used for polishing is 76-bp, paired-end data sequenced on an Illumina GA2).
 
 Acknowledgements
 ----------------

@@ -537,7 +537,7 @@ matrix.ni = cbind(total = sum(list.ni[["total"]]), intron = sum(list.ni[["intron
 matrix.nd = cbind(total = sum(list.nd[["total"]]), intron = sum(list.nd[["intron"]]), exon1 = sum(list.nd[["exon1"]]), exon2 = sum(list.nd[["exon2"]]));
 
 matrix.all = rbind(all = matrix.ne, mismatches = matrix.nm, insertions = matrix.ni, deletions = matrix.nd);
-rownames(matrix.all) = c("all", "  mismatches", "  insertions", "  deletions");
+rownames(matrix.all) = c("all", "- mismatches", "- insertions", "- deletions");
 ```
 
 It seemed likely that many of these errors occur in intronic regions where high repetitive sequence content might contribute to misassembly.  We investigated this hypothesis by aligning the exons of the var genes separately and enumerating errors observed in exons and introns.  We ignored `r length(subset(varExons, MQ < 10)$geneName)` genes with poor exon alignments (i.e. with mapping quality less than 10).  The results are presented in the table below.  `r as.double(100 * matrix.ne[,"intron"] / matrix.ne[,"total"])`% of the errors are found in intronic regions.  Exon 2 of the *var* gene (the short exon) is base-for-base perfect when compared to the canonical reference.
@@ -558,6 +558,8 @@ As we have additional Illumina data for this sample, we were curious to see if i
 5. Call SNPs and indels (`GATK`).
 6. Filter SNPs and indels (`GATK`).
 7. Modify the assembly by incorporating the alternate allele from filtered variants (`GATK`).
+
+The table below presents error counts within *var* genes for the unpolished and polished assemblies. 
 
 ```{r allTable, echo=FALSE, results='asis'}
 allTable = read.table(paste(dir.results, "/AsmTest1/AsmTest1.varGenes.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
@@ -738,6 +740,8 @@ matrix.all.complete = rbind(matrix.all, matrix.all.polished);
 ```{r matrixAllComplete, echo=FALSE, results='asis'}
 kable(matrix.all.complete);
 ```
+
+There is evidently an improvement in the error rate within the *var* genes.  After polishing, the number of perfectly reconstructed *var* genes increases from `r numPerfect` to `r all.numPerfect`.  This should improve when we get better Illumina data (the data used for polishing is 76-bp, paired-end data sequenced on an Illumina GA2).
 
 Acknowledgements
 ----------------
