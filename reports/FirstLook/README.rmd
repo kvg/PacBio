@@ -743,6 +743,36 @@ kable(matrix.all.complete);
 
 There is evidently an improvement in the error rate within the *var* genes.  After polishing, the number of perfectly reconstructed *var* genes increases from `r numPerfect` to `r all.numPerfect`.  This should improve when we get better Illumina data (the data used for polishing is 76-bp, paired-end data sequenced on an Illumina GA2).
 
+```{r variantsP, echo=FALSE, results='asis'}
+variantsP = read.table(paste(dir.results, "/AsmTest1.GATKPolished/AsmTest1.GATKPolished.filter.filter.variant_summary", sep=""), header=FALSE, stringsAsFactors=FALSE);
+names(variantsP) = c( "P1", "REF", "ALT", "P2", "BUFF", "DIST", "R", "Q", "LEN_R", "LEN_Q", "FRM", "UNKNOWN", "REFERENCE", "QUERY" );
+
+variantsP.summary = cbind("SNP" = table(subset(variantsP, REFERENCE != "M76611" & REF != "." & ALT != ".")$REFERENCE),
+                         "INS" = table(subset(variantsP, REFERENCE != "M76611" & REF == "." & ALT != ".")$REFERENCE),
+                         "DEL" = table(subset(variantsP, REFERENCE != "M76611" & REF != "." & ALT == ".")$REFERENCE));
+variantsP.summary = rbind(variantsP.summary, c(sum(variantsP.summary[,"SNP"]), sum(variantsP.summary[,"INS"]), sum(variantsP.summary[,"DEL"])));
+
+chrom.lengths = unique(variantsP[,c("REFERENCE", "LEN_R")]);
+rownames(chrom.lengths) = chrom.lengths$REFERENCE;
+
+variantsP.pctsummary = variantsP.summary[1:nrow(variantsP.summary) - 1,];
+for (chrom in chrom.lengths$REFERENCE) {
+    if (chrom != "M76611") {
+        variantsP.pctsummary[chrom,] = 100.0 * variantsP.summary[chrom,] / chrom.lengths[chrom, "LEN_R"];
+    }
+}
+variantsP.pctsummary = rbind(variantsP.pctsummary, 100.0*c(sum(variantsP.summary[,"SNP"]), sum(variantsP.summary[,"INS"]), sum(variantsP.summary[,"DEL"]))/23332831);
+
+variantsP.fullsummary = variantsP.summary;
+variantsP.fullsummary[,1] = sprintf("%s (%.2f%%)", variantsP.summary[,1], variantsP.pctsummary[,1]);
+variantsP.fullsummary[,2] = sprintf("%s (%.2f%%)", variantsP.summary[,2], variantsP.pctsummary[,2]);
+variantsP.fullsummary[,3] = sprintf("%s (%.2f%%)", variantsP.summary[,3], variantsP.pctsummary[,3]);
+
+kable(variantsP.fullsummary);
+```
+
+Overall, polishing does reduce the number of insertion and deletion errors in the assembly.  However, the number of apparent SNPs has increased from `r variants.fullsummary[nrow(variants.fullsummary), 1]` to `r variantsP.fullsummary[nrow(variantsP.fullsummary), 1]`. When we examine some of these SNPs in IGV, it is apparent that they are dominated by errors in homopolymer regions.  In the next iteration of the polishing pipeline, we should either be much more aggressive in filtering out false-positives from these regions, or we should simply not attempt to correct single base mismatches at all.
+
 Acknowledgements
 ----------------
 

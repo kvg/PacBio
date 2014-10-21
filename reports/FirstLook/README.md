@@ -363,6 +363,27 @@ The table below presents error counts within *var* genes for the unpolished and 
 
 There is evidently an improvement in the error rate within the *var* genes.  After polishing, the number of perfectly reconstructed *var* genes increases from 21 to 32.  This should improve when we get better Illumina data (the data used for polishing is 76-bp, paired-end data sequenced on an Illumina GA2).
 
+|id           |SNP           |INS            |DEL           |
+|:------------|:-------------|:--------------|:-------------|
+|Pf3D7_01_v3  |127 (0.02%)   |728 (0.11%)    |276 (0.04%)   |
+|Pf3D7_02_v3  |179 (0.02%)   |410 (0.04%)    |117 (0.01%)   |
+|Pf3D7_03_v3  |323 (0.03%)   |489 (0.05%)    |281 (0.03%)   |
+|Pf3D7_04_v3  |160 (0.01%)   |794 (0.07%)    |595 (0.05%)   |
+|Pf3D7_05_v3  |138 (0.01%)   |452 (0.03%)    |165 (0.01%)   |
+|Pf3D7_06_v3  |517 (0.04%)   |648 (0.05%)    |169 (0.01%)   |
+|Pf3D7_07_v3  |208 (0.01%)   |531 (0.04%)    |289 (0.02%)   |
+|Pf3D7_08_v3  |145 (0.01%)   |524 (0.04%)    |209 (0.01%)   |
+|Pf3D7_09_v3  |84 (0.01%)    |622 (0.04%)    |212 (0.01%)   |
+|Pf3D7_10_v3  |742 (0.04%)   |715 (0.04%)    |251 (0.01%)   |
+|Pf3D7_11_v3  |310 (0.02%)   |869 (0.04%)    |412 (0.02%)   |
+|Pf3D7_12_v3  |265 (0.01%)   |1066 (0.05%)   |332 (0.01%)   |
+|Pf3D7_13_v3  |294 (0.01%)   |1283 (0.04%)   |371 (0.01%)   |
+|Pf3D7_14_v3  |215 (0.01%)   |1114 (0.03%)   |189 (0.01%)   |
+|             |3707 (0.03%)  |10245 (0.09%)  |3868 (0.03%)  |
+
+
+Overall, polishing does reduce the number of insertion and deletion errors in the assembly.  However, the number of apparent SNPs has increased from 3357 (0.03%) to 3707 (0.03%). When we examine some of these SNPs in IGV, it is apparent that they are dominated by errors in homopolymer regions.  In the next iteration of the polishing pipeline, we should either be much more aggressive in filtering out false-positives from these regions, or we should simply not attempt to correct single base mismatches at all.
+
 Acknowledgements
 ----------------
 
