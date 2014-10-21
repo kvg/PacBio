@@ -768,7 +768,10 @@ variantsP.fullsummary[,1] = sprintf("%s (%.2f%%)", variantsP.summary[,1], varian
 variantsP.fullsummary[,2] = sprintf("%s (%.2f%%)", variantsP.summary[,2], variantsP.pctsummary[,2]);
 variantsP.fullsummary[,3] = sprintf("%s (%.2f%%)", variantsP.summary[,3], variantsP.pctsummary[,3]);
 
-kable(variantsP.fullsummary);
+variantsP.completesummary = cbind(variants.fullsummary, variantsP.fullsummary)[,c(1, 4, 2, 5, 3, 6)];
+colnames(variantsP.completesummary) = c("SNP (u)", "SNP (p)", "INS (u)", "INS (p)", "DEL (u)", "DEL (p)");
+
+kable(variantsP.completesummary);
 ```
 
 Overall, polishing does reduce the number of insertion and deletion errors in the assembly.  However, the number of apparent SNPs has increased from `r variants.fullsummary[nrow(variants.fullsummary), 1]` to `r variantsP.fullsummary[nrow(variantsP.fullsummary), 1]`. When we examine some of these SNPs in IGV, it is apparent that they are dominated by errors in homopolymer regions.  In the next iteration of the polishing pipeline, we should either be much more aggressive in filtering out false-positives from these regions, or we should simply not attempt to correct single base mismatches at all.
