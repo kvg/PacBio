@@ -274,11 +274,13 @@ asmstats = asmstats[order(asmstats$numContigs),];
 kable(asmstats, row.names=FALSE);
 
 
-## ----showCoords, echo=FALSE, results='asis'------------------------------
+## ----showCoords, echo=FALSE----------------------------------------------
 showCoords = read.table(paste(dir.results, "/AsmTest1/AsmTest1.filter.filter.coord_summary", sep=""), header=FALSE, stringsAsFactors=FALSE);
 names(showCoords) = c( "S1", "E1", "S2", "E2", "LEN_1", "LEN_2", "LEN_R", "LEN_Q", "COV_R", "COV_Q", "REF", "QUERY" );
 showCoords$QUERY = gsub("\\|quiver", "", showCoords$QUERY);
 
+
+## ----printCoords, echo=FALSE, results='asis'-----------------------------
 kable(showCoords[,c("REF", "QUERY", "S1", "E1", "S2", "E2", "COV_R", "COV_Q")], row.names=FALSE);
 
 
@@ -361,7 +363,7 @@ kable(variants.fullsummary);
 
 
 ## ----varTable, echo=FALSE, results='asis'--------------------------------
-varTable = read.table(paste(dir.results, "/AsmTest1/AsmTest1.varGenes.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
+varTable = read.table(paste(dir.results, "/AsmTest1.GATKPolished/AsmTest1.GATKPolished.varGenes.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
 colnames(varTable) = c( "geneName", "flags", "contig", "start", "MQ", "CIGAR", "QUAL", "UKN1", "UKN2", "NM", "MD", "AS" );
 varTable$NM = as.integer(gsub("NM:i:", "", varTable$NM));
 
@@ -383,7 +385,7 @@ numPerfect = nrow(subset(varTable, NM == 0 & NI == 0 & ND == 0));
 
 
 ## ----varMismatchLocationSummary, echo=FALSE------------------------------
-varExons = read.table(paste(dir.results, "/AsmTest1/AsmTest1.varExons.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
+varExons = read.table(paste(dir.results, "/AsmTest1.GATKPolished/AsmTest1.GATKPolished.varExons.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
 colnames(varExons) = c( "exonName", "flags", "contig", "start", "MQ", "CIGAR", "QUAL", "UKN1", "UKN2", "NM", "MD", "AS" );
 varExons$NM = as.integer(gsub("NM:i:", "", varExons$NM));
 varExons$geneName = unlist(lapply(strsplit(gsub("exon_", "", varExons$exonName), "-"), function(x) { return(x[1]); }));

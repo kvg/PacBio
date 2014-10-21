@@ -41,7 +41,8 @@ my $dm = new DM(
 );
 
 my $indiana8 = "java -Xmx8g -jar $binDir/indiana.jar";
-my $gatk8 = "java -Xmx8g -jar bin/GenomeAnalysisTK.v3.2.jar";
+#my $gatk8 = "java -Xmx8g -jar bin/GenomeAnalysisTK.v3.2.jar";
+my $gatk8 = "java -Xmx8g -jar /data1/users/kiran/repositories/GATK-Protected/protected/gatk-package-distribution/target/gatk-package-distribution-3.2.jar";
 my $nucmer = "~/opt/MUMmer3.23/nucmer";
 my $showaligns = "~/opt/MUMmer3.23/show-aligns";
 my $showcoords = "~/opt/MUMmer3.23/show-coords";
@@ -59,6 +60,13 @@ my %bams = (
 my %seqs = (
     'pb' => "$dataDir/Pfalc3D7/filtered_subreads.fastq",
     'il' => "$dataDir/PfCross/ERR019061_1.fastq.gz",
+);
+
+my %fastqs = (
+    'il' => {
+        'end1' => "data/PfCross/ERR019061_1.fastq.gz",
+        'end2' => "data/PfCross/ERR019061_2.fastq.gz"
+    },
 );
 
 my %asms = (
@@ -96,6 +104,8 @@ my %rois = (
     'rifinExons' => "$resourcesDir/rifin.3D7.gff",
     'stevorGenes' => "$resourcesDir/stevor.3D7.gff",
     'stevorExons' => "$resourcesDir/stevor.3D7.gff",
+    'allGenes' => "$resourcesDir/all.3D7.gff",
+    'allExons' => "$resourcesDir/all.3D7.gff",
 );
 
 my %roiTypes = (
@@ -105,6 +115,8 @@ my %roiTypes = (
     'rifinExons' => "exon",
     'stevorGenes' => "gene",
     'stevorExons' => "exon",
+    'allGenes' => "gene",
+    'allExons' => "exon",
 );
 
 my %pbrgs = (
@@ -179,7 +191,82 @@ foreach my $id (keys(%bams)) {
 
 foreach my $asmid (keys(%asms)) {
     my $contigs = $asms{$asmid};
+    my $outdir = "$resultsDir/$asmid";
 
+    my $readsSam = "$outdir/$asmid.il_reads.sam";
+    my $readsSamCmd = "bwa mem -t 30 $contigs $fastqs{'il'}->{'end1'} $fastqs{'il'}->{'end2'} > $readsSam";
+    $dm->addRule($readsSam, $contigs, $readsSamCmd, 'nopostfix' => 1);
+
+    my $readsBam = "$outdir/$asmid.il_reads.bam";
+    my $readsBamCmd = "java -Xmx8g -jar ~/repositories/Picard-Latest/dist/SortSam.jar I=$readsSam O=$readsBam SO=coordinate CREATE_INDEX=true";
+    $dm->addRule($readsBam, $readsSam, $readsBamCmd);
+
+    my $readsWithRGsBam = "$outdir/$asmid.il_reads.with_rgs.bam";
+    my $readsWithRGsBamCmd = "java -Xmx8g -jar ~/repositories/Picard-Latest/dist/AddOrReplaceReadGroups.jar I=$readsBam O=$readsWithRGsBam RGSM=PG0051-C RGID=ERR019061 RGPL=Illumina RGCN=WTSI RGLB=unknown RGPU=unknown RGDS=unknown CREATE_INDEX=true";
+    $dm->addRule($readsWithRGsBam, $readsBam, $readsWithRGsBamCmd);
+
+    my $dedupedBam = "$outdir/$asmid.il_reads.with_rgs.deduped.bam";
+    my $dedupedMetrics = "$outdir/$asmid.il_reads.with_rgs.deduped.metrics";
+    my $dedupedBamCmd = "java -Xmx8g -jar ~/repositories/Picard-Latest/dist/MarkDuplicates.jar I=$readsWithRGsBam O=$dedupedBam M=$dedupedMetrics CREATE_INDEX=true";
+    $dm->addRule($dedupedBam, $readsWithRGsBam, $dedupedBamCmd);
+
+    my $rtcTargets = "$outdir/$asmid.il_reads.with_rgs.deduped.rtc.intervals";
+    my $rtcTargetsCmd = "$gatk8 -T RealignerTargetCreator -R $contigs -I $dedupedBam -o $rtcTargets";
+    $dm->addRule($rtcTargets, $dedupedBam, $rtcTargetsCmd);
+
+    my $realignedBam = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.bam";
+    my $realignedBamCmd = "$gatk8 -T IndelRealigner -R $contigs -I $dedupedBam -targetIntervals $rtcTargets -o $realignedBam";
+    $dm->addRule($realignedBam, $rtcTargets, $realignedBamCmd);
+
+    my $recalTable = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal_data.table";
+    #my $recalTableCmd = "$gatk8 -T BaseRecalibrator -R $contigs -I $realignedBam -knownSites $resourcesDir/test.gatkfakeout.vcf -nct 10 -o $recalTable";
+    #$dm->addRule($recalTable, $realignedBam, $recalTableCmd);
+
+    my $recalBam = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal.bam";
+    my $recalBamCmd = "$gatk8 -T PrintReads -R $contigs -I $realignedBam --BQSR $recalTable -o $recalBam -nct 30";
+    $dm->addRule($recalBam, $recalTable, $recalBamCmd);
+
+    my $snps = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal.snp.vcf";
+    my $snpsCmd = "$gatk8 -T UnifiedGenotyper -R $contigs -I $recalBam -o $snps -nt 30 --sample_ploidy 1 -glm SNP";
+    $dm->addRule($snps, $recalBam, $snpsCmd);
+
+    my $snpsFiltered = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal.snp.filtered.vcf";
+    my $snpsFilteredCmd = "$gatk8 -T VariantFiltration -R $contigs -V $snps --filterExpression 'QD < 2.0 || MQ < 40.0 || FS > 60.0 || MQRankSum < -12.5 || ReadPosRankSum < -8.0 || MQ0 > 20' --filterName SNPFilter -o $snpsFiltered";
+    $dm->addRule($snpsFiltered, $snps, $snpsFilteredCmd);
+
+    my $indels = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal.indel.vcf";
+    my $indelsCmd = "$gatk8 -T UnifiedGenotyper -R $contigs -I $recalBam -o $indels -nt 30 --sample_ploidy 1 -glm INDEL";
+    $dm->addRule($indels, $recalBam, $indelsCmd);
+
+    my $indelsFiltered = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal.indel.filtered.vcf";
+    my $indelsFilteredCmd = "$gatk8 -T VariantFiltration -R $contigs -V $indels --filterExpression 'QD < 2.0 || ReadPosRankSum < -8.0 || FS > 200.0' --filterName IndelFilter -o $indelsFiltered";
+    $dm->addRule($indelsFiltered, $indels, $indelsFilteredCmd);
+
+    my $variantsFiltered = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal.variants.filtered.vcf";
+    my $variantsFilteredCmd = "$gatk8 -T CombineVariants -R $contigs -V $snpsFiltered -V $indelsFiltered -o $variantsFiltered";
+    $dm->addRule($variantsFiltered, [$snpsFiltered, $indelsFiltered], $variantsFilteredCmd);
+
+    my $altRef = "$outdir/$asmid.GATKPolished.fasta";
+    my $altRefCmd = "$gatk8 -T FastaAlternateReferenceMaker -R $contigs -V $variantsFiltered -o $altRef";
+    $dm->addRule($altRef, $variantsFiltered, $altRefCmd);
+
+    my $altRefDict = "$outdir/$asmid.GATKPolished.dict";
+    my $altRefDictCmd = "java -Xmx8g -jar ~/repositories/Picard-Latest/dist/CreateSequenceDictionary.jar R=$altRef O=$altRefDict";
+    $dm->addRule($altRefDict, $altRef, $altRefDictCmd);
+
+    my $altRefFai = "$outdir/$asmid.GATKPolished.fasta.fai";
+    my $altRefFaiCmd = "samtools faidx $altRef";
+    $dm->addRule($altRefFai, $altRef, $altRefFaiCmd);
+
+    my $altRefBwt = "$outdir/$asmid.GATKPolished.fasta.bwt";
+    my $altRefBwtCmd = "bwa index $altRef";
+    $dm->addRule($altRefBwt, $altRef, $altRefBwtCmd);
+
+    $asms{"$asmid.GATKPolished"} = $altRef;
+}
+
+foreach my $asmid (keys(%asms)) {
+    my $contigs = $asms{$asmid};
     my $outdir = "$resultsDir/$asmid";
 
     my @tags;
@@ -226,7 +313,7 @@ foreach my $asmid (keys(%asms)) {
         $dm->addRule($roiBam, $roiSam, $roiBamCmd);
 
         my $roiTable = "$outdir/$asmid.$roiId.table";
-        my $roiTableCmd = "grep -v '\@' $roiSam | cut -f1-9,12-14 | column -t > $roiTable";
+        my $roiTableCmd = "grep -v '\@' $roiSam | cut -f1-9,12-14 | awk '{ if (NF == 12) print \$0 }' | column -t > $roiTable";
         $dm->addRule($roiTable, $roiSam, $roiTableCmd);
     }
 }

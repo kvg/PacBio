@@ -546,6 +546,199 @@ It seemed likely that many of these errors occur in intronic regions where high 
 kable(matrix.all);
 ```
 
+Further polishing with Illumina data
+------------------------------------
+
+As we have additional Illumina data for this sample, we were curious to see if it could be leveraged to correct some of the errors in the assembly.  To that end, we devised a basic correction pipeline based on the premise any variants found by aligning the same sample's Illumina data to the PacBio-based assembly would constitute errors in the assembly.
+
+1. Aligned the Illumina reads from sample PG0051-C to the AsmTest1 assembly (`bwa`).
+2. Mark duplicate reads (`Picard MarkDuplicates`).
+3. Perform local realignment near putative indels (`GATK`).
+4. Recalibrate base quality scores (`GATK`).
+5. Call SNPs and indels (`GATK`).
+6. Filter SNPs and indels (`GATK`).
+7. Modify the assembly by incorporating the alternate allele from filtered variants (`GATK`).
+
+```{r allTable, echo=FALSE, results='asis'}
+allTable = read.table(paste(dir.results, "/AsmTest1/AsmTest1.varGenes.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
+colnames(allTable) = c( "geneName", "flags", "contig", "start", "MQ", "CIGAR", "QUAL", "UKN1", "UKN2", "NM", "MD", "AS" );
+allTable$NM = as.integer(gsub("NM:i:", "", allTable$NM));
+
+numIns = c();
+numDel = c();
+for (i in 1:nrow(allTable)) {
+    insAndDels = table(unlist(strsplit(gsub("\\d+", "", gsub("\\d+M", "", allTable$CIGAR[i])), "")));
+
+    numIns = c(numIns, ifelse(is.na(insAndDels["I"]), 0, insAndDels["I"]));
+    numDel = c(numDel, ifelse(is.na(insAndDels["D"]), 0, insAndDels["D"]));
+}
+
+allTable = cbind(allTable, NI = numIns, ND = numDel);
+all.numPerfect = nrow(subset(allTable, NM == 0 & NI == 0 & ND == 0));
+
+allExons = read.table(paste(dir.results, "/AsmTest1/AsmTest1.varExons.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
+colnames(allExons) = c( "exonName", "flags", "contig", "start", "MQ", "CIGAR", "QUAL", "UKN1", "UKN2", "NM", "MD", "AS" );
+allExons$NM = as.integer(gsub("NM:i:", "", allExons$NM));
+allExons$geneName = unlist(lapply(strsplit(gsub("exon_", "", allExons$exonName), "-"), function(x) { return(x[1]); }));
+allExons$exonNumber = unlist(lapply(strsplit(gsub("exon_", "", allExons$exonName), "-"), function(x) { return(x[2]); }));
+
+numIns = c();
+numDel = c();
+for (i in 1:nrow(allExons)) {
+    insAndDels = table(unlist(strsplit(gsub("\\d+", "", gsub("\\d+M", "", allExons$CIGAR[i])), "")));
+
+    numIns = c(numIns, ifelse(is.na(insAndDels["I"]), 0, insAndDels["I"]));
+    numDel = c(numDel, ifelse(is.na(insAndDels["D"]), 0, insAndDels["D"]));
+}
+
+allExons = cbind(allExons, NI = numIns, ND = numDel);
+
+genesToProcess = unique(allExons$geneName[!(allExons$geneName %in% subset(allExons, MQ < 10)$geneName)]);
+
+list.nm = list();
+list.ni = list();
+list.nd = list();
+list.ne = list();
+for (gene in genesToProcess) {
+    nm.total = subset(allTable, geneName == gene)$NM;
+    ni.total = subset(allTable, geneName == gene)$NI;
+    nd.total = subset(allTable, geneName == gene)$ND;
+
+    nm.exon1 = subset(allExons, geneName == gene & exonNumber == 1)$NM;
+    ni.exon1 = subset(allExons, geneName == gene & exonNumber == 1)$NI;
+    nd.exon1 = subset(allExons, geneName == gene & exonNumber == 1)$ND;
+
+    nm.exon2 = subset(allExons, geneName == gene & exonNumber == 2)$NM;
+    ni.exon2 = subset(allExons, geneName == gene & exonNumber == 2)$NI;
+    nd.exon2 = subset(allExons, geneName == gene & exonNumber == 2)$ND;
+
+    nm.intron = nm.total - nm.exon1 - nm.exon2;
+    ni.intron = ni.total - ni.exon1 - ni.exon2;
+    nd.intron = nd.total - nd.exon1 - nd.exon2;
+
+    list.nm[["total"]] = c(list.nm[["total"]], nm.total);
+    list.nm[["exon1"]] = c(list.nm[["exon1"]], nm.exon1);
+    list.nm[["exon2"]] = c(list.nm[["exon2"]], nm.exon2);
+    list.nm[["intron"]] = c(list.nm[["intron"]], nm.intron);
+
+    list.ni[["total"]] = c(list.ni[["total"]], ni.total);
+    list.ni[["exon1"]] = c(list.ni[["exon1"]], ni.exon1);
+    list.ni[["exon2"]] = c(list.ni[["exon2"]], ni.exon2);
+    list.ni[["intron"]] = c(list.ni[["intron"]], ni.intron);
+
+    list.nd[["total"]] = c(list.nd[["total"]], nd.total);
+    list.nd[["exon1"]] = c(list.nd[["exon1"]], nd.exon1);
+    list.nd[["exon2"]] = c(list.nd[["exon2"]], nd.exon2);
+    list.nd[["intron"]] = c(list.nd[["intron"]], nd.intron);
+
+    list.ne[["total"]] = c(list.ne[["total"]], nm.total + ni.total + nd.total);
+    list.ne[["exon1"]] = c(list.ne[["exon1"]], nm.exon1 + ni.exon1 + nd.exon1);
+    list.ne[["exon2"]] = c(list.ne[["exon2"]], nm.exon2 + ni.exon2 + nd.exon2);
+    list.ne[["intron"]] = c(list.ne[["intron"]], nm.intron + ni.intron + nd.intron);
+}
+
+matrix.ne = cbind(total = sum(list.ne[["total"]]), intron = sum(list.ne[["intron"]]), exon1 = sum(list.ne[["exon1"]]), exon2 = sum(list.ne[["exon2"]]));
+matrix.nm = cbind(total = sum(list.nm[["total"]]), intron = sum(list.nm[["intron"]]), exon1 = sum(list.nm[["exon1"]]), exon2 = sum(list.nm[["exon2"]]));
+matrix.ni = cbind(total = sum(list.ni[["total"]]), intron = sum(list.ni[["intron"]]), exon1 = sum(list.ni[["exon1"]]), exon2 = sum(list.ni[["exon2"]]));
+matrix.nd = cbind(total = sum(list.nd[["total"]]), intron = sum(list.nd[["intron"]]), exon1 = sum(list.nd[["exon1"]]), exon2 = sum(list.nd[["exon2"]]));
+
+matrix.all = rbind(all = matrix.ne, mismatches = matrix.nm, insertions = matrix.ni, deletions = matrix.nd);
+rownames(matrix.all) = c("unpolished", "- mismatches", "- insertions", "- deletions");
+
+##########
+
+allTable = read.table(paste(dir.results, "/AsmTest1.GATKPolished/AsmTest1.GATKPolished.varGenes.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
+colnames(allTable) = c( "geneName", "flags", "contig", "start", "MQ", "CIGAR", "QUAL", "UKN1", "UKN2", "NM", "MD", "AS" );
+allTable$NM = as.integer(gsub("NM:i:", "", allTable$NM));
+
+numIns = c();
+numDel = c();
+for (i in 1:nrow(allTable)) {
+    insAndDels = table(unlist(strsplit(gsub("\\d+", "", gsub("\\d+M", "", allTable$CIGAR[i])), "")));
+
+    numIns = c(numIns, ifelse(is.na(insAndDels["I"]), 0, insAndDels["I"]));
+    numDel = c(numDel, ifelse(is.na(insAndDels["D"]), 0, insAndDels["D"]));
+}
+
+allTable = cbind(allTable, NI = numIns, ND = numDel);
+all.numPerfect = nrow(subset(allTable, NM == 0 & NI == 0 & ND == 0));
+
+allExons = read.table(paste(dir.results, "/AsmTest1.GATKPolished/AsmTest1.GATKPolished.varExons.table", sep=""), header=FALSE, stringsAsFactors=FALSE);
+colnames(allExons) = c( "exonName", "flags", "contig", "start", "MQ", "CIGAR", "QUAL", "UKN1", "UKN2", "NM", "MD", "AS" );
+allExons$NM = as.integer(gsub("NM:i:", "", allExons$NM));
+allExons$geneName = unlist(lapply(strsplit(gsub("exon_", "", allExons$exonName), "-"), function(x) { return(x[1]); }));
+allExons$exonNumber = unlist(lapply(strsplit(gsub("exon_", "", allExons$exonName), "-"), function(x) { return(x[2]); }));
+
+numIns = c();
+numDel = c();
+for (i in 1:nrow(allExons)) {
+    insAndDels = table(unlist(strsplit(gsub("\\d+", "", gsub("\\d+M", "", allExons$CIGAR[i])), "")));
+
+    numIns = c(numIns, ifelse(is.na(insAndDels["I"]), 0, insAndDels["I"]));
+    numDel = c(numDel, ifelse(is.na(insAndDels["D"]), 0, insAndDels["D"]));
+}
+
+allExons = cbind(allExons, NI = numIns, ND = numDel);
+
+genesToProcess = unique(allExons$geneName[!(allExons$geneName %in% subset(allExons, MQ < 10)$geneName)]);
+
+list.nm = list();
+list.ni = list();
+list.nd = list();
+list.ne = list();
+for (gene in genesToProcess) {
+    nm.total = subset(allTable, geneName == gene)$NM;
+    ni.total = subset(allTable, geneName == gene)$NI;
+    nd.total = subset(allTable, geneName == gene)$ND;
+
+    nm.exon1 = subset(allExons, geneName == gene & exonNumber == 1)$NM;
+    ni.exon1 = subset(allExons, geneName == gene & exonNumber == 1)$NI;
+    nd.exon1 = subset(allExons, geneName == gene & exonNumber == 1)$ND;
+
+    nm.exon2 = subset(allExons, geneName == gene & exonNumber == 2)$NM;
+    ni.exon2 = subset(allExons, geneName == gene & exonNumber == 2)$NI;
+    nd.exon2 = subset(allExons, geneName == gene & exonNumber == 2)$ND;
+
+    nm.intron = nm.total - nm.exon1 - nm.exon2;
+    ni.intron = ni.total - ni.exon1 - ni.exon2;
+    nd.intron = nd.total - nd.exon1 - nd.exon2;
+
+    list.nm[["total"]] = c(list.nm[["total"]], nm.total);
+    list.nm[["exon1"]] = c(list.nm[["exon1"]], nm.exon1);
+    list.nm[["exon2"]] = c(list.nm[["exon2"]], nm.exon2);
+    list.nm[["intron"]] = c(list.nm[["intron"]], nm.intron);
+
+    list.ni[["total"]] = c(list.ni[["total"]], ni.total);
+    list.ni[["exon1"]] = c(list.ni[["exon1"]], ni.exon1);
+    list.ni[["exon2"]] = c(list.ni[["exon2"]], ni.exon2);
+    list.ni[["intron"]] = c(list.ni[["intron"]], ni.intron);
+
+    list.nd[["total"]] = c(list.nd[["total"]], nd.total);
+    list.nd[["exon1"]] = c(list.nd[["exon1"]], nd.exon1);
+    list.nd[["exon2"]] = c(list.nd[["exon2"]], nd.exon2);
+    list.nd[["intron"]] = c(list.nd[["intron"]], nd.intron);
+
+    list.ne[["total"]] = c(list.ne[["total"]], nm.total + ni.total + nd.total);
+    list.ne[["exon1"]] = c(list.ne[["exon1"]], nm.exon1 + ni.exon1 + nd.exon1);
+    list.ne[["exon2"]] = c(list.ne[["exon2"]], nm.exon2 + ni.exon2 + nd.exon2);
+    list.ne[["intron"]] = c(list.ne[["intron"]], nm.intron + ni.intron + nd.intron);
+}
+
+matrix.ne = cbind(total = sum(list.ne[["total"]]), intron = sum(list.ne[["intron"]]), exon1 = sum(list.ne[["exon1"]]), exon2 = sum(list.ne[["exon2"]]));
+matrix.nm = cbind(total = sum(list.nm[["total"]]), intron = sum(list.nm[["intron"]]), exon1 = sum(list.nm[["exon1"]]), exon2 = sum(list.nm[["exon2"]]));
+matrix.ni = cbind(total = sum(list.ni[["total"]]), intron = sum(list.ni[["intron"]]), exon1 = sum(list.ni[["exon1"]]), exon2 = sum(list.ni[["exon2"]]));
+matrix.nd = cbind(total = sum(list.nd[["total"]]), intron = sum(list.nd[["intron"]]), exon1 = sum(list.nd[["exon1"]]), exon2 = sum(list.nd[["exon2"]]));
+
+matrix.all.polished = rbind(all = matrix.ne, mismatches = matrix.nm, insertions = matrix.ni, deletions = matrix.nd);
+rownames(matrix.all.polished) = c("polished", "- mismatches", "- insertions", "- deletions");
+
+matrix.all.complete = rbind(matrix.all, matrix.all.polished);
+```
+
+```{r matrixAllComplete, echo=FALSE, results='asis'}
+kable(matrix.all.complete);
+```
+
 Acknowledgements
 ----------------
 

@@ -331,6 +331,34 @@ It seemed likely that many of these errors occur in intronic regions where high 
 |  deletions   |     19|      16|      3|      0|
 
 
+Further polishing with Illumina data
+------------------------------------
+
+As we have additional Illumina data for this sample, we were curious to see if it could be leveraged to correct some of the errors in the assembly.  To that end, we devised a basic correction pipeline based on the premise any variants found by aligning the same sample's Illumina data to the PacBio-based assembly would constitute errors in the assembly.
+
+1. Aligned the Illumina reads from sample PG0051-C to the AsmTest1 assembly (`bwa`).
+2. Mark duplicate reads (`Picard MarkDuplicates`).
+3. Perform local realignment near putative indels (`GATK`).
+4. Recalibrate base quality scores (`GATK`).
+5. Call SNPs and indels (`GATK`).
+6. Filter SNPs and indels (`GATK`).
+7. Modify the assembly by incorporating the alternate allele from filtered variants (`GATK`).
+
+
+
+
+|id            |  total|  intron|  exon1|  exon2|
+|:-------------|------:|-------:|------:|------:|
+|unpolished    |    146|     134|     12|      0|
+|- mismatches  |     81|      73|      8|      0|
+|- insertions  |     46|      45|      1|      0|
+|- deletions   |     19|      16|      3|      0|
+|polished      |     90|      84|      6|      0|
+|- mismatches  |     53|      49|      4|      0|
+|- insertions  |     25|      24|      1|      0|
+|- deletions   |     12|      11|      1|      0|
+
+
 Acknowledgements
 ----------------
 

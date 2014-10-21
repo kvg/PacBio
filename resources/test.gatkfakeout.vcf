@@ -1,0 +1,67 @@
+##fileformat=VCFv4.1
+##FILTER=<ID=LowQual,Description="Low quality">
+##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth (reads with MQ=255 or with bad mates are filtered)">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype Quality">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=MLPSAC,Number=A,Type=Integer,Description="Maximum likelihood expectation (MLE) for the alternate allele count, in the same order as listed, for each individual sample">
+##FORMAT=<ID=MLPSAF,Number=A,Type=Float,Description="Maximum likelihood expectation (MLE) for the alternate allele fraction, in the same order as listed, for each individual sample">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="Normalized, Phred-scaled likelihoods for genotypes as defined in the VCF specification">
+##GATKCommandLine=<ID=UnifiedGenotyper,Version=3.2-0-g799071b,Date="Tue Oct 21 16:11:47 BST 2014",Epoch=1413904307406,CommandLineOptions="analysis_type=UnifiedGenotyper input_file=[/data2/users/kiran/analyses/PacBio/results/master/AsmTest1/AsmTest1.il_reads.with_rgs.realigned.bam] showFullBamList=false read_buffer_size=null phone_home=AWS gatk_key=null tag=NA read_filter=[] intervals=null excludeIntervals=null interval_set_rule=UNION interval_merging=ALL interval_padding=0 reference_sequence=data/ASMTest1.polished_assembly.fasta nonDeterministicRandomSeed=false disableDithering=false maxRuntime=-1 maxRuntimeUnits=MINUTES downsampling_type=BY_SAMPLE downsample_to_fraction=null downsample_to_coverage=250 baq=OFF baqGapOpenPenalty=40.0 refactor_NDN_cigar_string=false fix_misencoded_quality_scores=false allow_potentially_misencoded_quality_scores=false useOriginalQualities=false defaultBaseQualities=-1 performanceLog=null BQSR=null quantize_quals=0 disable_indel_quals=false emit_original_quals=false preserve_qscores_less_than=6 globalQScorePrior=-1.0 validation_strictness=SILENT remove_program_records=false keep_program_records=false sample_rename_mapping_file=null unsafe=null disable_auto_index_creation_and_locking_when_reading_rods=false num_threads=10 num_cpu_threads_per_data_thread=1 num_io_threads=0 monitorThreadEfficiency=false num_bam_file_handles=null read_group_black_list=null pedigree=[] pedigreeString=[] pedigreeValidationType=STRICT allow_intervals_with_unindexed_bam=false generateShadowBCF=false variant_index_type=DYNAMIC_SEEK variant_index_parameter=-1 logging_level=INFO log_to_file=null help=false version=false genotype_likelihoods_model=SNP pcr_error_rate=1.0E-4 computeSLOD=false pair_hmm_implementation=LOGLESS_CACHING min_base_quality_score=17 max_deletion_fraction=0.05 min_indel_count_for_genotyping=5 min_indel_fraction_per_sample=0.25 indelGapContinuationPenalty=10 indelGapOpenPenalty=45 indelHaplotypeSize=80 indelDebug=false ignoreSNPAlleles=false allReadsSP=false ignoreLaneInfo=false reference_sample_calls=(RodBinding name= source=UNBOUND) reference_sample_name=null min_quality_score=1 max_quality_score=40 site_quality_prior=20 min_power_threshold_for_calling=0.95 annotateNDA=false heterozygosity=0.001 indel_heterozygosity=1.25E-4 standard_min_confidence_threshold_for_calling=30.0 standard_min_confidence_threshold_for_emitting=30.0 max_alternate_alleles=6 input_prior=[] sample_ploidy=1 genotyping_mode=DISCOVERY alleles=(RodBinding name= source=UNBOUND) contamination_fraction_to_filter=0.0 contamination_fraction_per_sample_file=null p_nonref_model=EXACT_INDEPENDENT exactcallslog=null output_mode=EMIT_VARIANTS_ONLY allSitePLs=false dbsnp=(RodBinding name= source=UNBOUND) comp=[] out=org.broadinstitute.gatk.engine.io.stubs.VariantContextWriterStub no_cmdline_in_header=org.broadinstitute.gatk.engine.io.stubs.VariantContextWriterStub sites_only=org.broadinstitute.gatk.engine.io.stubs.VariantContextWriterStub bcf=org.broadinstitute.gatk.engine.io.stubs.VariantContextWriterStub onlyEmitSamples=[] debug_file=null metrics_file=null annotation=[] excludeAnnotation=[] filter_reads_with_N_cigar=false filter_mismatching_base_and_quals=false filter_bases_not_stored=false">
+##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele count in genotypes, for each ALT allele, in the same order as listed">
+##INFO=<ID=AF,Number=A,Type=Float,Description="Allele Frequency, for each ALT allele, in the same order as listed">
+##INFO=<ID=AN,Number=1,Type=Integer,Description="Total number of alleles in called genotypes">
+##INFO=<ID=BaseQRankSum,Number=1,Type=Float,Description="Z-score from Wilcoxon rank sum test of Alt Vs. Ref base qualities">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth; some reads may have been filtered">
+##INFO=<ID=DS,Number=0,Type=Flag,Description="Were any of the samples downsampled?">
+##INFO=<ID=Dels,Number=1,Type=Float,Description="Fraction of Reads Containing Spanning Deletions">
+##INFO=<ID=FS,Number=1,Type=Float,Description="Phred-scaled p-value using Fisher's exact test to detect strand bias">
+##INFO=<ID=HaplotypeScore,Number=1,Type=Float,Description="Consistency of the site with at most two segregating haplotypes">
+##INFO=<ID=InbreedingCoeff,Number=1,Type=Float,Description="Inbreeding coefficient as estimated from the genotype likelihoods per-sample when compared against the Hardy-Weinberg expectation">
+##INFO=<ID=MLEAC,Number=A,Type=Integer,Description="Maximum likelihood expectation (MLE) for the allele counts (not necessarily the same as the AC), for each ALT allele, in the same order as listed">
+##INFO=<ID=MLEAF,Number=A,Type=Float,Description="Maximum likelihood expectation (MLE) for the allele frequency (not necessarily the same as the AF), for each ALT allele, in the same order as listed">
+##INFO=<ID=MQ,Number=1,Type=Float,Description="RMS Mapping Quality">
+##INFO=<ID=MQ0,Number=1,Type=Integer,Description="Total Mapping Quality Zero Reads">
+##INFO=<ID=MQRankSum,Number=1,Type=Float,Description="Z-score From Wilcoxon rank sum test of Alt vs. Ref read mapping qualities">
+##INFO=<ID=QD,Number=1,Type=Float,Description="Variant Confidence/Quality by Depth">
+##INFO=<ID=RPA,Number=.,Type=Integer,Description="Number of times tandem repeat unit is repeated, for each allele (including reference)">
+##INFO=<ID=RU,Number=1,Type=String,Description="Tandem repeat unit (bases)">
+##INFO=<ID=ReadPosRankSum,Number=1,Type=Float,Description="Z-score from Wilcoxon rank sum test of Alt vs. Ref read position bias">
+##INFO=<ID=STR,Number=0,Type=Flag,Description="Variant is a short tandem repeat">
+##contig=<ID=scf7180000000090|quiver,length=3293905>
+##contig=<ID=scf7180000000091|quiver,length=2921075>
+##contig=<ID=scf7180000000093|quiver,length=12650>
+##contig=<ID=scf7180000000094|quiver,length=20438>
+##contig=<ID=scf7180000000092|quiver,length=2309624>
+##contig=<ID=scf7180000000095|quiver,length=108907>
+##contig=<ID=scf7180000000096|quiver,length=45077>
+##contig=<ID=scf7180000000097|quiver,length=1947480>
+##contig=<ID=scf7180000000098|quiver,length=87635>
+##contig=<ID=scf7180000000099|quiver,length=1696391>
+##contig=<ID=scf7180000000100|quiver,length=27224>
+##contig=<ID=scf7180000000101|quiver,length=13276>
+##contig=<ID=scf7180000000102|quiver,length=1320876>
+##contig=<ID=scf7180000000103|quiver,length=24914>
+##contig=<ID=scf7180000000104|quiver,length=1400860>
+##contig=<ID=scf7180000000105|quiver,length=1494319>
+##contig=<ID=scf7180000000106|quiver,length=71476>
+##contig=<ID=scf7180000000107|quiver,length=1339406>
+##contig=<ID=scf7180000000109|quiver,length=11443>
+##contig=<ID=scf7180000000108|quiver,length=1061347>
+##contig=<ID=scf7180000000111|quiver,length=17146>
+##contig=<ID=scf7180000000112|quiver,length=25369>
+##contig=<ID=scf7180000000110|quiver,length=945342>
+##contig=<ID=scf7180000000114|quiver,length=12506>
+##contig=<ID=scf7180000000115|quiver,length=17157>
+##contig=<ID=scf7180000000116|quiver,length=43416>
+##contig=<ID=scf7180000000113|quiver,length=615277>
+##contig=<ID=scf7180000000117|quiver,length=13054>
+##contig=<ID=scf7180000000118|quiver,length=1485303>
+##contig=<ID=scf7180000000119|quiver,length=38801>
+##contig=<ID=scf7180000000120|quiver,length=49344>
+##contig=<ID=scf7180000000123|quiver,length=26095>
+##contig=<ID=scf7180000000122|quiver,length=261895>
+##contig=<ID=scf7180000000121|quiver,length=968713>
+##reference=file:///data2/users/kiran/analyses/PacBio/data/ASMTest1.polished_assembly.fasta
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	PG0051-C
+scf7180000000090|quiver	1	.	A	C	637	PASS	AC=1;AF=1.00;AN=1	GT:AD:DP:GQ:MLPSAC:MLPSAF:PL	1:12,32:45:99:1:1.00:667,0
