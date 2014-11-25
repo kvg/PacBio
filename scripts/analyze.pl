@@ -14,7 +14,7 @@ my %args = &getCommandArguments(
     'RUN_ID'     => undef,
     'DRY_RUN'    => 1,
     'NUM_JOBS'   => 1,
-    'KEEP_GOING' => 1,
+    'KEEP_GOING' => 0,
     'CLUSTER'    => 'localhost',
     'QUEUE'      => 'localhost',
 );
@@ -51,6 +51,7 @@ my $showsnps = "~/opt/MUMmer3.23/show-snps";
 my $showtiling = "~/opt/MUMmer3.23/show-tiling";
 my $deltafilter = "~/opt/MUMmer3.23/delta-filter";
 my $mummerplot = "~/opt/MUMmer3.23/mummerplot";
+my $icorn2 = "~/opt/icorn2-v0.95//icorn2.sh";
 
 my %bams = (
     'pb' => "$dataDir/Pfalc3D7/aligned_reads.bam",
@@ -64,13 +65,26 @@ my %seqs = (
 
 my %fastqs = (
     'il' => {
-        'end1' => "data/PfCross/ERR019061_1.fastq.gz",
-        'end2' => "data/PfCross/ERR019061_2.fastq.gz"
+        'end1' => "$dataDir/PfCross/ERR019061_1.fastq.gz",
+        'end2' => "$dataDir/PfCross/ERR019061_2.fastq.gz"
     },
 );
 
 my %asms = (
-    'AsmTest1' => "data/ASMTest1.polished_assembly.fasta",
+    'AsmTest1' => "$dataDir/ASMTest1.polished_assembly.fasta",
+    'ICORN2_01' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.1.fasta',
+    'ICORN2_02' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.2.fasta',
+    'ICORN2_03' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.3.fasta',
+    'ICORN2_04' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.4.fasta',
+    'ICORN2_05' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.5.fasta',
+    'ICORN2_06' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.6.fasta',
+    'ICORN2_07' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.7.fasta',
+    'ICORN2_08' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.8.fasta',
+    'ICORN2_09' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.9.fasta',
+    'ICORN2_10' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.10.fasta',
+    'ICORN2_11' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.11.fasta',
+    'ICORN2_12' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.12.fasta',
+    'ICORN2_13' => 'scratch/icorn2/ICORN2.ASMTest1.polished_assembly.13.fasta',
 );
 
 my %refs = (
@@ -189,6 +203,7 @@ foreach my $id (keys(%bams)) {
     }
 }
 
+if (0) {
 foreach my $asmid (keys(%asms)) {
     my $contigs = $asms{$asmid};
     my $outdir = "$resultsDir/$asmid";
@@ -219,23 +234,25 @@ foreach my $asmid (keys(%asms)) {
     $dm->addRule($realignedBam, $rtcTargets, $realignedBamCmd);
 
     my $recalTable = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal_data.table";
-    #my $recalTableCmd = "$gatk8 -T BaseRecalibrator -R $contigs -I $realignedBam -knownSites $resourcesDir/test.gatkfakeout.vcf -nct 10 -o $recalTable";
-    #$dm->addRule($recalTable, $realignedBam, $recalTableCmd);
+    my $recalTableCmd = "$gatk8 -T BaseRecalibrator -R $contigs -I $realignedBam -knownSites $resourcesDir/test.gatkfakeout.vcf -nct 10 -o $recalTable";
+    $dm->addRule($recalTable, $realignedBam, $recalTableCmd);
 
     my $recalBam = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal.bam";
     my $recalBamCmd = "$gatk8 -T PrintReads -R $contigs -I $realignedBam --BQSR $recalTable -o $recalBam -nct 30";
     $dm->addRule($recalBam, $recalTable, $recalBamCmd);
 
+    my $annotations = join(" -A ", "AlleleBalance", "AlleleBalanceBySample", "BaseCounts", "BaseQualityRankSumTest", "ChromosomeCounts", "ClippingRankSumTest", "Coverage", "DepthPerAlleleBySample", "DepthPerSampleHC", "FisherStrand", "GCContent", "HaplotypeScore", "HardyWeinberg", "HomopolymerRun", "LikelihoodRankSumTest", "LowMQ", "MappingQualityRankSumTest", "MappingQualityZero", "MappingQualityZeroBySample", "NBaseCount", "QualByDepth", "RMSMappingQuality", "ReadPosRankSumTest", "SpanningDeletions", "StrandBiasBySample", "StrandOddsRatio", "TandemRepeatAnnotator", "VariantType" );
+
     my $snps = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal.snp.vcf";
-    my $snpsCmd = "$gatk8 -T UnifiedGenotyper -R $contigs -I $recalBam -o $snps -nt 30 --sample_ploidy 1 -glm SNP";
+    my $snpsCmd = "$gatk8 -T UnifiedGenotyper -R $contigs -I $recalBam -o $snps -nt 30 --sample_ploidy 1 -glm SNP -A $annotations";
     $dm->addRule($snps, $recalBam, $snpsCmd);
 
     my $snpsFiltered = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal.snp.filtered.vcf";
-    my $snpsFilteredCmd = "$gatk8 -T VariantFiltration -R $contigs -V $snps --filterExpression 'QD < 2.0 || MQ < 40.0 || FS > 60.0 || MQRankSum < -12.5 || ReadPosRankSum < -8.0 || MQ0 > 20' --filterName SNPFilter -o $snpsFiltered";
+    my $snpsFilteredCmd = "$gatk8 -T VariantFiltration -R $contigs -V $snps --filterExpression 'QD < 2.0 || MQ < 60.0 || FS > 40.0 || MQRankSum < -7.5 || ReadPosRankSum < -4.0 || MQ0 > 0 || HRun > 3' --filterName SNPFilter -o $snpsFiltered";
     $dm->addRule($snpsFiltered, $snps, $snpsFilteredCmd);
 
     my $indels = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal.indel.vcf";
-    my $indelsCmd = "$gatk8 -T UnifiedGenotyper -R $contigs -I $recalBam -o $indels -nt 30 --sample_ploidy 1 -glm INDEL";
+    my $indelsCmd = "$gatk8 -T UnifiedGenotyper -R $contigs -I $recalBam -o $indels -nt 30 --sample_ploidy 1 -glm INDEL -A $annotations";
     $dm->addRule($indels, $recalBam, $indelsCmd);
 
     my $indelsFiltered = "$outdir/$asmid.il_reads.with_rgs.deduped.realigned.recal.indel.filtered.vcf";
@@ -250,9 +267,9 @@ foreach my $asmid (keys(%asms)) {
     my $altRefCmd = "$gatk8 -T FastaAlternateReferenceMaker -R $contigs -V $variantsFiltered -o $altRef";
     $dm->addRule($altRef, $variantsFiltered, $altRefCmd);
 
-    my $altRefDict = "$outdir/$asmid.GATKPolished.dict";
-    my $altRefDictCmd = "java -Xmx8g -jar ~/repositories/Picard-Latest/dist/CreateSequenceDictionary.jar R=$altRef O=$altRefDict";
-    $dm->addRule($altRefDict, $altRef, $altRefDictCmd);
+    #my $altRefDict = "$outdir/$asmid.GATKPolished.dict";
+    #my $altRefDictCmd = "java -Xmx8g -jar ~/repositories/Picard-Latest/dist/CreateSequenceDictionary.jar R=$altRef O=$altRefDict";
+    #$dm->addRule($altRefDict, $altRef, $altRefDictCmd);
 
     my $altRefFai = "$outdir/$asmid.GATKPolished.fasta.fai";
     my $altRefFaiCmd = "samtools faidx $altRef";
@@ -263,6 +280,13 @@ foreach my $asmid (keys(%asms)) {
     $dm->addRule($altRefBwt, $altRef, $altRefBwtCmd);
 
     $asms{"$asmid.GATKPolished"} = $altRef;
+
+    #data/ASMTest1.polished_assembly.fasta
+
+    my $icornPolished = "$outdir/ICORN2.$asmid.polished_assembly.fasta.5";
+    my $icornPolishedCmd = "cd $outdir && $icorn2 $dataDir/PfCross/ERR019061 250 $contigs 1 5";
+    #$dm->addRule($icornPolished, $contigs, $icornPolishedCmd);
+}
 }
 
 foreach my $asmid (keys(%asms)) {
@@ -303,6 +327,7 @@ foreach my $asmid (keys(%asms)) {
     my $variantSummaryCmd = "$showsnps -l -r -T -H $outdir/$asmid.filter.filter > $variantSummary";
     $dm->addRule($variantSummary, $dotplot, $variantSummaryCmd);
 
+    if (0) {
     foreach my $roiId (keys(%roiFastas)) {
         my $roiSam = "$outdir/$asmid.$roiId.sam";
         my $roiSamCmd = "bwa mem $contigs $roiFastas{$roiId} | sed 's/\|quiver//g' > $roiSam";
@@ -315,6 +340,7 @@ foreach my $asmid (keys(%asms)) {
         my $roiTable = "$outdir/$asmid.$roiId.table";
         my $roiTableCmd = "grep -v '\@' $roiSam | cut -f1-9,12-14 | awk '{ if (NF == 12) print \$0 }' | column -t > $roiTable";
         $dm->addRule($roiTable, $roiSam, $roiTableCmd);
+    }
     }
 }
 

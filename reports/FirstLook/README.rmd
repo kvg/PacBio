@@ -546,10 +546,51 @@ It seemed likely that many of these errors occur in intronic regions where high 
 kable(matrix.all);
 ```
 
-Further polishing with Illumina data
-------------------------------------
+Further polishing with ICORN2
+-----------------------------
 
-As we have additional Illumina data for this sample, we were curious to see if it could be leveraged to correct some of the errors in the assembly.  To that end, we devised a basic correction pipeline based on the premise any variants found by aligning the same sample's Illumina data to the PacBio-based assembly would constitute errors in the assembly.
+As we have additional Illumina data for this sample, we were curious to see if it could be leveraged to correct some of the errors in the assembly.  To that end, we applied the ICORN2 polishing pipeline, which is based on the premise any variants found by aligning the same sample's Illumina data to the PacBio-based assembly would constitute errors in the assembly.
+
+```{r icorn2, echo=FALSE, results='asis'}
+files = c(
+    "AsmTest1/AsmTest1.filter.filter.variant_summary",
+    "ICORN2_01/ICORN2_01.filter.filter.variant_summary",
+    "ICORN2_02/ICORN2_02.filter.filter.variant_summary",
+    "ICORN2_03/ICORN2_03.filter.filter.variant_summary",
+    "ICORN2_04/ICORN2_04.filter.filter.variant_summary",
+    "ICORN2_05/ICORN2_05.filter.filter.variant_summary",
+    "ICORN2_06/ICORN2_06.filter.filter.variant_summary",
+    "ICORN2_07/ICORN2_07.filter.filter.variant_summary",
+    "ICORN2_08/ICORN2_08.filter.filter.variant_summary",
+    "ICORN2_09/ICORN2_09.filter.filter.variant_summary",
+    "ICORN2_10/ICORN2_10.filter.filter.variant_summary",
+    "ICORN2_11/ICORN2_11.filter.filter.variant_summary",
+    "ICORN2_12/ICORN2_12.filter.filter.variant_summary",
+    "ICORN2_13/ICORN2_13.filter.filter.variant_summary"
+);
+
+vs.summaries = c();
+for (file in files) {
+    vs = read.table(paste(dir.results, "/", file, sep=""), header=FALSE, stringsAsFactors=FALSE);
+    names(vs) = c( "P1", "REF", "ALT", "P2", "BUFF", "DIST", "R", "Q", "LEN_R", "LEN_Q", "FRM", "UNKNOWN", "REFERENCE", "QUERY" );
+
+    vs.summary = cbind(file,
+                       "SNP" = length(subset(vs, REFERENCE != "M76611" & REF != "." & ALT != ".")$REFERENCE),
+                       "INS" = length(subset(vs, REFERENCE != "M76611" & REF == "." & ALT != ".")$REFERENCE),
+                       "DEL" = length(subset(vs, REFERENCE != "M76611" & REF != "." & ALT == ".")$REFERENCE));
+
+    vs.summaries = rbind(vs.summaries, vs.summary);
+}
+
+kable(vs.summaries);
+```
+
+Evidently, the polishing does help to fix insertion and deletion errors.  However, it is introducing more SNPs.  This will take more work to mitigate.
+
+Further polishing with the GATK
+-------------------------------
+
+We also devised a basic correction pipeline based on a recent version of the GATK.  This is experimental. 
 
 1. Aligned the Illumina reads from sample PG0051-C to the AsmTest1 assembly (`bwa`).
 2. Mark duplicate reads (`Picard MarkDuplicates`).
