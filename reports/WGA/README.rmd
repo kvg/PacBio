@@ -1,0 +1,70 @@
+Long-read sequencing on amplified DNA
+=====================================
+
+Long-read sequencing can produce very long genomic fragments with an N50 of ~10 kb, with some fragments as long as ~40 kb.  However, they typically require a large amount of high molecular weight DNA (5 to 15 ug), limiting their applications.  Particular to malaria parasite sequencing, culturing a sufficient number of Plasmodium falciparum parasites to obtain the desired gDNA yield is enormously difficult and time-consuming.  Alternatively, one can consider whole-genome amplification on a small amount of DNA - say ~1 ng - to the 15 ug level.  Standard WGA kits employing the Taq polymerase are inappropriate for such a task; Taq-produced amplicons are typically up to 3 or 4 kb, negating much of the value of long-read sequencing.  Instead, multiple displacement amplification (MDA) employs Phi-29, a polymerase with much higher replication fidelity and capable of generating amplicons greater than 20 kb in length.
+
+We explored the use of MDA-based WGA to produce a draft-quality genome assembly of a malaria parasite genome.  Specifically, we amplified 1 ng of 3D7 to 15 ug and performed PacBio sequencing on the resulting amplicons.
+
+```{r asmStats, echo=FALSE, results='asis'}
+readAsmStats <- function(file, name) {
+    d = t(read.table(file, header=FALSE, stringsAsFactors=FALSE, row.names=1));
+    colnames(d) = gsub(":", "", colnames(d));
+    rownames(d) = c(name);
+
+    return(d);
+}
+
+s.unamp = readAsmStats("../../results/wga/unamplified/unamplified.asmStats", "unamplified");
+s.amp   = readAsmStats("../../results/wga/amplified/amplified.asmStats", "amplified");
+
+s = rbind(s.unamp, s.amp);
+
+kable(s);
+```
+
+```{r readLengths, echo=FALSE}
+l.unamp = read.table("../../results/wga/unamplified/unamplified.lengths.txt", header=FALSE, stringsAsFactors=FALSE);
+l.amp = read.table("../../results/wga/amplified/amplified.lengths.txt", header=FALSE, stringsAsFactors=FALSE);
+
+h.unamp = hist(l.unamp$V1, breaks=seq(0, max(l.unamp$V1) + 100, by=100), plot=FALSE);
+h.amp   = hist(l.amp$V1, breaks=seq(0, max(l.amp$V1) + 100, by=100), plot=FALSE);
+
+plot(h.amp$mids, h.amp$density, col="red", type="l", lwd=3, bty="n", xlab="Read length (bp)", ylab="Density", cex=1.3, cex.axis=1.3, cex.lab=1.3);
+points(h.unamp$mids, h.unamp$density, col="blue", type="l", lwd=3);
+
+h.y = abs(max(h.amp$density) - max(h.unamp$density));
+
+text(s["unamplified", "n50"], h.y, labels=paste("n50 =", s["unamplified", "n50"], "bp"), col="blue", pos=4, offset=-0.06);
+abline(v=s["unamplified", "n50"], col="blue", lty=3);
+abline(v=s["amplified", "n50"], col="red", lty=3);
+text(s["amplified", "n50"], h.y - (h.y/10), labels=paste("n50 =", s["amplified", "n50"], "bp"), col="red", pos=4, offset=-0.06);
+
+legend("topright", c("Amplified", "Unamplified"), col=c("red", "blue"), lwd=3, cex=1.3, bty="n");
+```
+
+```{r chimericFromKmers, echo=FALSE}
+isChimericByKmers <- function(x, threshold=10) { return(sum(as.integer(x[4:19]) >= 10) > 1); }
+
+k.amp   = read.table("../../results/wga/amplified/amplified.chimeras.k21.txt", header=TRUE, stringsAsFactors=FALSE);
+k.amp$chimericByKmers = apply(k.amp, 1, isChimericByKmers);
+
+k.unamp = read.table("../../results/wga/unamplified/unamplified.chimeras.k21.txt", header=TRUE, stringsAsFactors=FALSE);
+k.unamp$chimericByKmers = apply(k.unamp, 1, isChimericByKmers);
+
+```
+
+```{r chimericFromAlignments, echo=FALSE}
+a.amp   = read.table("../../results/wga/amplified/amplified.sam.table", header=FALSE, stringsAsFactors=FALSE, col.names=c("readName", "length", "isChimeric", "chr", "start", "MQ"));
+
+k.amp$isAligned = TRUE;
+k.amp[which(k.amp$readName %in% unique(subset(a.amp, chr == "*")$readName)), "isAligned"] = FALSE;
+k.amp$chimericByBwa = FALSE;
+k.amp[which(k.amp$readName %in% unique(subset(a.amp, isChimeric == 1)$readName)), "chimericByBwa"] = TRUE;
+
+a.unamp = read.table("../../results/wga/unamplified/unamplified.sam.table", header=FALSE, stringsAsFactors=FALSE, col.names=c("readName", "length", "isChimeric", "chr", "start", "MQ"));
+
+k.unamp$isAligned = TRUE;
+k.unamp[which(k.unamp$readName %in% unique(subset(a.unamp, chr == "*")$readName)), "isAligned"] = FALSE;
+k.unamp$chimericByBwa = FALSE;
+k.unamp[which(k.unamp$readName %in% unique(subset(a.unamp, isChimeric == 1)$readName)), "chimericByBwa"] = TRUE;
+```
