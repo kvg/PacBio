@@ -1,5 +1,5 @@
-Long-read sequencing on amplified DNA
-=====================================
+Lowering the barrier to entry for long-read sequencing with whole-genome amplification
+==
 
 Long-read sequencing can produce very long genomic fragments with an N50 of ~10 kb, with some fragments as long as ~40 kb.  However, they typically require a large amount of high molecular weight DNA (5 to 15 ug), limiting their applications.  Particular to malaria parasite sequencing, culturing a sufficient number of Plasmodium falciparum parasites to obtain the desired gDNA yield is enormously difficult and time-consuming.  Alternatively, one can consider whole-genome amplification on a small amount of DNA - say ~1 ng - to the 15 ug level.  Standard WGA kits employing the Taq polymerase are inappropriate for such a task; Taq-produced amplicons are typically up to 3 or 4 kb, negating much of the value of long-read sequencing.  Instead, multiple displacement amplification (MDA) employs Phi-29, a polymerase with much higher replication fidelity and capable of generating amplicons greater than 20 kb in length.
 
