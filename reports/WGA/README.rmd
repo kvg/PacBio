@@ -129,9 +129,7 @@ asmStats = read.table(paste(results.dir, "assembly.stats", sep="/"), header=TRUE
 asmStats[which(asmStats$id == "amplified"),   "ng50"] = ng50(f.amp,   f.ref);
 asmStats[which(asmStats$id == "unamplified"), "ng50"] = ng50(f.unamp, f.ref);
 
-asmStats[,c("id", "numContigs", "minLength", "maxLength", "ng50", "totalSequence")];
-
-kable(asmStats);
+kable(asmStats[,c("id", "numContigs", "minLength", "maxLength", "ng50", "totalSequence")]);
 ```
 
 ```{r scaffoldLengths, echo=FALSE}

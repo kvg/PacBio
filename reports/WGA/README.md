@@ -20,15 +20,11 @@ We explored the use of MDA-based WGA to produce a draft-quality genome assembly 
 
 ![plot of chunk showCoverageOverIdeogram](figure/showCoverageOverIdeogram-1.png) 
 
-           id numContigs minLength maxLength    ng50 totalSequence
-1   amplified         84       618   1805358  887768      22914917
-2 unamplified         34     11443   3293905 1696391      23727741
 
-
-|id          | numContigs| minLength| maxLength| meanLength|     n50| totalSequence|    ng50|
-|:-----------|----------:|---------:|---------:|----------:|-------:|-------------:|-------:|
-|amplified   |         84|       618|   1805358|   272796.7|  887768|      22914917|  887768|
-|unamplified |         34|     11443|   3293905|   697874.7| 1696391|      23727741| 1696391|
+|id          | numContigs| minLength| maxLength|    ng50| totalSequence|
+|:-----------|----------:|---------:|---------:|-------:|-------------:|
+|amplified   |         84|       618|   1805358|  887768|      22914917|
+|unamplified |         34|     11443|   3293905| 1696391|      23727741|
 
 
 
