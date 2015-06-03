@@ -226,9 +226,6 @@ sub new {
     my $self = \%self;
     $self->_check_arg_consistency(%self);
 
-    print { $self->{'makefile'} } "SHELL:=/bin/bash\n";
-    print { $self->{'makefile'} } "export SHELLOPTS:=errexit:pipefail\n\n";
-
     return \%self;
 }
 
@@ -283,19 +280,23 @@ sub addRule {
     $self->_check_arg_consistency(%bja);
 
 # Setup the pre-commands (things like pre-making directories that will hold log files and output files)
-    my @precmds;
+    my %precmds;
     my $logdir = dirname( $bja{'outputFile'} );
     if ( !-e $logdir ) {
         my $mklogdircmd = "\@test \"! -d $logdir\" && mkdir -p $logdir";
-        push( @precmds, $mklogdircmd );
+        #push( @precmds, $mklogdircmd );
+        $precmds{$mklogdircmd} = 1;
     }
 
     foreach my $target (@targets) {
         my $rootdir = dirname($target);
 
         my $mkdircmd = "\@test \"! -d $rootdir\" && mkdir -p $rootdir";
-        push( @precmds, $mkdircmd );
+        #push( @precmds, $mkdircmd );
+        $precmds{$mkdircmd} = 1;
     }
+
+    my @precmds = keys(%precmds);
 
 # Setup the user's commands, taking care of imposing memory limits and adding in cluster prefix commands
     for ( my $i = 0 ; $i <= $#cmds ; $i++ ) {
@@ -331,7 +332,7 @@ sub addRule {
         $cmdprefix = "qsub -sync y -cwd -V -b yes -j y"
           . (
             defined $memRequest
-            ? qq/ -l mem_free=${memRequest}G,h_vmem=${memRequest}G/
+            ? qq/ -l mem_free=${memRequest}G,h_vmem=${memRequest}G,hostname=!foxtrot.well.ox.ac.uk/
             : q//
           ) . " -o $bja{'outputFile'} -N $bja{'name'}";
         $cmdprefix .=
@@ -357,9 +358,7 @@ sub addRule {
 #$cmdprefix = "bsub -q $bja{'queue'} -M $memCutoff -P $bja{'projectName'} -o $bja{'outputFile'} -u $bja{'mailTo'} -R \"rusage[mem=$integerMemRequest]\" $wait $rerunnable $migrationThreshold $bja{'extra'}";
     }
     elsif ( $bja{'cluster'} eq 'localhost' ) {
-        if (!exists($bja{'nopostfix'})) {
-            $cmdpostfix = " 2>&1 | tee -a $bja{'outputFile'}";
-        }
+        #$cmdpostfix = "| tee -a $bja{'outputFile'}";
     }
     else {
         croak
