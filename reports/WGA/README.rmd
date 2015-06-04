@@ -50,7 +50,9 @@ ng50 <- function(f, r) {
 results.dir = "../../results/wga";
 data.dir = "../../data";
 resources.dir = "../../resources";
+```
 
+```{r loadFastas, echo=FALSE, cache=TRUE}
 ref = "../../resources/references/3D7/PlasmoDB-9.0_Pfalciparum3D7_Genome.sorted.fasta";
 
 f.ref   = read.fasta(ref);
@@ -120,16 +122,26 @@ for (chr in chroms) {
     points(cov.start[interval], pos - 0.1 + -0.3*(unamp.mincov / max(unamp.mincov, na.rm=TRUE)), type="l", col=color.unamp, lwd=0.5);
 }
 
-legend("bottomright", c("Amplified", "Unamplified"), col=c(color.amp, color.unamp), lwd=2, bty="n");
+legend("bottomright", c("Coverage from amplified DNA", "Coverage from unamplified DNA"), col=c(color.amp, color.unamp), lwd=2, bty="n");
 ```
 
 ```{r asmStats, echo=FALSE, results='asis'}
 asmStats = read.table(paste(results.dir, "assembly.stats", sep="/"), header=TRUE);
 
-asmStats[which(asmStats$id == "amplified"),   "ng50"] = ng50(f.amp,   f.ref);
-asmStats[which(asmStats$id == "unamplified"), "ng50"] = ng50(f.unamp, f.ref);
+kable(asmStats[order(asmStats$numContigs), c("id", "numContigs", "minLength", "maxLength", "n50", "ng50", "totalSequence")], row.names=FALSE);
+```
 
-kable(asmStats[,c("id", "numContigs", "minLength", "maxLength", "ng50", "totalSequence")]);
+```{r dotPlots, echo=FALSE, results='asis'}
+dotplot.unamp.ps  = paste(results.dir, "mummer/3D7.unamplified.filter.ps", sep="/");
+dotplot.unamp.png = paste("figure/3D7.unamplified.filter.png", sep="/");
+system(paste("../../bin/convert -density 300 -rotate 90", dotplot.unamp.ps, dotplot.unamp.png));
+
+dotplot.amp.ps  = paste(results.dir, "mummer/3D7.amplified.filter.ps", sep="/");
+dotplot.amp.png = paste("figure/3D7.amplified.filter.png", sep="/");
+system(paste("../../bin/convert -density 300 -rotate 90", dotplot.amp.ps, dotplot.amp.png));
+
+cat("![dotplot_unamp](", dotplot.unamp.png, ")\n");
+cat("![dotplot_amp](", dotplot.amp.png, ")\n");
 ```
 
 ```{r scaffoldLengths, echo=FALSE}
