@@ -67,7 +67,7 @@ legend.colors = c();
 
 for (i in 2:ncol(lengthDists)) {
     lengthDist = lengthDists[, c(1, i)];
-    name = gsub("^X", "", names(lengthDists)[i]);
+    name = gsub("X", "", names(lengthDists)[i]);
 
     color = "red";
     if (grepl("PacBio", name)) {
