@@ -233,5 +233,5 @@ for (l in amp.lines) {
     }
 }
 
-kable(variantReport, row.names=FALSE);
+kable(variantReport);
 ```
