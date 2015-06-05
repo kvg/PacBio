@@ -52,6 +52,53 @@ data.dir = "../../data";
 resources.dir = "../../resources";
 ```
 
+```{r lengthDist, echo=FALSE}
+lengthDists = read.table(paste(results.dir, "lengths.dist.txt", sep="/"), header=TRUE, stringsAsFactors=FALSE);
+
+colors.cshl = c("#0B7CFB", "#085DBB", "#05376F", "#063D7C", "#042A55");
+colors.cshl.index = 1;
+colors.pb   = c("#3B000E", "#480012", "#D40034", "#880021", "#950024", "#6E001B", "#7B001E", "#AE002A");
+colors.pb.index = 1;
+
+plot(0, 0, type="n", xlim=c(0, nrow(lengthDists)), ylim=c(0, max(lengthDists[,2:ncol(lengthDists)])), bty="n", xlab="Length (bp)", ylab="Count", cex=1.3, cex.lab=1.3, cex.axis=1.3);
+
+legend.names = c();
+legend.colors = c();
+
+for (i in 2:ncol(lengthDists)) {
+    lengthDist = lengthDists[, c(1, i)];
+    name = names(lengthDists)[i];
+
+    color = "red";
+    if (grepl("PacBio", name)) {
+        color = colors.pb[colors.pb.index];
+        colors.pb.index = colors.pb.index + 1;
+    } else if (grepl("CSHL", name)) {
+        color = colors.cshl[colors.cshl.index];
+        colors.cshl.index = colors.cshl.index + 1;
+    }
+
+    cat(name, " ", color, "\n");
+
+    legend.names = c(legend.names, name);
+    legend.colors = c(legend.colors, color);
+
+    indices = which(lengthDists[,i] != 0);
+    points(lengthDists$length[indices], lengthDists[indices, i], type="l", lwd=1, col=color);
+}
+
+legend.order = order(legend.names);
+legend("topright", legend.names[legend.order], col=legend.colors[legend.order], lwd=3, bty="n");
+```
+
+```{r lengthStats, echo=FALSE, results='asis'}
+lengthStats = read.table(paste(results.dir, "lengths.stats.txt", sep="/"), header=TRUE, stringsAsFactors=FALSE);
+lengthStats$n50Length = NULL;
+
+lengthStats.order = order(lengthStats$key);
+kable(lengthStats[lengthStats.order,], row.names=FALSE);
+```
+
 ```{r loadFastas, echo=FALSE, cache=TRUE}
 ref = "../../resources/references/3D7/PlasmoDB-9.0_Pfalciparum3D7_Genome.sorted.fasta";
 
@@ -131,7 +178,7 @@ asmStats = read.table(paste(results.dir, "assembly.stats", sep="/"), header=TRUE
 kable(asmStats[order(asmStats$numContigs), c("id", "numContigs", "minLength", "maxLength", "n50", "ng50", "totalSequence")], row.names=FALSE);
 ```
 
-```{r dotPlots, echo=FALSE, results='asis'}
+```{r dotPlots, echo=FALSE, results='asis', cache=TRUE}
 dotplot.unamp.ps  = paste(results.dir, "mummer/3D7.unamplified.filter.ps", sep="/");
 dotplot.unamp.png = paste("figure/3D7.unamplified.filter.png", sep="/");
 system(paste("../../bin/convert -density 300 -rotate 90", dotplot.unamp.ps, dotplot.unamp.png));
@@ -142,6 +189,58 @@ system(paste("../../bin/convert -density 300 -rotate 90", dotplot.amp.ps, dotplo
 
 cat("![dotplot_unamp](", dotplot.unamp.png, ")\n");
 cat("![dotplot_amp](", dotplot.amp.png, ")\n");
+```
+
+```{r alignments, echo=FALSE, results='asis', eval=FALSE}
+coord_summary = read.table(paste(results.dir, "mummer/3D7.amplified.filter.filter.coord_summary", sep="/"), header=FALSE, stringsAsFactors=FALSE);
+names(coord_summary) = c( "S1", "E1", "S2", "E2", "LEN_1", "LEN_2", "LEN_R", "LEN_Q", "COV_R", "COV_Q", "CHROM", "CONTIG" );
+
+alignment.frame = data.frame(row.names = names(f.amp));
+
+for (contig in names(f.amp)) {
+    alignment.frame[contig, "length"] = length(f.amp[[contig]]);
+    alignment.frame[contig, "chroms"] = paste(unique(subset(coord_summary, CONTIG == contig)$CHROM), collapse=", ");
+}
+```
+
+```{r variantReport, echo=FALSE, results='asis'}
+fields = c( "TotalSeqs", "AlignedSeqs", "UnalignedSeqs", "TotalBases", "AlignedBases", "UnalignedBases", "Breakpoints", "Relocations", "Translocations", "Inversions", "Insertions", "InsertionSum", "InsertionAvg", "TandemIns", "TandemInsSum", "TandemInsAvg", "TotalSNPs", "AT", "AC", "AG", "TA", "TC", "TG", "CA", "CT", "CG", "GA", "GT", "GC", "TotalIndels", "A.", "T.", "C.", "G.", ".A", ".T", ".C", ".G" );
+
+variantReport = data.frame(1:length(fields), row.names=fields);
+variantReport$unamp_ref = NA;
+variantReport$unamplified = NA;
+variantReport$amp_ref = NA;
+variantReport$amplified = NA;
+variantReport$X1.length.fields. = NULL;
+
+unamp.lines = readLines(paste(results.dir, "mummer/3D7.unamplified.report", sep="/"));
+for (l in unamp.lines) {
+    values = unlist(strsplit(l, "\\s+"));
+    field = values[1];
+
+    if (field %in% fields && is.na(variantReport[field, "unamplified"])) {
+        variantReport[field, "unamp_ref"] = values[2];
+        variantReport[field, "unamplified"] = values[3];
+    }
+}
+
+amp.lines = readLines(paste(results.dir, "mummer/3D7.amplified.report", sep="/"));
+for (l in amp.lines) {
+    values = unlist(strsplit(l, "\\s+"));
+    field = values[1];
+
+    if (field %in% fields && is.na(variantReport[field, "amplified"])) {
+        variantReport[field, "amp_ref"] = values[2];
+        variantReport[field, "amplified"] = values[3];
+    }
+}
+
+for (field in fields) {
+    if (field != "TotalSeqs" && field != "TotalBases") {
+        #variantReport[field, "unamp_ref"] = "NA";
+        #variantReport[field, "amp_ref"] = "NA";
+    }
+}
 ```
 
 ```{r scaffoldLengths, echo=FALSE}

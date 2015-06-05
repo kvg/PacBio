@@ -54,9 +54,24 @@ my $showsnps = "~/opt/MUMmer3.23/show-snps";
 my $showtiling = "~/opt/MUMmer3.23/show-tiling";
 my $deltafilter = "~/opt/MUMmer3.23/delta-filter";
 my $mummerplot = "~/opt/MUMmer3.23/mummerplot";
+my $dnadiff = "~/opt/MUMmer3.23/dnadiff";
 my $icorn2 = "~/opt/icorn2-v0.95//icorn2.sh";
 
 my $ref = "$resourcesDir/references/3D7/PlasmoDB-9.0_Pfalciparum3D7_Genome.sorted.fasta";
+
+my %fqcells = (
+    '3D7_CSHL_A01'   => "$dataDir/Falciparum/fastqs/3D7_CSHL.A01_1.fastq",
+    '3D7_CSHL_C01'   => "$dataDir/Falciparum/fastqs/3D7_CSHL.C01_1.fastq",
+    '3D7_CSHL_D01'   => "$dataDir/Falciparum/fastqs/3D7_CSHL.D01_1.fastq",
+    '3D7_PacBio_A01' => "$dataDir/Falciparum/fastqs/3D7_PacBio.A01_1.fastq",
+    '3D7_PacBio_B01' => "$dataDir/Falciparum/fastqs/3D7_PacBio.B01_1.fastq",
+    '3D7_PacBio_C01' => "$dataDir/Falciparum/fastqs/3D7_PacBio.C01_1.fastq",
+    '3D7_PacBio_D01' => "$dataDir/Falciparum/fastqs/3D7_PacBio.D01_1.fastq",
+    '3D7_PacBio_E01' => "$dataDir/Falciparum/fastqs/3D7_PacBio.E01_1.fastq",
+    '3D7_PacBio_F01' => "$dataDir/Falciparum/fastqs/3D7_PacBio.F01_1.fastq",
+    '3D7_PacBio_G01' => "$dataDir/Falciparum/fastqs/3D7_PacBio.G01_1.fastq",
+    '3D7_PacBio_H01' => "$dataDir/Falciparum/fastqs/3D7_PacBio.H01_1.fastq",
+);
 
 my %fqs = (
     'unamplified' => 'data/ASMTest1.filtered_subreads.fastq',
@@ -95,6 +110,15 @@ my $asmStats = "$resultsDir/assembly.stats";
 my $asmStatsCmd = "$indiana8 BasicAssemblyStats -c unamplified:$asms{'unamplified'} -c amplified:$asms{'amplified'} " . flattenAsmList() . " -r $ref -o $asmStats";
 $dm->addRule($asmStats, [$asms{'unamplified'}, $asms{'amplified'}], $asmStatsCmd);
 
+foreach my $id (keys(%fqcells)) {
+    my %alignedAmpCell = align($dm, 'seq' => $fqcells{$id}, 'sample' => '3D7', 'readgroup' => $id, 'resultsDir' => "$resultsDir/reads/$id", 't' => 4);
+}
+
+my $lengthDist = "$resultsDir/lengths.dist.txt";
+my $lengthStats = "$resultsDir/lengths.stats.txt";
+my $lengthCmd = "$indiana8 lengthdist " . flattenFqList() . " -o $lengthDist -so $lengthStats";
+$dm->addRule($lengthDist, [values(%fqcells)], $lengthCmd);
+
 my %alignedUnamp = align($dm, 'seq' => $fqs{'unamplified'}, 'sample' => '3D7', 'readgroup' => 'unamplified', 'resultsDir' => "$resultsDir/reads", 't' => 50);
 my %mummerUnamp  = mummer($dm, 'seq' => $asms{'unamplified'}, 'sample' => '3D7', 'readgroup' => 'unamplified', 'resultsDir' => "$resultsDir/mummer");
 
@@ -106,11 +130,19 @@ my $coverageCmd = "$gatk8 -T DepthOfCoverage -R $ref -I $alignedUnamp{'bam'} -I 
 $dm->addRule($coverage, [$alignedUnamp{'bai'}, $alignedAmp{'bai'}], $coverageCmd);
 
 my $coverageSimple = "$resultsDir/coverage.simple.txt";
-#my $coverageSimpleCmd = "grep -v Locus $coverage | sed 's/:/\\t/g' | cut -f1-4 > $coverageSimple";
 my $coverageSimpleCmd = "grep -v Locus $coverage | sed 's/:/\\t/g' | cut -f1,2,5,6 > $coverageSimple";
 $dm->addRule($coverageSimple, $coverage, $coverageSimpleCmd);
 
 $dm->execute();
+
+sub flattenFqList {
+    my @list;
+    foreach my $key (keys(%fqcells)) {
+        push(@list, "-f $key:$fqcells{$key}");
+    }
+
+    return join(" ", @list);
+}
 
 sub flattenAsmList {
     my @list;
@@ -169,12 +201,16 @@ sub mummer {
     $dm->addRule($dotplot, $filter, $dotplotCmd);
 
     my $coordSummary = "$a{'resultsDir'}/$asmid.filter.filter.coord_summary";
-    my $coordSummaryCmd = "$showcoords -b -r -l -c -T -H $a{'resultsDir'}/$asmid.filter.filter > $coordSummary";
+    my $coordSummaryCmd = "$showcoords -b -r -l -c -H -T $a{'resultsDir'}/$asmid.filter.filter > $coordSummary";
     $dm->addRule($coordSummary, $dotplot, $coordSummaryCmd);
 
     my $variantSummary = "$a{'resultsDir'}/$asmid.filter.filter.variant_summary";
     my $variantSummaryCmd = "$showsnps -l -r -T -H $a{'resultsDir'}/$asmid.filter.filter > $variantSummary";
     $dm->addRule($variantSummary, $dotplot, $variantSummaryCmd);
+
+    my $report = "$a{'resultsDir'}/$asmid.report";
+    my $reportCmd = "$dnadiff -d $delta -p $a{'resultsDir'}/$asmid";
+    $dm->addRule($report, $delta, $reportCmd);
 
     return ('delta' => $delta);
 }

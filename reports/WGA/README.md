@@ -8,6 +8,38 @@ We explored the use of MDA-based WGA to produce a draft-quality genome assembly 
 
 
 
+```
+## X3D7_PacBio_G01   #3B000E 
+## X3D7_CSHL_C01   #0B7CFB 
+## X3D7_PacBio_E01   #480012 
+## X3D7_PacBio_D01   #D40034 
+## X3D7_CSHL_A01   #085DBB 
+## X3D7_PacBio_B01   #880021 
+## X3D7_PacBio_C01   #950024 
+## X3D7_PacBio_A01   #6E001B 
+## X3D7_PacBio_F01   #7B001E 
+## X3D7_CSHL_D01   #05376F 
+## X3D7_PacBio_H01   #AE002A
+```
+
+![plot of chunk lengthDist](figure/lengthDist-1.png) 
+
+
+|key            | numReads| minLength| maxLength| meanLength| n50Value|
+|:--------------|--------:|---------:|---------:|----------:|--------:|
+|3D7_CSHL_A01   |    46946|        50|     38351|   9622.495|    13685|
+|3D7_CSHL_C01   |    49256|        50|     44451|  10274.992|    14412|
+|3D7_CSHL_D01   |    40379|        50|     42929|  10874.385|    14128|
+|3D7_PacBio_A01 |    63785|        50|     40660|   9725.101|    14767|
+|3D7_PacBio_B01 |    71630|        51|     43816|   9932.797|    14851|
+|3D7_PacBio_C01 |    89314|        50|     47379|  10767.940|    15354|
+|3D7_PacBio_D01 |    91311|        50|     48366|  10733.769|    15334|
+|3D7_PacBio_E01 |    94691|        50|     45388|  10271.377|    14274|
+|3D7_PacBio_F01 |    85031|        50|     45460|  10228.038|    14368|
+|3D7_PacBio_G01 |    47916|        50|     43162|  10397.394|    14460|
+|3D7_PacBio_H01 |    68161|        50|     44561|  10278.915|    14452|
+
+
 
 
 
@@ -46,6 +78,10 @@ We explored the use of MDA-based WGA to produce a draft-quality genome assembly 
 
 ![dotplot_unamp]( figure/3D7.unamplified.filter.png )
 ![dotplot_amp]( figure/3D7.amplified.filter.png )
+
+
+
+
 
 
 
