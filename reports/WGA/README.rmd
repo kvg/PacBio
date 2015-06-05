@@ -235,3 +235,21 @@ for (l in amp.lines) {
 
 kable(variantReport);
 ```
+
+```{r variantTable, echo=FALSE}
+fields.unamp = c("P_REF", "REF", "ALT", "P_UNAMP", "BUFF", "DIST", "LEN_R", "LEN_Q", "FRM", "THING", "CHROM", "CONTIG_UNAMP");
+variants.unamp = read.table(paste(results.dir, "mummer/3D7.unamplified.snps", sep="/"), header=FALSE, stringsAsFactors=FALSE, col.names=fields.unamp);
+variants.unamp$ROWID_UNAMP = 1:nrow(variants.unamp);
+
+fields.amp = c("P_REF", "REF", "ALT", "P_AMP", "BUFF", "DIST", "LEN_R", "LEN_Q", "FRM", "THING", "CHROM", "CONTIG_AMP");
+variants.amp = read.table(paste(results.dir, "mummer/3D7.amplified.snps", sep="/"), header=FALSE, stringsAsFactors=FALSE, col.names=fields.amp);
+variants.amp$ROWID_AMP = 1:nrow(variants.amp);
+
+variants.illumina = read.table(paste(results.dir, "illumina/variants.vcf", sep="/"), header=FALSE, stringsAsFactors=FALSE, comment.char="#", col.names=c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT", "3D7"));
+
+#variants.unamp.sub = unique(variants.unamp[, c("CHROM", "P_REF", "REF", "ALT", "P_UNAMP", "CONTIG_UNAMP", "ROWID_UNAMP")]);
+#variants.amp.sub = unique(variants.amp[, c("CHROM", "P_REF", "REF", "ALT", "P_AMP", "CONTIG_AMP", "ROWID_AMP")]);
+
+qual.unamp.pessimistic = round(-10 * log10(nrow(variants.unamp) / 23332831));
+qual.amp.pessimistic   = round(-10 * log10(nrow(variants.amp) / 23332831));
+```

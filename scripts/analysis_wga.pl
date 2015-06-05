@@ -7,6 +7,7 @@ use FindBin;
 use File::Basename;
 use lib "$FindBin::Bin/lib";
 
+use Recipes;
 use ParseArgs;
 use DM;
 use Data::Dumper;
@@ -80,7 +81,7 @@ my %fqs = (
 
 my %asms = (
     'unamplified' => 'data/ASMTest1.polished_assembly.fasta',
-    'amplified'   => 'data/WGATest5.polished_assembly.fasta',
+    'amplified'   => 'data/WGAFullTest1.polished_assembly.fasta',
 );
 
 my %existingAsms = (
@@ -102,9 +103,28 @@ my %existingAsms = (
     "VS.1" => "/home/kiran/ngs/references/plasmodium/falciparum/VS.1/BroadInstitute/1__1_supercontigs.fasta",
 );
 
+my %illuminaFqs = (
+    'end1' => "$dataDir/14572_1_33_1.fastq",
+    'end2' => "$dataDir/14572_1_33_2.fastq"
+);
+
+my $gff = "$resourcesDir/all.3D7.gff";
+
 # ==============
 # ANALYSIS RULES
 # ==============
+
+my $mdBam = addAlignmentRules($dm, 'end1' => $illuminaFqs{'end1'}, 'end2' => $illuminaFqs{'end2'}, 't' => 4, 'sample' => '3D7', 'readgroup' => "14572_1_33", 'ref' => $ref, 'resultsDir' => "$resultsDir/illumina");
+
+my $vcf = "$resultsDir/illumina/variants.vcf";
+my $vcfCmd = "$gatk8 -T HaplotypeCaller -R $ref -I $mdBam -ploidy 1 -nct 8 -o $vcf";
+$dm->addRule($vcf, $mdBam, $vcfCmd);
+
+my $exons = "$resultsDir/exons/exons.fasta";
+my $exonsCmd = "$indiana8 ExtractExons -r $ref -g $gff -o $exons";
+$dm->addRule($exons, [$ref, $gff], $exonsCmd);
+
+my $exonsBam = addAlignmentRules($dm, 'end1' => $exons, 'end2' => '', 't' => 1, 'sample' => '3D7', 'readgroup' => "exons", 'ref' => $ref, 'resultsDir' => "$resultsDir/exons");
 
 my $asmStats = "$resultsDir/assembly.stats";
 my $asmStatsCmd = "$indiana8 BasicAssemblyStats -c unamplified:$asms{'unamplified'} -c amplified:$asms{'amplified'} " . flattenAsmList() . " -r $ref -o $asmStats";
@@ -210,6 +230,7 @@ sub mummer {
 
     my $report = "$a{'resultsDir'}/$asmid.report";
     my $reportCmd = "$dnadiff -d $delta -p $a{'resultsDir'}/$asmid";
+    #my $reportCmd = "$dnadiff -p $a{'resultsDir'}/$asmid $ref $contigs";
     $dm->addRule($report, $delta, $reportCmd);
 
     return ('delta' => $delta);
