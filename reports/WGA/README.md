@@ -7,21 +7,6 @@ We explored the use of MDA-based WGA to produce a draft-quality genome assembly 
 
 
 
-
-```
-## X3D7_PacBio_G01   #3B000E 
-## X3D7_CSHL_C01   #0B7CFB 
-## X3D7_PacBio_E01   #480012 
-## X3D7_PacBio_D01   #D40034 
-## X3D7_CSHL_A01   #085DBB 
-## X3D7_PacBio_B01   #880021 
-## X3D7_PacBio_C01   #950024 
-## X3D7_PacBio_A01   #6E001B 
-## X3D7_PacBio_F01   #7B001E 
-## X3D7_CSHL_D01   #05376F 
-## X3D7_PacBio_H01   #AE002A
-```
-
 ![plot of chunk lengthDist](figure/lengthDist-1.png) 
 
 

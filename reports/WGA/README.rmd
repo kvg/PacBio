@@ -67,7 +67,7 @@ legend.colors = c();
 
 for (i in 2:ncol(lengthDists)) {
     lengthDist = lengthDists[, c(1, i)];
-    name = names(lengthDists)[i];
+    name = gsub("^X", "", names(lengthDists)[i]);
 
     color = "red";
     if (grepl("PacBio", name)) {
@@ -77,8 +77,6 @@ for (i in 2:ncol(lengthDists)) {
         color = colors.cshl[colors.cshl.index];
         colors.cshl.index = colors.cshl.index + 1;
     }
-
-    cat(name, " ", color, "\n");
 
     legend.names = c(legend.names, name);
     legend.colors = c(legend.colors, color);
