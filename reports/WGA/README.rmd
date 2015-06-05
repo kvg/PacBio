@@ -233,18 +233,5 @@ for (l in amp.lines) {
     }
 }
 
-for (field in fields) {
-    if (field != "TotalSeqs" && field != "TotalBases") {
-        #variantReport[field, "unamp_ref"] = "NA";
-        #variantReport[field, "amp_ref"] = "NA";
-    }
-}
+kable(variantReport, row.names=FALSE);
 ```
-
-```{r scaffoldLengths, echo=FALSE}
-#f.ref.size = sum(unlist(lapply(f.ref, function(x) { return(length(x)) })));
-
-#plot(ecdf(as.vector(sort(unlist(lapply(f.amp, function(x) { return(length(x)) }))))))
-#plot(ecdf(as.vector(sort(unlist(lapply(f.unamp, function(x) { return(length(x)) }))))))
-```
-
