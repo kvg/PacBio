@@ -42,6 +42,7 @@ my $dm = new DM(
     'outputFile' => "$resultsDir/dm.log",
 );
 
+my $picard = "java -Xmx8g -jar $binDir/picard.jar";
 my $indiana8 = "java -Xmx8g -jar $binDir/indiana.jar";
 my $indiana16 = "java -Xmx16g -jar $binDir/indiana.jar";
 my $sortsam = "java -Xmx64g -jar $binDir/SortSam.jar";
@@ -76,7 +77,7 @@ my %fqcells = (
 
 my %fqs = (
     'unamplified' => 'data/ASMTest1.filtered_subreads.fastq',
-    'amplified'   => 'data/WGATest5.filtered_subreads.fastq',
+    'amplified'   => 'data/WGAFullTest1.filtered_subreads.fastq',
 );
 
 my %asms = (
@@ -109,6 +110,7 @@ my %illuminaFqs = (
 );
 
 my $gff = "$resourcesDir/all.3D7.gff";
+my $var = "$resourcesDir/var.3D7.fasta";
 
 # ==============
 # ANALYSIS RULES
@@ -116,15 +118,17 @@ my $gff = "$resourcesDir/all.3D7.gff";
 
 my $mdBam = addAlignmentRules($dm, 'end1' => $illuminaFqs{'end1'}, 'end2' => $illuminaFqs{'end2'}, 't' => 4, 'sample' => '3D7', 'readgroup' => "14572_1_33", 'ref' => $ref, 'resultsDir' => "$resultsDir/illumina");
 
+my $insertSizeMetrics = "$resultsDir/illumina/insertSize.metrics.txt";
+my $insertSizeHistogram = "$resultsDir/illumina/insertSize.histogram.txt";
+my $insertSizeMetricsCmd = "$picard CollectInsertSizeMetrics I=$mdBam O=$insertSizeMetrics H=$insertSizeHistogram";
+$dm->addRule($insertSizeMetrics, $mdBam, $insertSizeMetricsCmd);
+
+my %illuminaCtx = addMcCortexRules($dm, 'end1' => $illuminaFqs{'end1'}, 'end2' => $illuminaFqs{'end2'}, 'resultsDir' => "$resultsDir/illumina", 'sample' => '3D7', 'k' => 95, 'fq-cutoff' => 5, 't' => 10, 'l' => 150, 'L' => 850, 'build' => 1, 'clean' => 1, 'infer' => 1, 'thread' => 1, 'contigs' => 1, 'ctxbin' => "$binDir/mccortex95", 'mla' => 36);
+my %mummerIllumina = mummer($dm, 'seq' => $illuminaCtx{'contigs'}, 'sample' => '3D7', 'readgroup' => '14572_1_33', 'resultsDir' => "$resultsDir/mummer");
+
 my $vcf = "$resultsDir/illumina/variants.vcf";
 my $vcfCmd = "$gatk8 -T HaplotypeCaller -R $ref -I $mdBam -ploidy 1 -nct 8 -o $vcf";
 $dm->addRule($vcf, $mdBam, $vcfCmd);
-
-my $exons = "$resultsDir/exons/exons.fasta";
-my $exonsCmd = "$indiana8 ExtractExons -r $ref -g $gff -o $exons";
-$dm->addRule($exons, [$ref, $gff], $exonsCmd);
-
-my $exonsBam = addAlignmentRules($dm, 'end1' => $exons, 'end2' => '', 't' => 1, 'sample' => '3D7', 'readgroup' => "exons", 'ref' => $ref, 'resultsDir' => "$resultsDir/exons");
 
 my $asmStats = "$resultsDir/assembly.stats";
 my $asmStatsCmd = "$indiana8 BasicAssemblyStats -c unamplified:$asms{'unamplified'} -c amplified:$asms{'amplified'} " . flattenAsmList() . " -r $ref -o $asmStats";
@@ -139,11 +143,35 @@ my $lengthStats = "$resultsDir/lengths.stats.txt";
 my $lengthCmd = "$indiana8 lengthdist " . flattenFqList() . " -o $lengthDist -so $lengthStats";
 $dm->addRule($lengthDist, [values(%fqcells)], $lengthCmd);
 
-my %alignedUnamp = align($dm, 'seq' => $fqs{'unamplified'}, 'sample' => '3D7', 'readgroup' => 'unamplified', 'resultsDir' => "$resultsDir/reads", 't' => 50);
+my %alignedUnamp = align($dm, 'seq' => $fqs{'unamplified'}, 'sample' => '3D7', 'readgroup' => 'unamplified', 'resultsDir' => "$resultsDir/reads", 't' => 10);
 my %mummerUnamp  = mummer($dm, 'seq' => $asms{'unamplified'}, 'sample' => '3D7', 'readgroup' => 'unamplified', 'resultsDir' => "$resultsDir/mummer");
 
-my %alignedAmp = align($dm, 'seq' => $fqs{'amplified'}, 'sample' => '3D7', 'readgroup' => 'amplified', 'resultsDir' => "$resultsDir/reads", 't' => 50);
+my %alignedAmp = align($dm, 'seq' => $fqs{'amplified'}, 'sample' => '3D7', 'readgroup' => 'amplified', 'resultsDir' => "$resultsDir/reads", 't' => 10);
 my %mummerAmp  = mummer($dm, 'seq' => $asms{'amplified'}, 'sample' => '3D7', 'readgroup' => 'amplified', 'resultsDir' => "$resultsDir/mummer");
+
+my $exons = "$resultsDir/exons/exons.fasta";
+my $exonsCmd = "$indiana8 ExtractExons -r $ref -g $gff -o $exons";
+$dm->addRule($exons, [$ref, $gff], $exonsCmd);
+
+my $exonsSam = "$resultsDir/exons/exons.sam";
+my $exonsSamCmd = "$bwa mem -v 1 -t 10 -R \"\@RG\\tID:exons\\tSM:3D7\\tPL:ILLUMINA\" $ref $exons > $exonsSam";
+$dm->addRule($exonsSam, $exons, $exonsSamCmd);
+
+my $exonsUnampSam = "$resultsDir/exons/exons.unamp.sam";
+my $exonsUnampSamCmd = "$bwa mem -v 1 -t 10 -R \"\@RG\\tID:exons_unamp\\tSM:3D7\\tPL:ILLUMINA\" $asms{'unamplified'} $exons > $exonsUnampSam";
+$dm->addRule($exonsUnampSam, $exons, $exonsUnampSamCmd);
+
+my $exonsAmpSam = "$resultsDir/exons/exons.amp.sam";
+my $exonsAmpSamCmd = "$bwa mem -v 1 -t 10 -R \"\@RG\\tID:exons_amp\\tSM:3D7\\tPL:ILLUMINA\" $asms{'amplified'} $exons > $exonsAmpSam";
+$dm->addRule($exonsAmpSam, $exons, $exonsAmpSamCmd);
+
+my $varUnampSam = "$resultsDir/vars/vars.unamp.sam";
+my $varUnampSamCmd = "$bwa mem -v 1 -t 10 -R \"\@RG\\tID:vars_unamp\\tSM:3D7\\tPL:ILLUMINA\" $asms{'unamplified'} $var > $varUnampSam";
+$dm->addRule($varUnampSam, $var, $varUnampSamCmd);
+
+my $varAmpSam = "$resultsDir/vars/vars.amp.sam";
+my $varAmpSamCmd = "$bwa mem -v 1 -t 10 -R \"\@RG\\tID:vars_amp\\tSM:3D7\\tPL:ILLUMINA\" $asms{'amplified'} $var > $varAmpSam";
+$dm->addRule($varAmpSam, $var, $varAmpSamCmd);
 
 my $coverage = "$resultsDir/coverage.txt";
 my $coverageCmd = "$gatk8 -T DepthOfCoverage -R $ref -I $alignedUnamp{'bam'} -I $alignedAmp{'bam'} -pt readgroup -omitSampleSummary -omitIntervals -omitLocusTable -mmq 1 -nt 10 -o $coverage";

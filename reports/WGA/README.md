@@ -109,3 +109,16 @@ We explored the use of MDA-based WGA to produce a draft-quality genome assembly 
 |.G             |309(2.27%)       |208(1.53%)       |125(0.64%)       |477(2.45%)       |
 
 
+
+Quality of unamplified assembly: Q32.
+
+Quality of amplified assembly: Q30.
+
+
+|      | exons| exons_aligned| exons_perfect| exons_imperfect| exon_mean_nm| exon_mean_ni| exon_mean_nd|
+|:-----|-----:|-------------:|-------------:|---------------:|------------:|------------:|------------:|
+|ref   | 14767|         14375|         14375|             392|    0.0000000|    0.0000000|    0.0000000|
+|unamp | 14767|         14312|         13850|             917|    0.1820151|    0.0084544|    0.0314421|
+|amp   | 14767|         14330|         13838|             929|    0.2743196|    0.0264480|    0.0197488|
+
+

@@ -91,7 +91,7 @@ sub addMcCortexRules {
     # Sort binary
     my $ctxSorted = "$a{'resultsDir'}/$a{'sample'}.sorted.ctx";
     my $ctxSortedCmd = "$a{'ctxbin'} sort -f -m ${mla}G -o $ctxSorted $ctx";
-    if ($a{'build'}) { $dm->addRule($ctxSorted, $ctx, $ctxSortedCmd); }
+    #if ($a{'build'}) { $dm->addRule($ctxSorted, $ctx, $ctxSortedCmd); }
 
     # Clean binary
     my $clean = "$a{'resultsDir'}/$a{'sample'}.clean.ctx";
@@ -114,12 +114,12 @@ sub addMcCortexRules {
     # Verify
     my $verify = "$a{'resultsDir'}/$a{'sample'}.verify.txt";
     my $verifyCmd = "./scripts/verifyCtxs.pl CTX=$ctx CLEAN=$clean INFER=$infer OUT=$verify";
-    if ($a{'infer'}) { $dm->addRule($verify, $infer, $verifyCmd); }
+    #if ($a{'infer'}) { $dm->addRule($verify, $infer, $verifyCmd); }
 
     # Sort binary
     my $inferSorted = "$a{'resultsDir'}/$a{'sample'}.infer.sorted.ctx";
     my $inferSortedCmd = "$a{'ctxbin'} sort -f -m ${mla}G -o $inferSorted $infer";
-    if ($a{'infer'}) { $dm->addRule($inferSorted, $infer, $inferSortedCmd); }
+    #if ($a{'infer'}) { $dm->addRule($inferSorted, $infer, $inferSortedCmd); }
 
     # Thread (single-end)
     my $se = "$a{'resultsDir'}/$a{'sample'}.infer.se.ctp";

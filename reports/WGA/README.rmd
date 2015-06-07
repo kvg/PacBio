@@ -240,16 +240,154 @@ kable(variantReport);
 fields.unamp = c("P_REF", "REF", "ALT", "P_UNAMP", "BUFF", "DIST", "LEN_R", "LEN_Q", "FRM", "THING", "CHROM", "CONTIG_UNAMP");
 variants.unamp = read.table(paste(results.dir, "mummer/3D7.unamplified.snps", sep="/"), header=FALSE, stringsAsFactors=FALSE, col.names=fields.unamp);
 variants.unamp$ROWID_UNAMP = 1:nrow(variants.unamp);
+variants.unamp.sub = variants.unamp.sub[, c("CHROM", "P_REF", "REF", "ALT")];
 
 fields.amp = c("P_REF", "REF", "ALT", "P_AMP", "BUFF", "DIST", "LEN_R", "LEN_Q", "FRM", "THING", "CHROM", "CONTIG_AMP");
 variants.amp = read.table(paste(results.dir, "mummer/3D7.amplified.snps", sep="/"), header=FALSE, stringsAsFactors=FALSE, col.names=fields.amp);
 variants.amp$ROWID_AMP = 1:nrow(variants.amp);
+variants.amp.sub = variants.amp.sub[, c("CHROM", "P_REF", "REF", "ALT")];
 
-variants.illumina = read.table(paste(results.dir, "illumina/variants.vcf", sep="/"), header=FALSE, stringsAsFactors=FALSE, comment.char="#", col.names=c("CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT", "3D7"));
+variants.illumina = read.table(paste(results.dir, "illumina/variants.vcf", sep="/"), header=FALSE, stringsAsFactors=FALSE, comment.char="#", col.names=c("CHROM", "P_REF", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT", "3D7"));
+variants.illumina.sub = variants.illumina[, c("CHROM", "P_REF", "REF", "ALT")];
 
 #variants.unamp.sub = unique(variants.unamp[, c("CHROM", "P_REF", "REF", "ALT", "P_UNAMP", "CONTIG_UNAMP", "ROWID_UNAMP")]);
 #variants.amp.sub = unique(variants.amp[, c("CHROM", "P_REF", "REF", "ALT", "P_AMP", "CONTIG_AMP", "ROWID_AMP")]);
 
 qual.unamp.pessimistic = round(-10 * log10(nrow(variants.unamp) / 23332831));
 qual.amp.pessimistic   = round(-10 * log10(nrow(variants.amp) / 23332831));
+```
+
+Quality of unamplified assembly: Q`r qual.unamp.pessimistic`.
+
+Quality of amplified assembly: Q`r qual.amp.pessimistic`.
+
+```{r exons, echo=FALSE, results='asis'}
+getExonErrorStats <- function(sam) {
+    exons = list();
+
+    num = 1;
+    for (l in sam) {
+        if (!grepl("^@", l)) {
+            la = unlist(strsplit(l, "\t"));
+            name = la[1];
+
+            if (la[6] != "*" & is.null(exons[[name]])) {
+                cigar = gsub("\\d+M", "", la[6], perl=TRUE);
+                cigar = gsub("([HSID])", ":\\1,", cigar);
+
+                ni = 0;
+                nd = 0;
+                nh = 0;
+                ns = 0;
+                for (piece in unlist(strsplit(cigar, ","))) {
+                    ces = unlist(strsplit(piece, ":"));
+
+                    ce.length = ces[1];
+                    ce.op = ces[2];
+
+                    if (ce.op == "I") { ni = ni + 1; }
+                    if (ce.op == "D") { nd = nd + 1; }
+                    if (ce.op == "H") { nh = nh + 1; }
+                    if (ce.op == "S") { ns = ns + 1; }
+                }
+
+                nm = 0;
+                if (grepl("NM", l)) {
+                    nm = as.integer(gsub("NM:i:", "", grep("NM", la, value=TRUE)));
+                }
+
+                perfect = ((nm + ni + nd + nh + ns) == 0);
+
+                exons[[name]] = list(NM = nm, NI = ni, ND = nd, NH = nh, NS = ns, ALIGNED = TRUE, IS_PERFECT = perfect);
+            } else {
+                exons[[name]] = list(NM = 0, NI = 0, ND = 0, NH = 0, NS = 0, ALIGNED = FALSE, IS_PERFECT = FALSE);
+            }
+        }
+    }
+
+    return(exons);
+}
+
+convertToTable <- function(exons) {
+    exons.df = NULL;
+
+    for (name in names(exons)) {
+        aligned = exons[[name]]$ALIGNED;
+        perfect = exons[[name]]$IS_PERFECT;
+        nm = exons[[name]]$NM;
+        ni = exons[[name]]$NI;
+        nd = exons[[name]]$ND;
+        ns = exons[[name]]$NS;
+        nh = exons[[name]]$NH;
+
+        exons.row = cbind(NAME = name, IS_ALIGNED = aligned, IS_PERFECT = perfect, NM = nm, NI = ni, ND = nd, NS = ns, NH = nh);
+
+        if (is.null(exons.df)) {
+            exons.df = exons.row;
+        } else {
+            exons.df = rbind(exons.df, exons.row);
+        }
+    }
+
+    exons.df = as.data.frame(exons.df, stringsAsFactors=FALSE);
+
+    exons.df$IS_ALIGNED = as.logical(exons.df$IS_ALIGNED);
+    exons.df$IS_PERFECT = as.logical(exons.df$IS_PERFECT);
+
+    row.names(exons.df) = exons.df$NAME;
+
+    return(exons.df);
+}
+
+sam.ref = readLines(paste(results.dir, "exons/exons.sam", sep="/"));
+sam.unamp = readLines(paste(results.dir, "exons/exons.unamp.sam", sep="/"));
+sam.amp = readLines(paste(results.dir, "exons/exons.amp.sam", sep="/"));
+
+exons.ref = getExonErrorStats(sam.ref);
+exons.unamp = getExonErrorStats(sam.unamp);
+exons.amp = getExonErrorStats(sam.amp);
+
+exons.ref.df = convertToTable(exons.ref);
+exons.unamp.df = convertToTable(exons.unamp);
+exons.amp.df = convertToTable(exons.amp);
+
+row.ref = cbind(
+    exons = length(exons.ref),
+    exons_aligned = sum(unlist(lapply(exons.ref, function(x) { return(x$ALIGNED); }))),
+    exons_perfect = sum(unlist(lapply(exons.ref, function(x) { return(x$IS_PERFECT); }))),
+    exons_imperfect = sum(unlist(lapply(exons.ref, function(x) { return(!x$IS_PERFECT); }))),
+    exon_mean_nm = mean(as.integer(subset(exons.ref.df, IS_ALIGNED == TRUE)$NM)),
+    exon_mean_ni = mean(as.integer(subset(exons.ref.df, IS_ALIGNED == TRUE)$NI)),
+    exon_mean_nd = mean(as.integer(subset(exons.ref.df, IS_ALIGNED == TRUE)$ND))
+);
+
+row.unamp = cbind(
+    exons = length(exons.unamp),
+    exons_aligned = sum(unlist(lapply(exons.unamp, function(x) { return(x$ALIGNED); }))),
+    exons_perfect = sum(unlist(lapply(exons.unamp, function(x) { return(x$IS_PERFECT); }))),
+    exons_imperfect = sum(unlist(lapply(exons.unamp, function(x) { return(!x$IS_PERFECT); }))),
+    exon_mean_nm = mean(as.integer(subset(exons.unamp.df, IS_ALIGNED == TRUE)$NM)),
+    exon_mean_ni = mean(as.integer(subset(exons.unamp.df, IS_ALIGNED == TRUE)$NI)),
+    exon_mean_nd = mean(as.integer(subset(exons.unamp.df, IS_ALIGNED == TRUE)$ND))
+);
+
+row.amp = cbind(
+    exons = length(exons.amp),
+    exons_aligned = sum(unlist(lapply(exons.amp, function(x) { return(x$ALIGNED); }))),
+    exons_perfect = sum(unlist(lapply(exons.amp, function(x) { return(x$IS_PERFECT); }))),
+    exons_imperfect = sum(unlist(lapply(exons.amp, function(x) { return(!x$IS_PERFECT); }))),
+    exon_mean_nm = mean(as.integer(subset(exons.amp.df, IS_ALIGNED == TRUE)$NM)),
+    exon_mean_ni = mean(as.integer(subset(exons.amp.df, IS_ALIGNED == TRUE)$NI)),
+    exon_mean_nd = mean(as.integer(subset(exons.amp.df, IS_ALIGNED == TRUE)$ND))
+);
+
+exonStats = rbind(row.ref, row.unamp, row.amp);
+rownames(exonStats) = c("ref", "unamp", "amp");
+
+kable(exonStats);
+```
+
+```{r varRecovery, echo=FALSE}
+gl = read.table(paste(resources.dir, "var.3D7.annotated.gff", sep="/"), header=FALSE);
+varExonNames = gsub("ID=", "", gsub(";.+", "", subset(gl, V3 == "exon")$V9));
 ```
