@@ -262,7 +262,7 @@ Quality of unamplified assembly: Q`r qual.unamp.pessimistic`.
 Quality of amplified assembly: Q`r qual.amp.pessimistic`.
 
 ```{r exons, echo=FALSE, results='asis'}
-getExonErrorStats <- function(sam) {
+getErrorStats <- function(sam) {
     exons = list();
 
     num = 1;
@@ -343,9 +343,9 @@ sam.ref = readLines(paste(results.dir, "exons/exons.sam", sep="/"));
 sam.unamp = readLines(paste(results.dir, "exons/exons.unamp.sam", sep="/"));
 sam.amp = readLines(paste(results.dir, "exons/exons.amp.sam", sep="/"));
 
-exons.ref = getExonErrorStats(sam.ref);
-exons.unamp = getExonErrorStats(sam.unamp);
-exons.amp = getExonErrorStats(sam.amp);
+exons.ref = getErrorStats(sam.ref);
+exons.unamp = getErrorStats(sam.unamp);
+exons.amp = getErrorStats(sam.amp);
 
 exons.ref.df = convertToTable(exons.ref);
 exons.unamp.df = convertToTable(exons.unamp);
@@ -390,4 +390,18 @@ kable(exonStats);
 ```{r varRecovery, echo=FALSE}
 gl = read.table(paste(resources.dir, "var.3D7.annotated.gff", sep="/"), header=FALSE);
 varExonNames = gsub("ID=", "", gsub(";.+", "", subset(gl, V3 == "exon")$V9));
+
+#vars.ref = readLines(paste(results.dir, "exons/exons.sam", sep="/"));
+vars.unamp = readLines(paste(results.dir, "vars/vars.unamp.sam", sep="/"));
+vars.amp = readLines(paste(results.dir, "vars/vars.amp.sam", sep="/"));
+
+vars.unamp.df = convertToTable(getErrorStats(vars.unamp));
+vars.amp.df = convertToTable(getErrorStats(vars.amp));
+
+vars = cbind(vars.unamp.df, vars.amp.df);
+names(vars) = c( "NAME", "IS_ALIGNED_U", "IS_PERFECT_U", "NM_U", "NI_U", "ND_U", "NS_U", "NH_U", "NAME_A", "IS_ALIGNED_A", "IS_PERFECT_A", "NM_A", "NI_A", "ND_A", "NS_A", "NH_A" );
+
+vars = vars[, c("IS_ALIGNED_U", "NM_U", "NI_U", "ND_U", "IS_ALIGNED_A", "NM_A", "NI_A", "ND_A")];
+
+kable(vars);
 ```
