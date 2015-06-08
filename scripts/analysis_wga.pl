@@ -166,6 +166,9 @@ my %mummerUnamp  = mummer($dm, 'seq' => $asms{'unamplified'}, 'sample' => '3D7',
 my %alignedAmp = align($dm, 'seq' => $fqs{'amplified'}, 'sample' => '3D7', 'readgroup' => 'amplified', 'resultsDir' => "$resultsDir/reads", 't' => 10);
 my %mummerAmp  = mummer($dm, 'seq' => $asms{'amplified'}, 'sample' => '3D7', 'readgroup' => 'amplified', 'resultsDir' => "$resultsDir/mummer");
 
+my %alignedUnampAsm = align($dm, 'seq' => $asms{'unamplified'}, 'sample' => '3D7', 'readgroup' => 'unamplified_asm', 'resultsDir' => "$resultsDir/asm");
+my %alignedAmpAsm = align($dm, 'seq' => $asms{'amplified'}, 'sample' => '3D7', 'readgroup' => 'amplified_asm', 'resultsDir' => "$resultsDir/asm");
+
 my $exons = "$resultsDir/exons/exons.fasta";
 my $exonsCmd = "$indiana8 ExtractExons -r $ref -g $gff -o $exons";
 $dm->addRule($exons, [$ref, $gff], $exonsCmd);

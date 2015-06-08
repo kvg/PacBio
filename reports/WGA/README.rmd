@@ -462,7 +462,10 @@ unalignedExons = sort(c(unalignedExon1Names, unalignedExon2Names));
 kable(exons.amp.df[unalignedExons, c("NAME", "IS_ALIGNED")]);
 ```
 
-In both of these genes, it is apparent that the long exon (exon 1) is the one that did not align properly, while the short exon did.
+In both of these genes, it is apparent that the long exon (exon 1) is the one that did not align properly, while the short exon did.  IGV screenshots of each of these genes are shown below.
+
+![PF3D7_0600200](figure/PF3D7_0600200.png)
+![PF3D7_1240600](figure/PF3D7_1240600.png)
 
 ## Conclusions
 

@@ -224,7 +224,10 @@ We were particularly concerned with *var* gene recovery in the amplified assembl
 |exon_PF3D7_1240600-1 |exon_PF3D7_1240600-1 |FALSE      |
 |exon_PF3D7_1240600-2 |exon_PF3D7_1240600-2 |TRUE       |
 
-In both of these genes, it is apparent that the long exon (exon 1) is the one that did not align properly, while the short exon did.
+In both of these genes, it is apparent that the long exon (exon 1) is the one that did not align properly, while the short exon did.  IGV screenshots of each of these genes are shown below.
+
+![PF3D7_0600200](figure/PF3D7_0600200.png)
+![PF3D7_1240600](figure/PF3D7_1240600.png)
 
 ## Conclusions
 
