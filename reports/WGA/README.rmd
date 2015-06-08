@@ -401,7 +401,23 @@ vars.amp.df = convertToTable(getErrorStats(vars.amp));
 vars = cbind(vars.unamp.df, vars.amp.df);
 names(vars) = c( "NAME", "IS_ALIGNED_U", "IS_PERFECT_U", "NM_U", "NI_U", "ND_U", "NS_U", "NH_U", "NAME_A", "IS_ALIGNED_A", "IS_PERFECT_A", "NM_A", "NI_A", "ND_A", "NS_A", "NH_A" );
 
-vars = vars[, c("IS_ALIGNED_U", "NM_U", "NI_U", "ND_U", "IS_ALIGNED_A", "NM_A", "NI_A", "ND_A")];
+vars.sub = vars[, c("IS_ALIGNED_U", "NM_U", "NI_U", "ND_U", "IS_ALIGNED_A", "NM_A", "NI_A", "ND_A")];
 
-kable(vars);
+kable(vars.sub);
 ```
+
+Unamplified perfect var genes: `r sum(subset(vars, IS_ALIGNED_U == TRUE)$IS_PERFECT_U)`/`r nrow(vars)`.
+
+Amplified perfect var genes: `r sum(subset(vars, IS_ALIGNED_A == TRUE)$IS_PERFECT_A)`/`r nrow(vars)`.
+
+```{r varUnalignedExons, echo=FALSE}
+unalignedExon1Names = gsub("$", "-1", gsub("^", "exon_", subset(vars, IS_ALIGNED_A == FALSE)$NAME_A));
+unalignedExon2Names = gsub("$", "-2", gsub("^", "exon_", subset(vars, IS_ALIGNED_A == FALSE)$NAME_A));
+unalignedExons = sort(c(unalignedExon1Names, unalignedExon2Names));
+
+kable(exons.amp.df[unalignedExons,]);
+```
+
+Exon 1 aligned: `r sum(exons.amp.df[unalignedExon1Names,]$IS_ALIGNED)`.
+
+Exon 2 aligned: `r sum(exons.amp.df[unalignedExon2Names,]$IS_ALIGNED)`.

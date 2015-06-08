@@ -82,7 +82,8 @@ my %fqs = (
 
 my %asms = (
     'unamplified' => 'data/ASMTest1.polished_assembly.fasta',
-    'amplified'   => 'data/WGAFullTest1.polished_assembly.fasta',
+    #'amplified'   => 'data/WGAFullTest1.polished_assembly.fasta',
+    'amplified'   => 'data/WGAMenloPark4hTest1.fasta',
 );
 
 my %existingAsms = (
