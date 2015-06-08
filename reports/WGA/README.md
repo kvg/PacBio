@@ -83,7 +83,7 @@ The WGA4Cells_30m assembly has the highest N50, but that does not necessarily me
 
 
 
-We aligned the "unamplified" and "amplified" assemblies to the 3D7 reference using `MUMmer` and produced dotplot of the alignments, shown above.  While in general, each chromosome in the amplified assembly is typically built up from a greater number of contigs (typically around `median(table(coord_summary$CHROM))`), in both cases there are very few off-target alignments.
+We aligned the "unamplified" and "amplified" assemblies to the 3D7 reference using `MUMmer` and produced dotplot of the alignments, shown above.  While in general, each chromosome in the amplified assembly is typically built up from a greater number of contigs (typically around 5), in both cases there are very few off-target alignments.
 
 ## Error rate
 
