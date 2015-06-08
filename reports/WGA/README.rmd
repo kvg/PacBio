@@ -134,7 +134,7 @@ names(cov) = c("chrom", "start", "amplified", "unamplified");
 
 We evaluated coverage across the genome in the aggregated set of 11 SMRT cells from amplified DNA and compared to the results obtained from our [earlier experiment on unamplified DNA](https://github.com/kvg/PacBio/tree/master/reports/FirstLook#a-first-look-at-the-pacbio-3d7-data).  Coverage is more-or-less consistent across the genome, but in some cases, coverage does drop out in the centromere or the extreme telomeric ends of the chromosome (see chromosomes 6 and 12 for example).  This does have a minor effect on *var* gene recovery, as we will see later in this analysis. 
 
-```{r showCoverageOverIdeogram, echo=FALSE, fig.height=6, fig.width=12, dpi=300, cache=TRUE}
+```{r showCoverageOverIdeogram, echo=FALSE, fig.height=6, fig.width=12, dpi=300, cache=TRUE, warning=FALSE}
 chroms.length = lapply(f.ref, function(x) { return(length(x)); });
 chroms = names(chroms.length);
 
@@ -466,7 +466,7 @@ In both of these genes, it is apparent that the long exon (exon 1) is the one th
 
 ## Conclusions
 
-Overall, it appears the genome assembly from amplified DNA yields a comparable assembly to the assembly from unamplified DNA.  No obvious chimeras are evident from the alignment dotplots, and the overall quality differs by only two Q points.  Overall gene recovery is on par with the unamplified assembly, and while two *var* exons are missing from the assembly, a substantially greater number of remaining *vars* are recovered perfectly in the amplified assembly versus the unamplified assembly.
+Overall, it appears the genome assembly from amplified DNA yields a comparable assembly to the assembly from unamplified DNA.  No obvious chimeras are evident from the alignment dotplots, and the overall quality is Q30, differing from the unamplified assembly by only two Q points.  Overall gene recovery is on par with the unamplified assembly, and while two *var* exons are missing from the assembly, a substantially greater number of remaining *vars* are recovered perfectly in the amplified assembly versus the unamplified assembly.
 
 This test assembly lends credibility to the idea that, rather than painstakingly culturing dozens of parasites for months or years for the purpose of long-read sequencing, one can simply start with a very small quantity of DNA (~1 ng) and amplify it to the requisite level.  The benefits of doing so are enormous, ranging from substantially reduced human operator costs, to providing an avenue for repeat experiments when a culture becomes contaminated or a library fails, to gaining the ability to access genomes of field parasites, which tend to grow poorly in culture.
 
