@@ -1,9 +1,12 @@
-Lowering the barrier to entry for long-read sequencing with whole-genome amplification
-==
+# Whole-genome amplification lowers the barrier to entry for long-read sequencing
 
-Long-read sequencing can produce very long genomic fragments with an N50 of ~10-20 kb, with some fragments as long as ~50 kb.  However, they typically require a large amount of high molecular weight DNA (5 to 15 ug), limiting their applications.  Particular to malaria parasite sequencing, culturing a sufficient number of *Plasmodium falciparum* parasites to obtain the desired gDNA yield is enormously difficult and time-consuming.  Alternatively, one can consider whole-genome amplification on a small amount of DNA - say ~1 ng - to the requisite 15 ug level.  Standard WGA kits employing the Taq polymerase are inappropriate for such a task; Taq-produced amplicons are typically up to 3 or 4 kb, negating much of the value of long-read sequencing.  Instead, multiple displacement amplification (MDA) employs Phi-29, a polymerase with much higher replication fidelity and capability to generate amplicons greater than 20 kb in length.
+## Introduction
 
-We explored the use of MDA-based WGA to produce a draft-quality genome assembly of a malaria parasite genome.  Specifically, we amplified 1 ng of 3D7 to 15 ug and performed PacBio sequencing on the resulting amplicons.
+Long-read sequencing instruments routinely produce reads around 10-20 kb in length with sufficiently low error rate as to produce inexpensive draft quality reference sequences.  However, a significant impediment to carrying out these sequencing experiments remains the high input gDNA requirement.  Pacific Biosciences recommends 10-15 ug of high molecular weight gDNA for libraries with a 10-20 kb insert size.  This is 3-4 orders of magnitude larger than required for Illumina sequencing.  Such a large quantity of gDNA can be difficult to produce, and for malaria parasites, presents several obstacles.  First, parasites must be cultured, and not all parasites are equally amenable to culturing.  Second, for the parasites that *do* respond favorably to laboratory culturing conditions, they still take several months to grow.  That is a lot of opportunity for error, including cross-contamination.  Third, should the parasites be cultured successfully and DNA extracted, the library construction process itself may fail, thus rendering the months of work to produce the parasites in the first place useless.  Finally, culturing parasites for so long occupies a significant amount of time for the personnel assigned to the task, limiting the number of cultures that can be done in parallel and diminishing the overall productivity of the lab.
+
+In order to alleviate the enormous burden posed by preparation for long-read sequencing and enable the study of high diversity regions in hundreds of draft-quality parasite assemblies, we investigated the use of whole-genome amplification (WGA) to preparing the input material.  We chose to evaluate the method on the 3D7 parasite (as a finished reference genome already exists for this sample, quality comparisons will be straightforward).  We applied a multiple displacement amplification (MDA) protocol, previously described and optimized for the AT-rich *P. falciparum* genome (![Oyola, S. O. et al. (2014)](http://doi.org/10.1093/dnares/dsu028)).  MDA makes use of the phi-29 polymerase which has high replication fidelity and can produce 40-50 kb amplicons.
+
+Finally, to guide some of our expectations regarding the metrics to be presented below, we also provide results from our 3D7 PacBio resequencing experiment on unamplified DNA from last year.  Note that this sample was sequenced on an older version of the chemistry (P5-C3), which produces shorter reads than the more recent (P6-C4) chemistry.
 
 ```{r setup, echo=FALSE}
 library("seqinr");
@@ -52,6 +55,32 @@ data.dir = "../../data";
 resources.dir = "../../resources";
 ```
 
+## Read lengths and coverage
+
+We obtained DNA from the canonical reference malaria parasite, 3D7, and amplified 1 ng of material to 15 ug using the MDA protocol described above.  We submitted this material to the PacBio sequencing service at CSHL.  After construction of a 20-kb insert library and sequencing with the most recent P6-C4 chemistry, CSHL provided us with 11 SMRT cells of data.  We computed read length distributions and coverage per SMRT cell (as determined by aligning the filtered subreads with `bwa mem -x pacbio` and the `GATK DepthOfCoverage` tool), summarized in the table below.
+
+```{r rgStats, echo=FALSE, results='asis'}
+covStats.file = paste(results.dir, "amp.coverage.chr8.read_group_summary", sep="/");
+covStats.text = system(paste("grep -v '^Total'", covStats.file), intern=TRUE);
+covStats = read.delim(textConnection(covStats.text), stringsAsFactors=FALSE);
+covStats$key = gsub("3D7_rg_", "", covStats$sample_id);
+names(covStats) = c( "sample_id", "total", "mean", "cov_Q3", "cov_median", "cov_Q1", "pct_bases_above_15x", "key" );
+
+lengthStats = read.table(paste(results.dir, "lengths.stats.txt", sep="/"), header=TRUE, stringsAsFactors=FALSE);
+lengthStats$n50Length = NULL;
+
+rgStats = merge(lengthStats, covStats);
+
+rgStats.order = order(rgStats$key);
+rgStats.fields = c( "key", "numReads", "maxLength", "n50Value", "cov_Q1", "cov_median", "cov_Q3", "pct_bases_above_15x" );
+
+kable(rgStats[rgStats.order, rgStats.fields], row.names=FALSE);
+```
+
+On average, the yield from each SMRT cell was `r mean(rgStats$numReads)` +/- `r sd(rgStats$numReads)` reads, resulting in about `r mean(rgStats$cov_median)` +/- `r sd(rgStats$cov_median)` fold coverage per cell.  Read length was consistently high with N50s around `r mean(rgStats$n50Value)`.  SMRT cells labelled "PacBio_{A,B,C,D}01" were run with 30-minute movie lengths, while cells labelled "PacBio_{E,F,G,H}01" were run with 240-minute movie lengths.  While this should theoretically result in the latter cells having longer read lengths and higher yield, from the table it is not immediately apparent that this is the case.
+
+The length distributions for each experiment (plotted below) reveal mostly consistent performance from SMRT cell to SMRT cell.
+
 ```{r lengthDist, echo=FALSE}
 lengthDists = read.table(paste(results.dir, "lengths.dist.txt", sep="/"), header=TRUE, stringsAsFactors=FALSE);
 
@@ -89,26 +118,21 @@ legend.order = order(legend.names);
 legend("topright", legend.names[legend.order], col=legend.colors[legend.order], lwd=3, bty="n");
 ```
 
-```{r lengthStats, echo=FALSE, results='asis'}
-lengthStats = read.table(paste(results.dir, "lengths.stats.txt", sep="/"), header=TRUE, stringsAsFactors=FALSE);
-lengthStats$n50Length = NULL;
-
-lengthStats.order = order(lengthStats$key);
-kable(lengthStats[lengthStats.order,], row.names=FALSE);
-```
-
 ```{r loadFastas, echo=FALSE, cache=TRUE}
 ref = "../../resources/references/3D7/PlasmoDB-9.0_Pfalciparum3D7_Genome.sorted.fasta";
 
-f.ref   = read.fasta(ref);
-f.unamp = read.fasta(paste(data.dir, "ASMTest1.polished_assembly.fasta", sep="/"));
-f.amp   = read.fasta(paste(data.dir, "WGATest5.polished_assembly.fasta", sep="/"));
+f.ref = read.fasta(ref);
+f.amp = read.fasta(paste(data.dir, "data/WGAFullTest1.polished_assembly.fasta", sep="/"));
 ```
 
 ```{r loadCoverage, echo=FALSE, cache=TRUE}
 cov = read.table(paste(results.dir, "coverage.simple.txt", sep="/"), header=FALSE, stringsAsFactors=FALSE);
 names(cov) = c("chrom", "start", "amplified", "unamplified");
 ```
+
+## Coverage across genome
+
+We evaluated coverage across the genome in the aggregated set of 11 SMRT cells from amplified DNA and compared to the results obtained from our ![earlier experiment on unamplified DNA](https://github.com/kvg/PacBio/tree/master/reports/FirstLook#a-first-look-at-the-pacbio-3d7-data).  Coverage is more-or-less consistent across the genome, but in some cases, coverage does drop out in the centromere or the extreme telomeric ends of the chromosome (see chromosomes 6 and 12 for example).  This does have a minor effect on *var* gene recovery, as we will see later in this analysis. 
 
 ```{r showCoverageOverIdeogram, echo=FALSE, fig.height=6, fig.width=12, dpi=300, cache=TRUE}
 chroms.length = lapply(f.ref, function(x) { return(length(x)); });
@@ -170,11 +194,19 @@ for (chr in chroms) {
 legend("bottomright", c("Coverage from amplified DNA", "Coverage from unamplified DNA"), col=c(color.amp, color.unamp), lwd=2, bty="n");
 ```
 
+## Assembly performance
+
+We produced four assemblies with the amplified DNA: one with eleven SMRT cells ("amplified"), one with the four 30-minute SMRT cells ("WGA4Cells_30m"), one with the four 4-hour SMRT cells ("WGA4Cells_4h"), and one with the three CSHL SMRT cells ("WGA3Cells_CSHL").  We compared the performance of these assemblies to existing finished and draft sequences, as well as our PacBio test from last year ("unamplified").  The results are presented in the table below.  Interestingly, the four SMRT cell tests yielded comparable results to the eleven SMRT cell test, perhaps indicating diminishing returns for greater and greater coverage.
+
 ```{r asmStats, echo=FALSE, results='asis'}
 asmStats = read.table(paste(results.dir, "assembly.stats", sep="/"), header=TRUE);
 
 kable(asmStats[order(asmStats$numContigs), c("id", "numContigs", "minLength", "maxLength", "n50", "ng50", "totalSequence")], row.names=FALSE);
 ```
+
+The WGA4Cells_30m assembly has the highest N50, but that does not necessarily mean it is the highest-quality assembly.  In fact, having examined the quality results for all of the amplified assemblies (not shown), we will proceed with subsequent analyses using the full (eleven-cell) dataset, as it slightly edges out the others in terms of overall quality.
+
+## Comparison of amplified assembly to 3D7 reference
 
 ```{r dotPlots, echo=FALSE, results='asis', cache=TRUE}
 dotplot.unamp.ps  = paste(results.dir, "mummer/3D7.unamplified.filter.ps", sep="/");
@@ -193,13 +225,23 @@ cat("![dotplot_amp](", dotplot.amp.png, ")\n");
 coord_summary = read.table(paste(results.dir, "mummer/3D7.amplified.filter.filter.coord_summary", sep="/"), header=FALSE, stringsAsFactors=FALSE);
 names(coord_summary) = c( "S1", "E1", "S2", "E2", "LEN_1", "LEN_2", "LEN_R", "LEN_Q", "COV_R", "COV_Q", "CHROM", "CONTIG" );
 
-alignment.frame = data.frame(row.names = names(f.amp));
+#alignment.frame = data.frame(row.names = names(f.amp));
 
-for (contig in names(f.amp)) {
-    alignment.frame[contig, "length"] = length(f.amp[[contig]]);
-    alignment.frame[contig, "chroms"] = paste(unique(subset(coord_summary, CONTIG == contig)$CHROM), collapse=", ");
-}
+#for (contig in names(f.amp)) {
+#    alignment.frame[contig, "length"] = length(f.amp[[contig]]);
+#    alignment.frame[contig, "chroms"] = paste(unique(subset(coord_summary, CONTIG == contig)$CHROM), collapse=", ");
+#}
+
+kable(coord_summary);
 ```
+
+We aligned the "unamplified" and "amplified" assemblies to the 3D7 reference using `MUMmer` and produced dotplot of the alignments, shown above.  While in general, each chromosome in the amplified assembly is typically built up from a greater number of contigs (typically around `median(table(coord_summary$CHROM))`), in both cases there are very few off-target alignments.
+
+## Error rate
+
+Because we have resequenced a parasite for which a finished reference sequence exists, we can simply take that reference genome to be truth, thus making quality comparisons straightforward.  It should be noted that the finished reference sequence was originally produced in 2002 using a whole-chromosome shotgun strategy with 1-3 kb libraries (![Gardner, M. J. et al. (2002)](http://doi.org/10.1038/nature01097).  As we are now performing sequencing with library insert sizes around five times larger, we might expect that there are some repetitive regions that will have been collapsed in the original reference but potentially represented properly in the PacBio assemblies.  Furthermore, as the parasite has now been in culture for about 13 years since the production of the reference, it may have incurred many *de novo* mutations.  For simplicity, we shall still consider both of these errors in the new assemblies.  Therefore, our estimate of assembly quality will err on the side of pessimism.
+
+We called variants using the `dnadiff` utility in the `MUMmer` package.  The summary is shown the table below.  Be advised that some of `MUMmer`'s variant type definitions deviate slightly from typical conventions.  In particular, `MUMmer` considers an indel to be a single nucleotide in length, classifying longer events as "insertions".  Also, deletions are reported as insertions in the reference sequence.
 
 ```{r variantReport, echo=FALSE, results='asis'}
 fields = c( "TotalSeqs", "AlignedSeqs", "UnalignedSeqs", "TotalBases", "AlignedBases", "UnalignedBases", "Breakpoints", "Relocations", "Translocations", "Inversions", "Insertions", "InsertionSum", "InsertionAvg", "TandemIns", "TandemInsSum", "TandemInsAvg", "TotalSNPs", "AT", "AC", "AG", "TA", "TC", "TG", "CA", "CT", "CG", "GA", "GT", "GC", "TotalIndels", "A.", "T.", "C.", "G.", ".A", ".T", ".C", ".G" );
@@ -240,15 +282,15 @@ kable(variantReport);
 fields.unamp = c("P_REF", "REF", "ALT", "P_UNAMP", "BUFF", "DIST", "LEN_R", "LEN_Q", "FRM", "THING", "CHROM", "CONTIG_UNAMP");
 variants.unamp = read.table(paste(results.dir, "mummer/3D7.unamplified.snps", sep="/"), header=FALSE, stringsAsFactors=FALSE, col.names=fields.unamp);
 variants.unamp$ROWID_UNAMP = 1:nrow(variants.unamp);
-variants.unamp.sub = variants.unamp.sub[, c("CHROM", "P_REF", "REF", "ALT")];
+#variants.unamp.sub = variants.unamp.sub[, c("CHROM", "P_REF", "REF", "ALT")];
 
 fields.amp = c("P_REF", "REF", "ALT", "P_AMP", "BUFF", "DIST", "LEN_R", "LEN_Q", "FRM", "THING", "CHROM", "CONTIG_AMP");
 variants.amp = read.table(paste(results.dir, "mummer/3D7.amplified.snps", sep="/"), header=FALSE, stringsAsFactors=FALSE, col.names=fields.amp);
 variants.amp$ROWID_AMP = 1:nrow(variants.amp);
-variants.amp.sub = variants.amp.sub[, c("CHROM", "P_REF", "REF", "ALT")];
+#variants.amp.sub = variants.amp.sub[, c("CHROM", "P_REF", "REF", "ALT")];
 
-variants.illumina = read.table(paste(results.dir, "illumina/variants.vcf", sep="/"), header=FALSE, stringsAsFactors=FALSE, comment.char="#", col.names=c("CHROM", "P_REF", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT", "3D7"));
-variants.illumina.sub = variants.illumina[, c("CHROM", "P_REF", "REF", "ALT")];
+#variants.illumina = read.table(paste(results.dir, "illumina/variants.vcf", sep="/"), header=FALSE, stringsAsFactors=FALSE, comment.char="#", col.names=c("CHROM", "P_REF", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT", "3D7"));
+#variants.illumina.sub = variants.illumina[, c("CHROM", "P_REF", "REF", "ALT")];
 
 #variants.unamp.sub = unique(variants.unamp[, c("CHROM", "P_REF", "REF", "ALT", "P_UNAMP", "CONTIG_UNAMP", "ROWID_UNAMP")]);
 #variants.amp.sub = unique(variants.amp[, c("CHROM", "P_REF", "REF", "ALT", "P_AMP", "CONTIG_AMP", "ROWID_AMP")]);
@@ -257,11 +299,11 @@ qual.unamp.pessimistic = round(-10 * log10(nrow(variants.unamp) / 23332831));
 qual.amp.pessimistic   = round(-10 * log10(nrow(variants.amp) / 23332831));
 ```
 
-Quality of unamplified assembly: Q`r qual.unamp.pessimistic`.
+The table above shows fewer SNPs for the amplified assembly versus the unamplified assembly, but substantially more single-base indels.  Using these metrics, we calculate the overall (pessimistic) quality of the unamplified assembly to be around Q`r qual.unamp.pessimistic`, while the overall (pessimistic) quality of the amplified assembly is Q`r qual.amp.pessimistic`.
 
-Quality of amplified assembly: Q`r qual.amp.pessimistic`.
+# Exon recovery
 
-```{r exons, echo=FALSE, results='asis'}
+```{r exons, echo=FALSE, results='asis', cache=TRUE}
 getErrorStats <- function(sam) {
     exons = list();
 
@@ -387,6 +429,10 @@ rownames(exonStats) = c("ref", "unamp", "amp");
 kable(exonStats);
 ```
 
+We sought to determine the recovery properties of all `r length(exons.amp)` exons in the annotated 3D7 genome by aligning each exon to the unamplified and amplified assemblies using `bwa mem`.  The recovery statistics are presented in the table above.  For comparison, we also show the result of aligning exons from the reference sequence back to the reference sequence simply to provide a guideline for what a perfect realignment would look like.  For the newer assemblies, `r round(100 * exonStats["unamp", "exons_perfect"] / exonStats["unamp", "exons_aligned"])`% of exons aligned perfectly in the unamplified assembly, and `r round(100 * exonStats["amp", "exons_perfect"] / exonStats["amp", "exons_aligned"])`% of the exons aligned perfectly in the amplified assembly.  While there were more mismatches, insertions, and deletions observed in the amplified assembly, the overall rate of these events is still very low.
+
+# Var gene recovery
+
 ```{r varRecovery, echo=FALSE}
 gl = read.table(paste(resources.dir, "var.3D7.annotated.gff", sep="/"), header=FALSE);
 varExonNames = gsub("ID=", "", gsub(";.+", "", subset(gl, V3 == "exon")$V9));
@@ -406,18 +452,57 @@ vars.sub = vars[, c("IS_ALIGNED_U", "NM_U", "NI_U", "ND_U", "IS_ALIGNED_A", "NM_
 kable(vars.sub);
 ```
 
-Unamplified perfect var genes: `r sum(subset(vars, IS_ALIGNED_U == TRUE)$IS_PERFECT_U)`/`r nrow(vars)`.
-
-Amplified perfect var genes: `r sum(subset(vars, IS_ALIGNED_A == TRUE)$IS_PERFECT_A)`/`r nrow(vars)`.
+We were particularly concerned with *var* gene recovery in the amplified assembly.  We aligned the full length genes (both exons and intronic region) for the 60 *var* genes to each assembly and compared.  The results are presented in the table above.  Here the unamplified genome exhibited superior performance with `r sum(subset(vars, IS_ALIGNED_A == TRUE)$IS_PERFECT_A)`/`r nrow(vars)` showing perfect base-for-base recovery, versus the `r sum(subset(vars, IS_ALIGNED_U == TRUE)$IS_PERFECT_U)`/`r nrow(vars)` found to be perfect in the unamplified genome.  However, two *var* genes failed to align properly.  Aligning the exons of these genes individually, we find:
 
 ```{r varUnalignedExons, echo=FALSE}
 unalignedExon1Names = gsub("$", "-1", gsub("^", "exon_", subset(vars, IS_ALIGNED_A == FALSE)$NAME_A));
 unalignedExon2Names = gsub("$", "-2", gsub("^", "exon_", subset(vars, IS_ALIGNED_A == FALSE)$NAME_A));
 unalignedExons = sort(c(unalignedExon1Names, unalignedExon2Names));
 
-kable(exons.amp.df[unalignedExons,]);
+kable(exons.amp.df[unalignedExons, c("NAME", "IS_ALIGNED")]);
 ```
 
-Exon 1 aligned: `r sum(exons.amp.df[unalignedExon1Names,]$IS_ALIGNED)`.
+In both of these genes, it is apparent that the long exon (exon 1) is the one that did not align properly, while the short exon did.
 
-Exon 2 aligned: `r sum(exons.amp.df[unalignedExon2Names,]$IS_ALIGNED)`.
+## Conclusions
+
+Overall, it appears the genome assembly from amplified DNA yields a comparable assembly to the assembly from unamplified DNA.  No obvious chimeras are evident from the alignment dotplots, and the overall quality differs by only two Q points.  Overall gene recovery is on par with the unamplified assembly, and while two *var* exons are missing from the assembly, a substantially greater number of remaining *vars* are recovered perfectly in the amplified assembly versus the unamplified assembly.
+
+This test assembly lends credibility to the idea that, rather than painstakingly culturing dozens of parasites for months or years for the purpose of long-read sequencing, one can simply start with a very small quantity of DNA (~1 ng) and amplify it to the requisite level.  The benefits of doing so are enormous, ranging from substantially reduced human operator costs, to providing an avenue for repeat experiments when a culture becomes contaminated or a library fails, to gaining the ability to access genomes of field parasites, which tend to grow poorly in culture.
+
+Acknowledgements
+----------------
+
+Thanks to Kwiatkowski lab members:
+
+* Susana Campino, Mihir Kekre, Eleanor Drury for their work on culturing the 3D7 parasite to the necessary level in order to extract the requisite amount of genomic DNA for PacBio sequencing.
+* Alistair Miles for the P. falciparum genome accessibility calculations and other useful discussions.
+* Dawn Muddyman and Claire Nathwani for administrative support.
+* Dominic Kwiatkowski for access to data and collaboration.
+
+Thanks to CSHL Pacific Biosciences Sequencing Service:
+
+* Senem Mavruk Eskipehlivan: Technician, PacBio sequencer operation
+* Elena Ghiban: Bioinformatic staff, PacBio server management
+* Melissa deBastide: Lead bioinformatics of the genome center
+* Patricia Mocombe: Technician, PacBio sequencing library construction
+* Stephanie Muller: Technician, responsible for receiving samples and archiving metadata into LIMS
+* Maureen Bell: Financial officer
+* Eric Antoniou: research investigator and operation manager of the genome center
+* Michael Schatz: Associate Professor, de novo assembly using PacBio reads
+
+Thanks to Pacific Biosciences:
+
+* (Personnel unknown)
+
+Thanks to McVean lab members:
+
+* Isaac Turner for discussions on generating and validating *de novo* assemblies.
+* Gil McVean for PhD advising
+
+Session info
+------------
+
+```{r sessionInfo}
+sessionInfo();
+```

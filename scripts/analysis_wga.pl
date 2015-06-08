@@ -82,8 +82,14 @@ my %fqs = (
 
 my %asms = (
     'unamplified' => 'data/ASMTest1.polished_assembly.fasta',
-    #'amplified'   => 'data/WGAFullTest1.polished_assembly.fasta',
-    'amplified'   => 'data/WGAMenloPark4hTest1.fasta',
+    'amplified'   => 'data/WGAFullTest1.polished_assembly.fasta',
+);
+
+my %altAsms = (
+    #'WGA11Cells' => 'data/WGAFullTest1.polished_assembly.fasta',
+    'WGA4Cells_4h' => 'data/WGAMenloPark4hTest1.fasta',
+    'WGA4Cells_30m' => 'data/WGATest6.polished_assembly.fasta',
+    'WGA3Cells_CSHL' => 'data/WGACSHLTest2.polished_assembly.fasta',
 );
 
 my %existingAsms = (
@@ -135,9 +141,19 @@ my $asmStats = "$resultsDir/assembly.stats";
 my $asmStatsCmd = "$indiana8 BasicAssemblyStats -c unamplified:$asms{'unamplified'} -c amplified:$asms{'amplified'} " . flattenAsmList() . " -r $ref -o $asmStats";
 $dm->addRule($asmStats, [$asms{'unamplified'}, $asms{'amplified'}], $asmStatsCmd);
 
+my @alignedAmpCellBams;
+my @alignedAmpCellBais;
 foreach my $id (keys(%fqcells)) {
     my %alignedAmpCell = align($dm, 'seq' => $fqcells{$id}, 'sample' => '3D7', 'readgroup' => $id, 'resultsDir' => "$resultsDir/reads/$id", 't' => 4);
+
+    push(@alignedAmpCellBams, $alignedAmpCell{'bam'});
+    push(@alignedAmpCellBais, $alignedAmpCell{'bai'});
 }
+
+my $coveragePrefix = "$resultsDir/amp.coverage.chr8";
+my $coverageSummary = "$coveragePrefix.read_group_summary";
+my $coverageAmpCmd = "$gatk8 -T DepthOfCoverage -R $ref -I " . join(" -I ", @alignedAmpCellBams) . " -L Pf3D7_08_v3 -pt readgroup -omitIntervals -omitLocusTable -mmq 1 -o $coveragePrefix";
+$dm->addRule($coverageSummary, \@alignedAmpCellBais, $coverageAmpCmd);
 
 my $lengthDist = "$resultsDir/lengths.dist.txt";
 my $lengthStats = "$resultsDir/lengths.stats.txt";
@@ -197,6 +213,10 @@ sub flattenAsmList {
     my @list;
     foreach my $key (keys(%existingAsms)) {
         push(@list, "-c $key:$existingAsms{$key}");
+    }
+
+    foreach my $key (keys(%altAsms)) {
+        push(@list, "-c $key:$altAsms{$key}");
     }
 
     return join(" ", @list);
